@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import de.amr.graph.grid.ui.animation.Floodfill;
+import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.util.StopWatch;
 
 /**
@@ -23,8 +23,8 @@ public class FloodFillAction extends AbstractAction {
 	}
 
 	private void runFloodFill() {
-		Floodfill.builder().canvas(canvas()).source(model().getPathFinderSource())
-				.distanceVisible(model().isDistancesVisible()).build().run();
+		BFSAnimation.builder().canvas(canvas()).distanceVisible(model().isDistancesVisible()).build()
+				.floodFill(model().getPathFinderSource());
 	}
 
 	@Override

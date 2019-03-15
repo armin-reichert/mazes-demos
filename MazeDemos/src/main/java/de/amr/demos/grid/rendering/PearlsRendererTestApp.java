@@ -48,7 +48,7 @@ public class PearlsRendererTestApp extends SwingGridSampleApp {
 
 		sleep(2000);
 		getCanvas().clear();
-		floodfill(TOP_LEFT);
+		floodFill(TOP_LEFT);
 	}
 
 	private void clear() {

@@ -11,7 +11,7 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
-import de.amr.graph.grid.ui.animation.Floodfill;
+import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.util.StopWatch;
 
@@ -26,8 +26,8 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 	}
 
 	protected void floodFill() {
-		Floodfill.builder().canvas(canvas()).source(model().getGenerationStart()).distanceVisible(false).build()
-				.run();
+		BFSAnimation.builder().canvas(canvas()).distanceVisible(false).build()
+				.floodFill(model().getGrid().cell(model().getGenerationStart()));
 	}
 
 	@SuppressWarnings("unchecked")

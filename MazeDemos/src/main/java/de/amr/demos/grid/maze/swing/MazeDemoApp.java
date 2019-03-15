@@ -67,7 +67,7 @@ public class MazeDemoApp extends SwingGridSampleApp {
 					getCanvas().getHeight() / cellSize);
 			setGrid(generator.getGrid());
 			generator.createMaze(0, 0);
-			floodfill();
+			floodFill();
 			sleep(1000);
 			getCanvas().clear();
 		});
