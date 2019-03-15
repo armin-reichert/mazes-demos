@@ -103,7 +103,7 @@ public class DepthFirstSearchApp {
 		renderer.fnPassageWidth = (u, v) -> renderer.getCellSize() * 95 / 100;
 		renderer.fnText = cell -> String.format("%d", cell);
 		renderer.fnTextColor = cell -> Color.LIGHT_GRAY;
-		renderer.fnTextFont = () -> new Font(Font.SANS_SERIF, Font.PLAIN, renderer.getCellSize() / 3);
+		renderer.fnTextFont = cell -> new Font(Font.SANS_SERIF, Font.PLAIN, renderer.getCellSize() / 3);
 
 		canvas = new GridCanvas(renderer);
 		canvas.setPreferredSize(new Dimension(800, 800));
