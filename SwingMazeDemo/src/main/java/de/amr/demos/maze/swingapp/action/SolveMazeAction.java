@@ -67,7 +67,7 @@ public class SolveMazeAction extends AbstractAction {
 		}
 
 		else if (solverInfo.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolver(new DijkstraSearch<>(model().getGrid(), edge -> 1), solverInfo);
+			runSolver(new DijkstraSearch<>(model().getGrid(), (u, v) -> 1), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == BestFirstSearch.class) {
@@ -75,7 +75,7 @@ public class SolveMazeAction extends AbstractAction {
 		}
 
 		else if (solverInfo.getAlgorithmClass() == AStarSearch.class) {
-			runSolver(new AStarSearch<>(model().getGrid(), edge -> 1, metric()), solverInfo);
+			runSolver(new AStarSearch<>(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
 		}
 
 		if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
