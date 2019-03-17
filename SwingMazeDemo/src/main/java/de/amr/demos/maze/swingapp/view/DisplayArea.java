@@ -62,6 +62,14 @@ public class DisplayArea extends GridCanvas {
 		}
 	}
 
+	public void updateRenderer() {
+		if (renderStack.size() > 1) {
+			popRenderer();
+		}
+		pushRenderer(createRenderer());
+		repaint();
+	}
+
 	private ConfigurableGridRenderer createRenderer() {
 		ConfigurableGridRenderer r = model().getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();

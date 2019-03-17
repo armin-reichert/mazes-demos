@@ -32,6 +32,10 @@ public class OptionMenu extends JMenu {
 		addCheckBox("Flood-fill after generation", model()::setFloodFillAfterGeneration,
 				model()::isFloodFillAfterGeneration);
 		addCheckBox("Show distances", model()::setDistancesVisible, model()::isDistancesVisible);
+		// addCheckBox("Pearls style", checked -> {
+		// model().setStyle(checked ? Style.PEARLS : Style.WALL_PASSAGES);
+		// canvas().updateRenderer();
+		// }, () -> model().getStyle() == Style.PEARLS);
 		addCheckBox("Fluent Passage Width", model()::setPassageWidthFluent, model()::isPassageWidthFluent);
 		addSeparator();
 		addCheckBox("Hide this dialog when running", model()::setHidingControlsWhenRunning,
