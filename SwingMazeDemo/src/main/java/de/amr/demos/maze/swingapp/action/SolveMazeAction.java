@@ -78,7 +78,7 @@ public class SolveMazeAction extends AbstractAction {
 			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
 		}
 
-		if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
+		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
 			runSolver(new DepthFirstSearch(model().getGrid()), solverInfo);
 		}
 
