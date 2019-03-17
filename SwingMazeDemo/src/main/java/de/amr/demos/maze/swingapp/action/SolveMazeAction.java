@@ -63,39 +63,39 @@ public class SolveMazeAction extends AbstractAction {
 	private void runSolverAnimation(AlgorithmInfo solverInfo) {
 
 		if (solverInfo.getAlgorithmClass() == BreadthFirstSearch.class) {
-			runSolver(new BreadthFirstSearch<>(model().getGrid()), solverInfo);
+			runSolver(new BreadthFirstSearch(model().getGrid()), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolver(new DijkstraSearch<>(model().getGrid(), (u, v) -> 1), solverInfo);
+			runSolver(new DijkstraSearch(model().getGrid(), (u, v) -> 1), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolver(new BestFirstSearch<>(model().getGrid(), heuristics()), solverInfo);
+			runSolver(new BestFirstSearch(model().getGrid(), heuristics()), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == AStarSearch.class) {
-			runSolver(new AStarSearch<>(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
+			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
 		}
 
 		if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
-			runSolver(new DepthFirstSearch<>(model().getGrid()), solverInfo);
+			runSolver(new DepthFirstSearch(model().getGrid()), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch2.class) {
-			runSolver(new DepthFirstSearch2<>(model().getGrid()), solverInfo);
+			runSolver(new DepthFirstSearch2(model().getGrid()), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == IDDFS.class) {
-			runSolver(new IDDFS<>(model().getGrid()), solverInfo);
+			runSolver(new IDDFS(model().getGrid()), solverInfo);
 		}
 
 		else if (solverInfo.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolver(new HillClimbingSearch<>(model().getGrid(), heuristics()), solverInfo);
+			runSolver(new HillClimbingSearch(model().getGrid(), heuristics()), solverInfo);
 		}
 	}
 
-	private void runSolver(GraphSearch<?, ?, ?> solver, AlgorithmInfo solverInfo) {
+	private void runSolver(GraphSearch<?> solver, AlgorithmInfo solverInfo) {
 		int source = model().getGrid().cell(model().getPathFinderSource());
 		int target = model().getGrid().cell(model().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);

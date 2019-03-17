@@ -127,8 +127,7 @@ public class MazeDemoFX extends Application {
 		MazeGenerator<OrthogonalGrid> generator = randomMazeGenerator();
 		maze = generator.createMaze(0, 0);
 		drawGrid();
-		Path path = Path.computePath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT),
-				new BreadthFirstSearch<>(maze));
+		Path path = Path.computePath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT), new BreadthFirstSearch(maze));
 		drawPath(path);
 	}
 
