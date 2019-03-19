@@ -63,7 +63,7 @@ public class DisplayArea extends GridCanvas {
 	}
 
 	public void updateRenderer() {
-		if (rendererStack.size() > 1) {
+		if (hasRenderer()) {
 			popRenderer();
 		}
 		pushRenderer(createRenderer());
