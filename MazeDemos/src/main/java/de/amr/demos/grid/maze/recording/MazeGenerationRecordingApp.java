@@ -7,6 +7,7 @@ import java.io.File;
 import javax.swing.JFrame;
 
 import de.amr.graph.core.api.ObservableGraph;
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.event.EdgeEvent;
 import de.amr.graph.event.GraphObserver;
 import de.amr.graph.event.VertexEvent;
@@ -14,7 +15,6 @@ import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
-import de.amr.graph.pathfinder.api.TraversalState;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysFirst;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysLast;
