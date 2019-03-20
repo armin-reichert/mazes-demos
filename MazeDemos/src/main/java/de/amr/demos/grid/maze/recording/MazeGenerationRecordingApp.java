@@ -15,12 +15,38 @@ import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
+import de.amr.maze.alg.Armin;
+import de.amr.maze.alg.BinaryTree;
+import de.amr.maze.alg.BinaryTreeRandom;
+import de.amr.maze.alg.Eller;
+import de.amr.maze.alg.HuntAndKill;
+import de.amr.maze.alg.HuntAndKillRandom;
+import de.amr.maze.alg.Sidewinder;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.mst.BoruvkaMST;
+import de.amr.maze.alg.mst.KruskalMST;
+import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysFirst;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysLast;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom;
 import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;
-import de.amr.util.GifRecorder;
+import de.amr.maze.alg.traversal.IterativeDFS;
+import de.amr.maze.alg.traversal.RandomBFS;
+import de.amr.maze.alg.ust.WilsonUSTCollapsingCircle;
+import de.amr.maze.alg.ust.WilsonUSTCollapsingWalls;
+import de.amr.maze.alg.ust.WilsonUSTExpandingCircle;
+import de.amr.maze.alg.ust.WilsonUSTExpandingCircles;
+import de.amr.maze.alg.ust.WilsonUSTExpandingRectangle;
+import de.amr.maze.alg.ust.WilsonUSTExpandingSpiral;
+import de.amr.maze.alg.ust.WilsonUSTHilbertCurve;
+import de.amr.maze.alg.ust.WilsonUSTLeftToRightSweep;
+import de.amr.maze.alg.ust.WilsonUSTMooreCurve;
+import de.amr.maze.alg.ust.WilsonUSTNestedRectangles;
+import de.amr.maze.alg.ust.WilsonUSTPeanoCurve;
+import de.amr.maze.alg.ust.WilsonUSTRandomCell;
+import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
+import de.amr.maze.alg.ust.WilsonUSTRightToLeftSweep;
+import de.amr.maze.alg.ust.WilsonUSTRowsTopDown;
 
 /**
  * Runs maze generation algorithms and saves the mazes as animated GIF images.
@@ -34,37 +60,37 @@ public class MazeGenerationRecordingApp {
 
 	private static final Class<?>[] HANDSOME_GENERATORS = {
 		/*@formatter:off*/
-//		BoruvkaMST.class, 
-//		KruskalMST.class, 
-//		PrimMST.class, 
-//		BinaryTree.class,
-//		BinaryTreeRandom.class, 
-//		Eller.class,
-//		EllerInsideOut.class, 
-//		HuntAndKill.class, 
-//		HuntAndKillRandom.class,
-//		IterativeDFS.class, 
-//		RandomBFS.class,
+		BoruvkaMST.class, 
+		KruskalMST.class, 
+		PrimMST.class, 
+		BinaryTree.class,
+		BinaryTreeRandom.class, 
+		Eller.class,
+		Armin.class, 
+		HuntAndKill.class, 
+		HuntAndKillRandom.class,
+		IterativeDFS.class, 
+		RandomBFS.class,
 		GrowingTreeLastOrRandom.class,
 		GrowingTreeAlwaysFirst.class,
 		GrowingTreeAlwaysLast.class,
 		GrowingTreeAlwaysRandom.class,
-//		Sidewinder.class,
-//		WilsonUSTCollapsingCircle.class, 
-//		WilsonUSTCollapsingWalls.class,
-//		WilsonUSTExpandingCircle.class, 
-//		WilsonUSTExpandingCircles.class, 
-//		WilsonUSTExpandingRectangle.class, 
-//		WilsonUSTExpandingSpiral.class, 
-//		WilsonUSTHilbertCurve.class, 
-//		WilsonUSTLeftToRightSweep.class, 
-//		WilsonUSTMooreCurve.class, 
-//		WilsonUSTNestedRectangles.class, 
-//		WilsonUSTPeanoCurve.class, 
-//		WilsonUSTRandomCell.class,
-//		WilsonUSTRecursiveCrosses.class, 
-//		WilsonUSTRightToLeftSweep.class, 
-//		WilsonUSTRowsTopDown.class, 
+		Sidewinder.class,
+		WilsonUSTCollapsingCircle.class, 
+		WilsonUSTCollapsingWalls.class,
+		WilsonUSTExpandingCircle.class, 
+		WilsonUSTExpandingCircles.class, 
+		WilsonUSTExpandingRectangle.class, 
+		WilsonUSTExpandingSpiral.class, 
+		WilsonUSTHilbertCurve.class, 
+		WilsonUSTLeftToRightSweep.class, 
+		WilsonUSTMooreCurve.class, 
+		WilsonUSTNestedRectangles.class, 
+		WilsonUSTPeanoCurve.class, 
+		WilsonUSTRandomCell.class,
+		WilsonUSTRecursiveCrosses.class, 
+		WilsonUSTRightToLeftSweep.class, 
+		WilsonUSTRowsTopDown.class, 
 		/*@formatter:on*/
 	};
 

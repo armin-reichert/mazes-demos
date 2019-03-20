@@ -23,7 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.amr.maze</groupId>
-			<artifactId>Mazes</artifactId>
+			<artifactId>mazes-algorithms</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
