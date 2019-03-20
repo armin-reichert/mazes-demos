@@ -53,7 +53,7 @@
 	</dependencies>
 	<parent>
 		<groupId>de.amr.demos.graph</groupId>
-		<artifactId>graph-demos-parent</artifactId>
+		<artifactId>graph-demos-all</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../../graph-demos</relativePath>
 	</parent>
