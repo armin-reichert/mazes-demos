@@ -172,19 +172,13 @@ public class MazeDemoApp {
 		canvas = new DisplayArea();
 		canvas.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		canvas.getActionMap().put("showSettings", actionShowControls);
-		if (model.getGrid().numVertices() < 10_000) {
-			canvas.drawGrid();
-		} else {
-			canvas.fill(Color.WHITE);
-		}
 	}
 
 	public void resetDisplay() {
-		model.setGrid(createDefaultGrid(true));
 		wndDisplayArea.setVisible(false);
+		model.setGrid(createDefaultGrid(true));
 		newCanvas();
 		wndDisplayArea.setContentPane(canvas);
-		canvas.repaint();
 		wndDisplayArea.setVisible(true);
 	}
 

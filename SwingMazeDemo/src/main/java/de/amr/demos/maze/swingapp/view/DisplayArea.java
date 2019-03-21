@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
@@ -16,7 +17,6 @@ import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
-import de.amr.graph.core.api.TraversalState;
 
 /**
  * Display area for maze generation and traversal.
@@ -29,7 +29,16 @@ public class DisplayArea extends GridCanvas {
 
 	public DisplayArea() {
 		super(model().getGrid());
+		setCellSize(model().getGridCellSize(), false);
 		pushRenderer(createRenderer());
+		clear();
+		if (model().getGrid().numVertices() < 10_000) {
+			drawGrid();
+		}
+		else {
+			fill(Color.WHITE);
+		}
+		// attach observer for animated drawing
 		animation = new GridCanvasAnimation<>(this);
 		animation.fnDelay = () -> model().getDelay();
 		model().getGrid().addGraphObserver(animation);
@@ -52,9 +61,9 @@ public class DisplayArea extends GridCanvas {
 
 	@Override
 	public void setGrid(GridGraph<?, ?> grid) {
-		if (grid != this.grid && grid instanceof OrthogonalGrid) {
+		if (grid != getGrid() && grid instanceof OrthogonalGrid) {
 			super.setGrid(grid);
-			OrthogonalGrid oldGrid = (OrthogonalGrid) this.grid;
+			OrthogonalGrid oldGrid = (OrthogonalGrid) getGrid();
 			OrthogonalGrid newGrid = (OrthogonalGrid) grid;
 			oldGrid.removeGraphObserver(animation);
 			model().setGrid(newGrid);
@@ -63,9 +72,7 @@ public class DisplayArea extends GridCanvas {
 	}
 
 	public void updateRenderer() {
-		if (hasRenderer()) {
-			popRenderer();
-		}
+		popRenderer();
 		pushRenderer(createRenderer());
 		repaint();
 	}
