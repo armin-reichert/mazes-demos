@@ -23,7 +23,7 @@ import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
 import de.amr.graph.pathfinder.impl.DijkstraSearch;
-import de.amr.graph.pathfinder.impl.GraphSearch;
+import de.amr.graph.pathfinder.impl.AbstractGraphSearch;
 import de.amr.graph.pathfinder.impl.HillClimbingSearch;
 import de.amr.graph.pathfinder.impl.IDDFS;
 import de.amr.util.StopWatch;
@@ -95,7 +95,7 @@ public class SolveMazeAction extends AbstractAction {
 		}
 	}
 
-	private void runSolver(GraphSearch<?> solver, AlgorithmInfo solverInfo) {
+	private void runSolver(AbstractGraphSearch<?> solver, AlgorithmInfo solverInfo) {
 		int source = model().getGrid().cell(model().getPathFinderSource());
 		int target = model().getGrid().cell(model().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
