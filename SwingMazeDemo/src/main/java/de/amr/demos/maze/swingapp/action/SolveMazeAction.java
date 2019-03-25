@@ -17,13 +17,16 @@ import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
+import de.amr.graph.pathfinder.api.ObservableGraphSearch;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiAStarSearch;
+import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiDijkstraSearch;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
 import de.amr.graph.pathfinder.impl.DijkstraSearch;
-import de.amr.graph.pathfinder.impl.AbstractGraphSearch;
 import de.amr.graph.pathfinder.impl.HillClimbingSearch;
 import de.amr.graph.pathfinder.impl.IDDFS;
 import de.amr.util.StopWatch;
@@ -65,37 +68,39 @@ public class SolveMazeAction extends AbstractAction {
 		if (solverInfo.getAlgorithmClass() == BreadthFirstSearch.class) {
 			runSolver(new BreadthFirstSearch(model().getGrid()), solverInfo);
 		}
-
+		else if (solverInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
+			runSolver(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), solverInfo);
+		}
 		else if (solverInfo.getAlgorithmClass() == DijkstraSearch.class) {
 			runSolver(new DijkstraSearch(model().getGrid(), (u, v) -> 1), solverInfo);
 		}
-
+		else if (solverInfo.getAlgorithmClass() == BidiDijkstraSearch.class) {
+			runSolver(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), solverInfo);
+		}
 		else if (solverInfo.getAlgorithmClass() == BestFirstSearch.class) {
 			runSolver(new BestFirstSearch(model().getGrid(), heuristics()), solverInfo);
 		}
-
 		else if (solverInfo.getAlgorithmClass() == AStarSearch.class) {
 			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
 		}
-
+		else if (solverInfo.getAlgorithmClass() == BidiAStarSearch.class) {
+			runSolver(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), solverInfo);
+		}
 		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
 			runSolver(new DepthFirstSearch(model().getGrid()), solverInfo);
 		}
-
 		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch2.class) {
 			runSolver(new DepthFirstSearch2(model().getGrid()), solverInfo);
 		}
-
 		else if (solverInfo.getAlgorithmClass() == IDDFS.class) {
 			runSolver(new IDDFS(model().getGrid()), solverInfo);
 		}
-
 		else if (solverInfo.getAlgorithmClass() == HillClimbingSearch.class) {
 			runSolver(new HillClimbingSearch(model().getGrid(), heuristics()), solverInfo);
 		}
 	}
 
-	private void runSolver(AbstractGraphSearch<?> solver, AlgorithmInfo solverInfo) {
+	private void runSolver(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
 		int source = model().getGrid().cell(model().getPathFinderSource());
 		int target = model().getGrid().cell(model().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
@@ -105,7 +110,8 @@ public class SolveMazeAction extends AbstractAction {
 					.pathColor(model().getPathColor()).distanceVisible(model().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
-		} else if (solverInfo.isTagged(PathFinderTag.DFS)) {
+		}
+		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
 			DFSAnimation anim = DFSAnimation.builder().canvas(canvas()).delay(() -> model().getDelay())
 					.pathColor(model().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));

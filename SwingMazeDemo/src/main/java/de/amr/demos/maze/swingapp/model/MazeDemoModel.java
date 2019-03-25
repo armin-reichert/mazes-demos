@@ -19,6 +19,9 @@ import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiAStarSearch;
+import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiDijkstraSearch;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
@@ -129,13 +132,16 @@ public class MazeDemoModel {
 	public static final AlgorithmInfo[] PATHFINDER_ALGORITHMS = {
 		/*@formatter:off*/
 		new AlgorithmInfo(BreadthFirstSearch.class, "Breadth-First Search", BFS),
+		new AlgorithmInfo(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", BFS),
 		new AlgorithmInfo(DepthFirstSearch.class, "Depth-First Search", DFS),
 		new AlgorithmInfo(DepthFirstSearch2.class, "Depth-First Search (variation)", DFS), 
-		new AlgorithmInfo(IDDFS.class, "Iterative Deepening DFS", DFS),
-		new AlgorithmInfo(DijkstraSearch.class, "Uniform Cost (Dijkstra) Search", BFS), 
+		new AlgorithmInfo(IDDFS.class, "Iterative-Deepening DFS (very slow!)", DFS),
+		new AlgorithmInfo(DijkstraSearch.class, "Uniform-Cost (Dijkstra) Search", BFS),
+		new AlgorithmInfo(BidiDijkstraSearch.class, "Bidirectional Dijkstra Search", BFS),
 		new AlgorithmInfo(HillClimbingSearch.class, "Hill-Climbing Search", DFS, INFORMED),
 		new AlgorithmInfo(BestFirstSearch.class, "Greedy Best-First Search", BFS, INFORMED),
 		new AlgorithmInfo(AStarSearch.class, "A* Search", BFS, INFORMED),
+		new AlgorithmInfo(BidiAStarSearch.class, "Bidirectional A* Search", BFS, INFORMED),
 		/*@formatter:on*/
 	};
 
