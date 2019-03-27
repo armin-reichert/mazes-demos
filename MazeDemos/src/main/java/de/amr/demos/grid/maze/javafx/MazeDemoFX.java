@@ -112,7 +112,8 @@ public class MazeDemoFX extends Application {
 					cellSize *= 2;
 					computeGridSize();
 				}
-			} else if (event.getCode() == KeyCode.PLUS) {
+			}
+			else if (event.getCode() == KeyCode.PLUS) {
 				if (cellSize > 4) {
 					cellSize /= 2;
 					computeGridSize();
@@ -127,7 +128,7 @@ public class MazeDemoFX extends Application {
 		MazeGenerator<OrthogonalGrid> generator = randomMazeGenerator();
 		maze = generator.createMaze(0, 0);
 		drawGrid();
-		Path path = Path.findPath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT), new BreadthFirstSearch(maze));
+		Path path = new BreadthFirstSearch(maze).findPath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT));
 		drawPath(path);
 	}
 

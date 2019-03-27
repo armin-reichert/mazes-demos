@@ -142,6 +142,6 @@ public class DepthFirstSearchApp {
 	}
 
 	private void dfs() {
-		solution = Path.findPath(grid.cell(TOP_LEFT), grid.cell(BOTTOM_RIGHT), new DepthFirstSearch2(grid));
+		solution = new DepthFirstSearch2(grid).findPath(grid.cell(TOP_LEFT), grid.cell(BOTTOM_RIGHT));
 	}
 }
