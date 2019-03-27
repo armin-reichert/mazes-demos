@@ -28,8 +28,7 @@ public class DisplayArea extends GridCanvas {
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
 
 	public DisplayArea() {
-		super(model().getGrid());
-		setCellSize(model().getGridCellSize(), false);
+		super(model().getGrid(), model().getGridCellSize());
 		pushRenderer(createRenderer());
 		clear();
 		if (model().getGrid().numVertices() < 10_000) {

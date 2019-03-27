@@ -8,7 +8,6 @@ import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
 import java.util.function.ToDoubleBiFunction;
-import java.util.function.ToDoubleFunction;
 
 import javax.swing.AbstractAction;
 
@@ -63,40 +62,40 @@ public class SolveMazeAction extends AbstractAction {
 		});
 	}
 
-	private void runSolverAnimation(AlgorithmInfo solverInfo) {
+	private void runSolverAnimation(AlgorithmInfo info) {
 
-		if (solverInfo.getAlgorithmClass() == BreadthFirstSearch.class) {
-			runSolver(new BreadthFirstSearch(model().getGrid()), solverInfo);
+		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
+			runSolver(new BreadthFirstSearch(model().getGrid()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			runSolver(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), solverInfo);
+		else if (info.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
+			runSolver(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolver(new DijkstraSearch(model().getGrid(), (u, v) -> 1), solverInfo);
+		else if (info.getAlgorithmClass() == DijkstraSearch.class) {
+			runSolver(new DijkstraSearch(model().getGrid(), (u, v) -> 1), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			runSolver(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), solverInfo);
+		else if (info.getAlgorithmClass() == BidiDijkstraSearch.class) {
+			runSolver(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolver(new BestFirstSearch(model().getGrid(), heuristics()), solverInfo);
+		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
+			runSolver(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == AStarSearch.class) {
-			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), solverInfo);
+		else if (info.getAlgorithmClass() == AStarSearch.class) {
+			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == BidiAStarSearch.class) {
-			runSolver(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), solverInfo);
+		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
+			runSolver(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch.class) {
-			runSolver(new DepthFirstSearch(model().getGrid()), solverInfo);
+		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
+			runSolver(new DepthFirstSearch(model().getGrid()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == DepthFirstSearch2.class) {
-			runSolver(new DepthFirstSearch2(model().getGrid()), solverInfo);
+		else if (info.getAlgorithmClass() == DepthFirstSearch2.class) {
+			runSolver(new DepthFirstSearch2(model().getGrid()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == IDDFS.class) {
-			runSolver(new IDDFS(model().getGrid()), solverInfo);
+		else if (info.getAlgorithmClass() == IDDFS.class) {
+			runSolver(new IDDFS(model().getGrid()), info);
 		}
-		else if (solverInfo.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolver(new HillClimbingSearch(model().getGrid(), heuristics()), solverInfo);
+		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
+			runSolver(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 	}
 
@@ -122,9 +121,8 @@ public class SolveMazeAction extends AbstractAction {
 				: format("%s: %.2f seconds.", solverInfo.getDescription(), watch.getSeconds()));
 	}
 
-	private ToDoubleFunction<Integer> heuristics() {
-		int targetCell = model().getGrid().cell(model().getPathFinderTarget());
-		return cell -> metric().applyAsDouble(cell, targetCell);
+	private int target() {
+		return model().getGrid().cell(model().getPathFinderTarget());
 	}
 
 	private ToDoubleBiFunction<Integer, Integer> metric() {
