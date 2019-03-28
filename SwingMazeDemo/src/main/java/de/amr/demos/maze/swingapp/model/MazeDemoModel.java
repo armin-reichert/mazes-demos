@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.graph.pathfinder.impl.BidiAStarSearch;
@@ -36,6 +35,7 @@ import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
 import de.amr.maze.alg.Sidewinder;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;

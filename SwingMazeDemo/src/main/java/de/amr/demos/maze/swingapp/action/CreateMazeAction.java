@@ -6,8 +6,8 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
+import de.amr.maze.alg.core.OrthogonalGrid;
 
 /**
  * Action for creating a maze using the currently selected generation algorithm.

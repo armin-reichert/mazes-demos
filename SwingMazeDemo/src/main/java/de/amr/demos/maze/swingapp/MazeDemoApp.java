@@ -38,8 +38,8 @@ import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.DisplayArea;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
 /**

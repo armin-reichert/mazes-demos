@@ -2,10 +2,10 @@ package de.amr.demos.grid.maze.swing;
 
 import java.util.stream.IntStream;
 
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.maze.alg.RecursiveDivision;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.core.OrthogonalGrid;
 
 public class RecursiveDivisionApp extends SwingGridSampleApp {
 

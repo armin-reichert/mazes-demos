@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.maze.alg.Armin;
@@ -16,6 +15,7 @@ import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;

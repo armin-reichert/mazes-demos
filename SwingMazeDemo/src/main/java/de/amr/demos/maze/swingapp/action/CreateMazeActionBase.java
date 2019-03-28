@@ -9,10 +9,10 @@ import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeActionBase extends AbstractAction {

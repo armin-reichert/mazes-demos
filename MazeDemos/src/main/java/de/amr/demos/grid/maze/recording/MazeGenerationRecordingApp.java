@@ -11,7 +11,6 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.event.EdgeEvent;
 import de.amr.graph.event.GraphObserver;
 import de.amr.graph.event.VertexEvent;
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
@@ -23,6 +22,7 @@ import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.Sidewinder;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
@@ -112,7 +112,7 @@ public class MazeGenerationRecordingApp {
 				MazeGenerator<OrthogonalGrid> generator = (MazeGenerator<OrthogonalGrid>) generatorClass
 						.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(numCols, numRows);
 				OrthogonalGrid grid = generator.getGrid();
-				GridCanvas canvas = new GridCanvas(grid);
+				GridCanvas canvas = new GridCanvas(grid, cellSize);
 				canvas.pushRenderer(createRenderer(grid, cellSize));
 				canvas.drawGrid();
 				window.getContentPane().add(canvas);

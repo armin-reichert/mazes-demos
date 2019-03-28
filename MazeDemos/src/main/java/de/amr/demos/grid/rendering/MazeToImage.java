@@ -9,11 +9,11 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.maze.alg.RecursiveDivision;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
@@ -54,7 +54,7 @@ public class MazeToImage {
 			Params p = new Params();
 			JCommander.newBuilder().addObject(p).build().parse(args);
 			OrthogonalGrid maze = maze(p);
-			GridCanvas canvas = new GridCanvas(maze);
+			GridCanvas canvas = new GridCanvas(maze, p.cellSize);
 			WallPassageGridRenderer gr = new WallPassageGridRenderer();
 			gr.fnCellSize = () -> p.cellSize;
 			canvas.pushRenderer(gr);

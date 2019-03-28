@@ -18,11 +18,11 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-import de.amr.graph.grid.impl.OrthogonalGrid;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
+import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.KruskalMST;
 
 /**
