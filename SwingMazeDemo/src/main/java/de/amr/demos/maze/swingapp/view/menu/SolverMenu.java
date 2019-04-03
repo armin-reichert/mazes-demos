@@ -32,7 +32,8 @@ public class SolverMenu extends AlgorithmMenu {
 		Stream.of(PATHFINDER_ALGORITHMS).forEach(alg -> {
 			if (alg.isTagged(PathFinderTag.INFORMED)) {
 				informedSolvers.add(alg);
-			} else {
+			}
+			else {
 				uninformedSolvers.add(alg);
 			}
 		});

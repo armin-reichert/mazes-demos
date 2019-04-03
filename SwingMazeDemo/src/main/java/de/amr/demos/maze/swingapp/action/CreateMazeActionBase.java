@@ -47,7 +47,8 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 		app().showMessage(format("\n%s (%d cells)", algo.getDescription(), generator.getGrid().numVertices()));
 		if (model().isGenerationAnimated()) {
 			generator.createMaze(x, y);
-		} else {
+		}
+		else {
 			canvas().enableAnimation(false);
 			StopWatch watch = new StopWatch();
 			watch.measure(() -> generator.createMaze(x, y));

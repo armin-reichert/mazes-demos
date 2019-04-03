@@ -32,7 +32,8 @@ public class MazeDemoApp extends SwingGridSampleApp {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-		} else {
+		}
+		else {
 			System.out.println("Usage: java de.amr.demos.grid.maze.swing.MazeDemoApp <maze generator class>");
 		}
 	}

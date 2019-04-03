@@ -94,7 +94,8 @@ public class GifRecorder implements AutoCloseable {
 			writeFrame(frame);
 			lastFrameWritten = frame;
 			skippedFrames.clear();
-		} else {
+		}
+		else {
 			skippedFrames.add(frame);
 		}
 	}
@@ -115,7 +116,8 @@ public class GifRecorder implements AutoCloseable {
 			++framesWritten;
 			if (framesWritten % 50 == 0) {
 				System.out.print(framesWritten);
-			} else if (framesWritten % 10 == 0) {
+			}
+			else if (framesWritten % 10 == 0) {
 				System.out.print(".");
 			}
 		} catch (IOException e) {
