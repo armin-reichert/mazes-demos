@@ -175,11 +175,10 @@ public class MazeDemoApp {
 	}
 
 	public void resetDisplay() {
-		wndDisplayArea.setVisible(false);
+		canvas.clear();
 		model.setGrid(createDefaultGrid(true));
 		newCanvas();
 		wndDisplayArea.setContentPane(canvas);
-		wndDisplayArea.setVisible(true);
 	}
 
 	public void showMessage(String msg) {
