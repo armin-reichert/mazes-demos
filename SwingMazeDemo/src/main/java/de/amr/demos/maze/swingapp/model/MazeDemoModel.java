@@ -41,6 +41,7 @@ import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.mst.ReverseDeleteMST_BFS;
 import de.amr.maze.alg.mst.ReverseDeleteMST_BestFS;
+import de.amr.maze.alg.mst.ReverseDeleteMST_BidiAStar;
 import de.amr.maze.alg.mst.ReverseDeleteMST_DFS;
 import de.amr.maze.alg.mst.ReverseDeleteMST_HillClimbing;
 import de.amr.maze.alg.traversal.GrowingTreeAlwaysFirst;
@@ -100,6 +101,7 @@ public class MazeDemoModel {
 		new AlgorithmInfo(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow),
 		new AlgorithmInfo(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow),
 		new AlgorithmInfo(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow),
+		new AlgorithmInfo(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow),
 		new AlgorithmInfo(AldousBroderUST.class, "Aldous-Broder UST (rather slow)", UST, Slow),
 		new AlgorithmInfo(AldousBroderWilsonUST.class, "Houston UST (rather slow)", UST, Slow),
 		new AlgorithmInfo(WilsonUSTRandomCell.class, "Wilson UST (random)", UST, Slow),

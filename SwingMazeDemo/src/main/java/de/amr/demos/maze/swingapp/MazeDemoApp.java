@@ -179,6 +179,7 @@ public class MazeDemoApp {
 		model.setGrid(createDefaultGrid(true));
 		newCanvas();
 		wndDisplayArea.setContentPane(canvas);
+		wndDisplayArea.validate();
 	}
 
 	public void showMessage(String msg) {
