@@ -15,6 +15,8 @@ import javax.swing.JPanel;
  * @author Armin Reichert
  */
 public class ToggleControlPanelAction extends AbstractAction {
+	
+	private static final int COLLAPSED_HEIGHT = 160;
 
 	private final ImageIcon zoomIn = new ImageIcon(getClass().getResource("/zoom_in.png"));
 	private final ImageIcon zoomOut = new ImageIcon(getClass().getResource("/zoom_out.png"));
@@ -35,7 +37,7 @@ public class ToggleControlPanelAction extends AbstractAction {
 			putValue(Action.LARGE_ICON_KEY, zoomIn);
 			controls.setVisible(false);
 			controlWindow().pack();
-			controlWindow().setSize(controlWindow().getWidth(), 140);
+			controlWindow().setSize(controlWindow().getWidth(), COLLAPSED_HEIGHT);
 		}
 		else {
 			putValue(Action.NAME, "Hide Details");

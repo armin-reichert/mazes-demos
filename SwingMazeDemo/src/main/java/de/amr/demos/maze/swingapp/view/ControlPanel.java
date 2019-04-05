@@ -123,12 +123,14 @@ public class ControlPanel extends JPanel {
 		buttons.add(btnShowHideDetails, "cell 5 0,aligny top");
 
 		sliderDelay = new JSlider();
+		sliderDelay.setPaintLabels(true);
+		sliderDelay.setPaintTicks(true);
 		buttons.add(sliderDelay, "flowx,cell 0 1 6 1,growx");
-		sliderDelay.setToolTipText("Slowdown");
-		sliderDelay.setValue(10);
-		sliderDelay.setMaximum(50);
-		sliderDelay.setMinorTickSpacing(1);
-		sliderDelay.setMajorTickSpacing(5);
+		sliderDelay.setToolTipText("Delay [milliseconds]");
+		sliderDelay.setValue(0);
+		sliderDelay.setMaximum(100);
+		sliderDelay.setMinorTickSpacing(10);
+		sliderDelay.setMajorTickSpacing(50);
 	}
 
 	public void showMessage(String msg) {

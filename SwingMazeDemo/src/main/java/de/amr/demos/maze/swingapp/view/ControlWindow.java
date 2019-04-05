@@ -71,7 +71,11 @@ public class ControlWindow extends JFrame {
 			}
 		});
 
+		controlPanel.getSliderDelay().setMinimum(0);
+		controlPanel.getSliderDelay().setMaximum(100);
 		controlPanel.getSliderDelay().setValue(model().getDelay());
+		controlPanel.getSliderDelay().setMinorTickSpacing(10);
+		controlPanel.getSliderDelay().setMajorTickSpacing(50);
 		controlPanel.getSliderDelay().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
