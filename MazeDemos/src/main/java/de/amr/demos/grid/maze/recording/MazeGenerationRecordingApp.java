@@ -11,6 +11,8 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.event.EdgeEvent;
 import de.amr.graph.event.GraphObserver;
 import de.amr.graph.event.VertexEvent;
+import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
@@ -21,8 +23,9 @@ import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.Sidewinder;
+import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
@@ -108,12 +111,12 @@ public class MazeGenerationRecordingApp {
 		for (Class<?> generatorClass : generatorClasses) {
 			JFrame window = new JFrame();
 			try {
-				@SuppressWarnings("unchecked")
-				MazeGenerator<OrthogonalGrid> generator = (MazeGenerator<OrthogonalGrid>) generatorClass
-						.getConstructor(Integer.TYPE, Integer.TYPE).newInstance(numCols, numRows);
-				OrthogonalGrid grid = generator.getGrid();
+				MazeGenerator generator = (MazeGenerator) generatorClass
+						.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
+						.newInstance(ObservableMazesFactory.get(), numCols, numRows);
+				GridGraph2D<TraversalState, Integer> grid = generator.getGrid();
 				GridCanvas canvas = new GridCanvas(grid, cellSize);
-				canvas.pushRenderer(createRenderer(grid, cellSize));
+				canvas.pushRenderer(createRenderer((ObservableGridGraph2D<TraversalState, Integer>) grid, cellSize));
 				canvas.drawGrid();
 				window.getContentPane().add(canvas);
 				window.pack();
@@ -121,7 +124,7 @@ public class MazeGenerationRecordingApp {
 				window.setTitle(generatorClass.getSimpleName());
 				window.setVisible(true);
 				try (GifRecorder recorder = new GifRecorder(canvas.getDrawingBuffer().getType())) {
-					attach(recorder, grid, canvas);
+					attach(recorder, (ObservableGridGraph2D<TraversalState, Integer>) grid, canvas);
 					recorder.setDelayMillis(delayMillis);
 					recorder.setEndDelayMillis(2000); // 2 seconds before loop
 					recorder.setLoop(true);
@@ -138,7 +141,8 @@ public class MazeGenerationRecordingApp {
 		}
 	}
 
-	private static GridRenderer createRenderer(OrthogonalGrid grid, int cellSize) {
+	private static GridRenderer createRenderer(ObservableGridGraph2D<TraversalState, Integer> grid,
+			int cellSize) {
 		WallPassageGridRenderer renderer = new WallPassageGridRenderer();
 		renderer.fnCellBgColor = cell -> {
 			switch (grid.get(cell)) {
@@ -163,7 +167,8 @@ public class MazeGenerationRecordingApp {
 		return img;
 	}
 
-	private static void attach(GifRecorder recorder, OrthogonalGrid grid, GridCanvas canvas) {
+	private static void attach(GifRecorder recorder, ObservableGridGraph2D<TraversalState, Integer> grid,
+			GridCanvas canvas) {
 		grid.addGraphObserver(new GraphObserver<TraversalState, Integer>() {
 
 			@Override

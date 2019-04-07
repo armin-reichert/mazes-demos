@@ -10,13 +10,13 @@ import java.awt.Graphics;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
-import de.amr.maze.alg.core.OrthogonalGrid;
 
 /**
  * Display area for maze generation and traversal.
@@ -58,12 +58,13 @@ public class DisplayArea extends GridCanvas {
 		animation.setEnabled(enabled);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setGrid(GridGraph<?, ?> grid) {
-		if (grid != getGrid() && grid instanceof OrthogonalGrid) {
+		if (grid != getGrid() && grid instanceof ObservableGridGraph2D<?, ?>) {
 			super.setGrid(grid);
-			OrthogonalGrid oldGrid = (OrthogonalGrid) getGrid();
-			OrthogonalGrid newGrid = (OrthogonalGrid) grid;
+			ObservableGridGraph2D<TraversalState, Integer> oldGrid = (ObservableGridGraph2D<TraversalState, Integer>) getGrid();
+			ObservableGridGraph2D<TraversalState, Integer> newGrid = (ObservableGridGraph2D<TraversalState, Integer>) grid;
 			oldGrid.removeGraphObserver(animation);
 			model().setGrid(newGrid);
 			newGrid.addGraphObserver(animation);

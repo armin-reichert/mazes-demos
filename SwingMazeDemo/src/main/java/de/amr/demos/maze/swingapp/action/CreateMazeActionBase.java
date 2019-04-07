@@ -8,11 +8,15 @@ import static java.lang.String.format;
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
+import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeActionBase extends AbstractAction {
@@ -30,16 +34,16 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 				.floodFill(model().getGrid().cell(model().getGenerationStart()));
 	}
 
-	@SuppressWarnings("unchecked")
-	private MazeGenerator<OrthogonalGrid> createGenerator(AlgorithmInfo algo) throws Exception {
-		return (MazeGenerator<OrthogonalGrid>) algo.getAlgorithmClass().getConstructor(Integer.TYPE, Integer.TYPE)
-				.newInstance(model().getGridWidth(), model().getGridHeight());
+	private MazeGenerator createGenerator(AlgorithmInfo algo) throws Exception {
+		return (MazeGenerator) algo.getAlgorithmClass()
+				.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
+				.newInstance(ObservableMazesFactory.get(), model().getGridWidth(), model().getGridHeight());
 	}
 
-	protected OrthogonalGrid createMaze(AlgorithmInfo algo, GridPosition startPosition)
-			throws Exception, StackOverflowError {
-		MazeGenerator<OrthogonalGrid> generator = createGenerator(algo);
-		canvas().setGrid(generator.getGrid());
+	protected ObservableGridGraph2D<TraversalState, Integer> createMaze(AlgorithmInfo algo,
+			GridPosition startPosition) throws Exception, StackOverflowError {
+		MazeGenerator generator = createGenerator(algo);
+		canvas().setGrid((GridGraph<?, ?>) generator.getGrid());
 		canvas().clear();
 		canvas().drawGrid();
 		int startCell = generator.getGrid().cell(startPosition);
@@ -57,6 +61,6 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 			app().showMessage(format("Grid rendering:  %.2f seconds.", watch.getSeconds()));
 			canvas().enableAnimation(true);
 		}
-		return generator.getGrid();
+		return (ObservableGridGraph2D<TraversalState, Integer>) generator.getGrid();
 	}
 }

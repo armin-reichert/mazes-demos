@@ -18,11 +18,13 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
+import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 
 /**
@@ -32,7 +34,7 @@ import de.amr.maze.alg.mst.KruskalMST;
  */
 public class DepthFirstSearchApp {
 
-	private OrthogonalGrid grid;
+	private ObservableGridGraph2D<TraversalState, Integer> grid;
 	private Path solution;
 	private GridCanvas canvas;
 
@@ -133,7 +135,8 @@ public class DepthFirstSearchApp {
 	}
 
 	private void newMaze(int gridSize) {
-		grid = new KruskalMST(gridSize, gridSize).createMaze(0, 0);
+		grid = (ObservableGridGraph2D<TraversalState, Integer>) new KruskalMST(ObservableMazesFactory.get(),
+				gridSize, gridSize).createMaze(0, 0);
 		solution = null;
 	}
 

@@ -38,8 +38,10 @@ import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.DisplayArea;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
 /**
@@ -161,11 +163,13 @@ public class MazeDemoApp {
 		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
 	}
 
-	public OrthogonalGrid createDefaultGrid(boolean full) {
-		OrthogonalGrid grid = full
-				? OrthogonalGrid.fullGrid(model.getGridWidth(), model.getGridHeight(), TraversalState.COMPLETED)
-				: OrthogonalGrid.emptyGrid(model.getGridWidth(), model.getGridHeight(), TraversalState.COMPLETED);
-		return grid;
+	public ObservableGridGraph<TraversalState, Integer> createDefaultGrid(boolean full) {
+		GridGraph2D<TraversalState, Integer> grid = full
+				? ObservableMazesFactory.get().fullGrid(model.getGridWidth(), model.getGridHeight(),
+						TraversalState.COMPLETED)
+				: ObservableMazesFactory.get().emptyGrid(model.getGridWidth(), model.getGridHeight(),
+						TraversalState.COMPLETED);
+		return (ObservableGridGraph<TraversalState, Integer>) grid;
 	}
 
 	private void newCanvas() {

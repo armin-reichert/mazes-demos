@@ -6,8 +6,9 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
+import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
-import de.amr.maze.alg.core.OrthogonalGrid;
 
 /**
  * Action for creating a maze using the currently selected generation algorithm.
@@ -26,7 +27,8 @@ public class CreateMazeAction extends CreateMazeActionBase {
 			app().enableUI(false);
 			app().startWorkerThread(() -> {
 				try {
-					OrthogonalGrid maze = createMaze(algo, model().getGenerationStart());
+					ObservableGridGraph2D<TraversalState, Integer> maze = createMaze(algo,
+							model().getGenerationStart());
 					if (maze != null && model().isFloodFillAfterGeneration()) {
 						pause(1);
 						floodFill();

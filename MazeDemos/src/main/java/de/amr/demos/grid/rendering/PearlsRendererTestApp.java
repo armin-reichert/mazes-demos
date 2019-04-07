@@ -4,11 +4,12 @@ import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
 
 public class PearlsRendererTestApp extends SwingGridSampleApp {
@@ -38,8 +39,9 @@ public class PearlsRendererTestApp extends SwingGridSampleApp {
 		sleep(2000);
 		clear();
 		setCanvasAnimation(true);
-		MazeGenerator<OrthogonalGrid> generator = new WilsonUSTRecursiveCrosses(GRID_SIZE, GRID_SIZE);
-		setGrid(generator.getGrid());
+		MazeGenerator generator = new WilsonUSTRecursiveCrosses(ObservableMazesFactory.get(), GRID_SIZE,
+				GRID_SIZE);
+		setGrid((ObservableGridGraph<TraversalState, Integer>) generator.getGrid());
 		generator.createMaze(0, 0);
 
 		sleep(2000);

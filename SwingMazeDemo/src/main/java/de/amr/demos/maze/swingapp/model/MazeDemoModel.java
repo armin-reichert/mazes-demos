@@ -15,7 +15,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.graph.pathfinder.impl.BidiAStarSearch;
@@ -35,7 +37,6 @@ import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
 import de.amr.maze.alg.Sidewinder;
-import de.amr.maze.alg.core.OrthogonalGrid;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
@@ -157,7 +158,7 @@ public class MazeDemoModel {
 
 	private int gridWidth;
 	private int gridHeight;
-	private OrthogonalGrid grid;
+	private ObservableGridGraph2D<TraversalState, Integer> grid;
 	private int[] gridCellSizes;
 	private int gridCellSize;
 	private int passageWidthPercentage;
@@ -249,11 +250,11 @@ public class MazeDemoModel {
 		this.gridHeight = gridHeight;
 	}
 
-	public OrthogonalGrid getGrid() {
+	public ObservableGridGraph2D<TraversalState, Integer> getGrid() {
 		return grid;
 	}
 
-	public void setGrid(OrthogonalGrid grid) {
+	public void setGrid(ObservableGridGraph2D<TraversalState, Integer> grid) {
 		this.grid = grid;
 	}
 

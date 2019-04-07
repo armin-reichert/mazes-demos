@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.maze.alg.Armin;
@@ -14,8 +16,9 @@ import de.amr.maze.alg.BinaryTreeRandom;
 import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
+import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.OrthogonalGrid;
+import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;
@@ -66,7 +69,7 @@ public class MazeDemoFX extends Application {
 
 	private Canvas canvas;
 	private Timer timer;
-	private OrthogonalGrid maze;
+	private GridGraph2D<TraversalState, Integer> maze;
 	private int cols;
 	private int rows;
 	private int cellSize;
@@ -125,19 +128,18 @@ public class MazeDemoFX extends Application {
 
 	private void nextMaze() {
 		canvas.resize((cols + 1) * cellSize, (rows + 1) * cellSize);
-		MazeGenerator<OrthogonalGrid> generator = randomMazeGenerator();
+		MazeGenerator generator = randomMazeGenerator();
 		maze = generator.createMaze(0, 0);
 		drawGrid();
 		Path path = new BreadthFirstSearch(maze).findPath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT));
 		drawPath(path);
 	}
 
-	@SuppressWarnings("unchecked")
-	private MazeGenerator<OrthogonalGrid> randomMazeGenerator() {
+	private MazeGenerator randomMazeGenerator() {
 		Class<?> generatorClass = GENERATOR_CLASSES[new Random().nextInt(GENERATOR_CLASSES.length)];
 		try {
-			return (MazeGenerator<OrthogonalGrid>) generatorClass.getConstructor(Integer.TYPE, Integer.TYPE)
-					.newInstance(cols, rows);
+			return (MazeGenerator) generatorClass.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
+					.newInstance(ObservableMazesFactory.get(), cols, rows);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not create maze generator instance");
