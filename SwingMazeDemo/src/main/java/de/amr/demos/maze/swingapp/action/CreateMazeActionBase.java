@@ -14,9 +14,7 @@ import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
-import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeActionBase extends AbstractAction {
@@ -34,18 +32,11 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 				.floodFill(model().getGrid().cell(model().getGenerationStart()));
 	}
 
-	private MazeGenerator createGenerator(AlgorithmInfo algo) throws Exception {
-		return (MazeGenerator) algo.getAlgorithmClass()
-				.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
-				.newInstance(ObservableMazesFactory.get(), model().getGridWidth(), model().getGridHeight());
-	}
-
 	protected ObservableGridGraph2D<TraversalState, Integer> createMaze(AlgorithmInfo algo,
 			GridPosition startPosition) throws Exception, StackOverflowError {
-		MazeGenerator generator = createGenerator(algo);
+		MazeGenerator generator = app().createMazeGenerator(algo);
+		model().setGrid((ObservableGridGraph2D<TraversalState, Integer>) generator.getGrid());
 		canvas().setGrid((GridGraph<?, ?>) generator.getGrid());
-		canvas().clear();
-		canvas().drawGrid();
 		int startCell = generator.getGrid().cell(startPosition);
 		int x = generator.getGrid().col(startCell), y = generator.getGrid().row(startCell);
 		app().showMessage(format("\n%s (%d cells)", algo.getDescription(), generator.getGrid().numVertices()));

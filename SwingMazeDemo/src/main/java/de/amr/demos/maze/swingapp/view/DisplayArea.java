@@ -10,8 +10,8 @@ import java.awt.Graphics;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridGraph;
+import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
@@ -30,14 +30,6 @@ public class DisplayArea extends GridCanvas {
 	public DisplayArea() {
 		super(model().getGrid(), model().getGridCellSize());
 		pushRenderer(createRenderer());
-		clear();
-		if (model().getGrid().numVertices() < 10_000) {
-			drawGrid();
-		}
-		else {
-			fill(Color.WHITE);
-		}
-		// attach observer for animated drawing
 		animation = new GridCanvasAnimation<>(this);
 		animation.fnDelay = () -> model().getDelay();
 		model().getGrid().addGraphObserver(animation);
@@ -61,14 +53,12 @@ public class DisplayArea extends GridCanvas {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setGrid(GridGraph<?, ?> grid) {
-		if (grid != getGrid() && grid instanceof ObservableGridGraph2D<?, ?>) {
-			super.setGrid(grid);
-			ObservableGridGraph2D<TraversalState, Integer> oldGrid = (ObservableGridGraph2D<TraversalState, Integer>) getGrid();
-			ObservableGridGraph2D<TraversalState, Integer> newGrid = (ObservableGridGraph2D<TraversalState, Integer>) grid;
-			oldGrid.removeGraphObserver(animation);
-			model().setGrid(newGrid);
-			newGrid.addGraphObserver(animation);
-		}
+		super.setGrid(grid);
+		ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) getGrid();
+		ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) grid;
+		oldGrid.removeGraphObserver(animation);
+		model().setGrid(newGrid);
+		newGrid.addGraphObserver(animation);
 	}
 
 	public void updateRenderer() {
@@ -80,6 +70,7 @@ public class DisplayArea extends GridCanvas {
 	private ConfigurableGridRenderer createRenderer() {
 		ConfigurableGridRenderer r = model().getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
+		r.fnGridBgColor = () -> Color.BLACK;
 		r.fnCellSize = () -> model().getGridCellSize();
 		r.fnPassageWidth = (u, v) -> {
 			int passageWidth = model().getGridCellSize() * model().getPassageWidthPercentage() / 100;
@@ -91,9 +82,6 @@ public class DisplayArea extends GridCanvas {
 			passageWidth = min(model().getGridCellSize() - 1, passageWidth);
 			return passageWidth;
 		};
-		r.fnPassageColor = (u, v) -> {
-			return r.getCellBgColor(u);
-		};
 		r.fnCellBgColor = cell -> {
 			TraversalState state = model().getGrid().get(cell);
 			switch (state) {
@@ -104,8 +92,14 @@ public class DisplayArea extends GridCanvas {
 			case VISITED:
 				return model().getVisitedCellColor();
 			default:
-				return r.getGridBgColor();
+				return r.fnGridBgColor.get();
 			}
+		};
+		r.fnPassageColor = (u, dir) -> {
+			if (model().getGrid().degree(u) == 0) {
+				return Color.red;
+			}
+			return r.getCellBgColor(u);
 		};
 		return r;
 	}

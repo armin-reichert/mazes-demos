@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import de.amr.graph.grid.impl.GridGraph;
+
 public class CreateFullGridAction extends AbstractAction {
 
 	public CreateFullGridAction() {
@@ -15,7 +17,7 @@ public class CreateFullGridAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		canvas().setGrid(app().createDefaultGrid(true));
+		canvas().setGrid((GridGraph<?, ?>) app().createDefaultGrid(true));
 		canvas().clear();
 		canvas().drawGrid();
 	}

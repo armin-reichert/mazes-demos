@@ -39,8 +39,11 @@ import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.DisplayArea;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
-import de.amr.graph.grid.impl.ObservableGridGraph;
+import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
+import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.ObservableMazesFactory;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
@@ -163,13 +166,13 @@ public class MazeDemoApp {
 		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
 	}
 
-	public ObservableGridGraph<TraversalState, Integer> createDefaultGrid(boolean full) {
+	public ObservableGridGraph2D<TraversalState, Integer> createDefaultGrid(boolean full) {
 		GridGraph2D<TraversalState, Integer> grid = full
 				? ObservableMazesFactory.get().fullGrid(model.getGridWidth(), model.getGridHeight(),
 						TraversalState.COMPLETED)
 				: ObservableMazesFactory.get().emptyGrid(model.getGridWidth(), model.getGridHeight(),
 						TraversalState.COMPLETED);
-		return (ObservableGridGraph<TraversalState, Integer>) grid;
+		return (ObservableGridGraph2D<TraversalState, Integer>) grid;
 	}
 
 	private void newCanvas() {
@@ -179,9 +182,9 @@ public class MazeDemoApp {
 	}
 
 	public void resetDisplay() {
-		canvas.clear();
 		model.setGrid(createDefaultGrid(true));
 		newCanvas();
+		canvas.clear();
 		wndDisplayArea.setContentPane(canvas);
 		wndDisplayArea.validate();
 	}
@@ -211,6 +214,23 @@ public class MazeDemoApp {
 
 	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
 		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
+		try {
+			MazeGenerator generator = createMazeGenerator(generatorInfo);
+			model.setGrid((ObservableGridGraph2D<TraversalState, Integer>) generator.getGrid());
+			canvas.setGrid((GridGraph<?, ?>) generator.getGrid());
+			canvas.clear();
+			if (generator.getGrid().numVertices() <= 10_000) {
+				canvas.drawGrid();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public MazeGenerator createMazeGenerator(AlgorithmInfo algo) throws Exception {
+		return (MazeGenerator) algo.getAlgorithmClass()
+				.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
+				.newInstance(ObservableMazesFactory.get(), model.getGridWidth(), model.getGridHeight());
 	}
 
 	public void onSolverChange(AlgorithmInfo solverInfo) {
