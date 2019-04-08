@@ -1,6 +1,7 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.controlWindow;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
@@ -21,11 +22,13 @@ public class CreateMazeAction extends CreateMazeActionBase {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(algo -> {
+		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(generatorInfo -> {
 			app().enableUI(false);
 			app().startWorkerThread(() -> {
 				try {
-					createMaze(algo, model().getGenerationStart());
+					app().provideGrid(generatorInfo);
+					canvas().drawGrid();
+					createMaze(generatorInfo, model().getGenerationStart());
 					if (model().isFloodFillAfterGeneration()) {
 						pause(1);
 						floodFill();

@@ -1,14 +1,17 @@
 package de.amr.demos.grid.maze.swing;
 
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.ObservableGridGraph;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableGridFactory;
 
 /**
  * Helper class for visualizing maze creation and flood-fill.
@@ -68,9 +71,9 @@ public class MazeDemoApp extends SwingGridSampleApp {
 			setCellSize(cellSize);
 			int numCols = getCanvas().getWidth() / cellSize;
 			int numRows = getCanvas().getHeight() / cellSize;
-			GridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(numCols, numRows,
-					TraversalState.UNVISITED);
-			setGrid((ObservableGridGraph<TraversalState, Integer>) grid);
+			ObservableGridGraph<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(numCols, numRows,
+					Top4.get(), UNVISITED, 0);
+			setGrid(grid);
 			createGenerator(grid).createMaze(0, 0);
 			floodFill();
 			sleep(1000);

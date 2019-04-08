@@ -1,5 +1,7 @@
 package de.amr.demos.grid.maze.recording;
 
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,6 +15,8 @@ import de.amr.graph.event.GraphObserver;
 import de.amr.graph.event.VertexEvent;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
@@ -24,7 +28,6 @@ import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.Sidewinder;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
@@ -110,8 +113,8 @@ public class MazeGenerationRecordingApp {
 		for (Class<?> generatorClass : generatorClasses) {
 			JFrame window = new JFrame();
 			try {
-				GridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(numCols, numRows,
-						TraversalState.UNVISITED);
+				GridGraph2D<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(numCols, numRows,
+						Top4.get(), UNVISITED, 0);
 				GridCanvas canvas = new GridCanvas(grid, cellSize);
 				canvas.pushRenderer(createRenderer((ObservableGridGraph2D<TraversalState, Integer>) grid, cellSize));
 				canvas.drawGrid();

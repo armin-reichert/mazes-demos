@@ -34,16 +34,16 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
+import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.DisplayArea;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
-import de.amr.graph.grid.api.ObservableGridGraph2D;
-import de.amr.graph.grid.impl.GridGraph;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
 /**
@@ -132,7 +132,8 @@ public class MazeDemoApp {
 		model.setGridCellSize(32);
 		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
 		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
-		model.setGrid(createDefaultGrid(true));
+		model.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+				TraversalState.UNVISITED, 0));
 
 		// create new canvas inside fullscreen window
 		newCanvas();
@@ -140,7 +141,6 @@ public class MazeDemoApp {
 		wndDisplayArea = new JFrame("Maze Display Window");
 		wndDisplayArea.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		wndDisplayArea.setUndecorated(true);
-		wndDisplayArea.setVisible(true);
 		wndDisplayArea.setContentPane(canvas);
 
 		// create control window
@@ -161,17 +161,10 @@ public class MazeDemoApp {
 		// hide details initially
 		actionToggleControlPanel.setMinimized(true);
 
-		wndControl.setVisible(true);
-		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
-	}
+		wndDisplayArea.setVisible(true);
 
-	public ObservableGridGraph2D<TraversalState, Integer> createDefaultGrid(boolean full) {
-		GridGraph2D<TraversalState, Integer> grid = full
-				? ObservableGridFactory.get().fullGrid(model.getGridWidth(), model.getGridHeight(),
-						TraversalState.COMPLETED)
-				: ObservableGridFactory.get().emptyGrid(model.getGridWidth(), model.getGridHeight(),
-						TraversalState.COMPLETED);
-		return (ObservableGridGraph2D<TraversalState, Integer>) grid;
+		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
+		wndControl.setVisible(true);
 	}
 
 	private void newCanvas() {
@@ -181,7 +174,8 @@ public class MazeDemoApp {
 	}
 
 	public void resetDisplay() {
-		model.setGrid(createDefaultGrid(true));
+		model.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+				TraversalState.UNVISITED, 0));
 		newCanvas();
 		canvas.clear();
 		wndDisplayArea.setContentPane(canvas);
@@ -213,20 +207,24 @@ public class MazeDemoApp {
 
 	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
 		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
-		try {
-			model.setGrid(ObservableGridFactory.get().emptyGrid(model.getGridWidth(), model.getGridHeight(),
-					TraversalState.UNVISITED));
-			canvas.setGrid((GridGraph<?, ?>) model.getGrid());
-			canvas.clear();
-			canvas.drawGrid();
-		} catch (Exception e) {
-			e.printStackTrace();
+		provideGrid(generatorInfo);
+		canvas.clear();
+	}
+
+	public void provideGrid(AlgorithmInfo generatorInfo) {
+		if (generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired)) {
+			canvas.setGrid(GridFactory.fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+					TraversalState.COMPLETED, 0));
+		}
+		else {
+			canvas.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+					TraversalState.UNVISITED, 0));
 		}
 	}
 
-	public static MazeGenerator createMazeGenerator(AlgorithmInfo algo,
-			ObservableGridGraph2D<TraversalState, Integer> grid) throws Exception {
-		return (MazeGenerator) algo.getAlgorithmClass().getConstructor(GridGraph2D.class).newInstance(grid);
+	public MazeGenerator createMazeGenerator(AlgorithmInfo generatorInfo) throws Exception {
+		return (MazeGenerator) generatorInfo.getAlgorithmClass().getConstructor(GridGraph2D.class)
+				.newInstance(model.getGrid());
 	}
 
 	public void onSolverChange(AlgorithmInfo solverInfo) {

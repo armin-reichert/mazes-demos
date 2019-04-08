@@ -1,5 +1,6 @@
 package de.amr.demos.maze.swingapp.model;
 
+import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.FullGridRequired;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.MST;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.SmallGrid;
@@ -17,7 +18,7 @@ import java.util.function.Predicate;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.graph.pathfinder.impl.BidiAStarSearch;
@@ -98,11 +99,11 @@ public class MazeDemoModel {
 		new AlgorithmInfo(KruskalMST.class, "Kruskal MST", MST),
 		new AlgorithmInfo(PrimMST.class, "Prim MST", MST),
 		new AlgorithmInfo(BoruvkaMST.class, "Boruvka MST", MST),
-		new AlgorithmInfo(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow),
-		new AlgorithmInfo(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow),
-		new AlgorithmInfo(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow),
-		new AlgorithmInfo(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow),
-		new AlgorithmInfo(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow),
+		new AlgorithmInfo(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow, FullGridRequired),
+		new AlgorithmInfo(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow, FullGridRequired),
+		new AlgorithmInfo(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow, FullGridRequired),
+		new AlgorithmInfo(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow, FullGridRequired),
+		new AlgorithmInfo(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow, FullGridRequired),
 		new AlgorithmInfo(AldousBroderUST.class, "Aldous-Broder UST (rather slow)", UST, Slow),
 		new AlgorithmInfo(AldousBroderWilsonUST.class, "Houston UST (rather slow)", UST, Slow),
 		new AlgorithmInfo(WilsonUSTRandomCell.class, "Wilson UST (random)", UST, Slow),
@@ -128,7 +129,7 @@ public class MazeDemoModel {
 		new AlgorithmInfo(Armin.class, "Armin's Algorithm"), 
 		new AlgorithmInfo(HuntAndKill.class, "Hunt-And-Kill"),
 		new AlgorithmInfo(HuntAndKillRandom.class, "Hunt-And-Kill (random)"),
-		new AlgorithmInfo(RecursiveDivision.class, "Recursive Division"),
+		new AlgorithmInfo(RecursiveDivision.class, "Recursive Division", FullGridRequired),
 		/*@formatter:on*/
 	};
 
@@ -158,7 +159,7 @@ public class MazeDemoModel {
 
 	private int gridWidth;
 	private int gridHeight;
-	private ObservableGridGraph2D<TraversalState, Integer> grid;
+	private ObservableGridGraph<TraversalState, Integer> grid;
 	private int[] gridCellSizes;
 	private int gridCellSize;
 	private int passageWidthPercentage;
@@ -250,11 +251,11 @@ public class MazeDemoModel {
 		this.gridHeight = gridHeight;
 	}
 
-	public ObservableGridGraph2D<TraversalState, Integer> getGrid() {
+	public ObservableGridGraph<TraversalState, Integer> getGrid() {
 		return grid;
 	}
 
-	public void setGrid(ObservableGridGraph2D<TraversalState, Integer> grid) {
+	public void setGrid(ObservableGridGraph<TraversalState, Integer> grid) {
 		this.grid = grid;
 	}
 

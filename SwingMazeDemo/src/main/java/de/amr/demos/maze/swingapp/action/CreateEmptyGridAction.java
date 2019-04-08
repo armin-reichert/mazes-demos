@@ -1,13 +1,15 @@
 package de.amr.demos.maze.swingapp.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import de.amr.graph.grid.impl.GridGraph;
+import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 
 public class CreateEmptyGridAction extends AbstractAction {
 
@@ -17,7 +19,8 @@ public class CreateEmptyGridAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		canvas().setGrid((GridGraph<?, ?>) app().createDefaultGrid(false));
+		canvas().setGrid(GridFactory.emptyObservableGrid(model().getGridWidth(), model().getGridHeight(),
+				Top4.get(), TraversalState.COMPLETED, 0));
 		canvas().clear();
 		canvas().drawGrid();
 	}

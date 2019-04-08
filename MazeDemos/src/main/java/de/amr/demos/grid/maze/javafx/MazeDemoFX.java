@@ -1,5 +1,6 @@
 package de.amr.demos.grid.maze.javafx;
 
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 
@@ -9,6 +10,8 @@ import java.util.TimerTask;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.maze.alg.Armin;
@@ -17,7 +20,6 @@ import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;
@@ -127,7 +129,7 @@ public class MazeDemoFX extends Application {
 
 	private void nextMaze() {
 		canvas.resize((cols + 1) * cellSize, (rows + 1) * cellSize);
-		grid = ObservableGridFactory.get().emptyGrid(cols, rows, TraversalState.UNVISITED);
+		grid = GridFactory.emptyObservableGrid(cols, rows, Top4.get(), UNVISITED, 0);
 		randomMazeGenerator(grid).createMaze(0, 0);
 		drawGrid();
 		Path path = new BreadthFirstSearch(grid).findPath(grid.cell(TOP_LEFT), grid.cell(BOTTOM_RIGHT));

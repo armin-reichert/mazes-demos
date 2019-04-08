@@ -2,7 +2,6 @@ package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.createMazeGenerator;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static java.lang.String.format;
 
@@ -30,12 +29,13 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 				.floodFill(model().getGrid().cell(model().getGenerationStart()));
 	}
 
-	protected void createMaze(AlgorithmInfo algo, GridPosition startPosition)
+	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition)
 			throws Exception, StackOverflowError {
-		MazeGenerator generator = createMazeGenerator(algo, model().getGrid());
+		MazeGenerator generator = app().createMazeGenerator(generatorInfo);
 		int startCell = model().getGrid().cell(startPosition);
 		int x = model().getGrid().col(startCell), y = model().getGrid().row(startCell);
-		app().showMessage(format("\n%s (%d cells)", algo.getDescription(), model().getGrid().numVertices()));
+		app().showMessage(
+				format("\n%s (%d cells)", generatorInfo.getDescription(), model().getGrid().numVertices()));
 		if (model().isGenerationAnimated()) {
 			generator.createMaze(x, y);
 		}

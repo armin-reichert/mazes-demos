@@ -1,5 +1,7 @@
 package de.amr.demos.grid.rendering;
 
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -11,11 +13,12 @@ import com.beust.jcommander.Parameter;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.maze.alg.RecursiveDivision;
-import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
@@ -70,8 +73,8 @@ public class MazeToImage {
 	}
 
 	private static ObservableGridGraph2D<TraversalState, Integer> maze(Params p) {
-		ObservableGridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(p.width,
-				p.height, TraversalState.UNVISITED);
+		ObservableGridGraph2D<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(p.width, p.height,
+				Top4.get(), UNVISITED, 0);
 		switch (p.alg) {
 		case "dfs":
 			new IterativeDFS(grid).createMaze(0, 0);

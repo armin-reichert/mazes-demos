@@ -1,5 +1,6 @@
 package de.amr.demos.grid.pathfinding;
 
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 
@@ -20,11 +21,12 @@ import javax.swing.KeyStroke;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
+import de.amr.graph.grid.impl.GridFactory;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
-import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 
 /**
@@ -135,7 +137,7 @@ public class DepthFirstSearchApp {
 	}
 
 	private void newMaze(int gridSize) {
-		grid = ObservableGridFactory.get().emptyGrid(gridSize, gridSize, TraversalState.UNVISITED);
+		grid = GridFactory.emptyObservableGrid(gridSize, gridSize, Top4.get(), UNVISITED, 0);
 		new KruskalMST(grid).createMaze(0, 0);
 		solution = null;
 	}
