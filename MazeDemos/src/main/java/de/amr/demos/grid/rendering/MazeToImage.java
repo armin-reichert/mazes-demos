@@ -15,7 +15,7 @@ import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.maze.alg.RecursiveDivision;
-import de.amr.maze.alg.core.ObservableMazesFactory;
+import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
@@ -70,20 +70,27 @@ public class MazeToImage {
 	}
 
 	private static ObservableGridGraph2D<TraversalState, Integer> maze(Params p) {
+		ObservableGridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(p.width,
+				p.height, TraversalState.UNVISITED);
 		switch (p.alg) {
 		case "dfs":
-			return (ObservableGridGraph2D<TraversalState, Integer>) new IterativeDFS(ObservableMazesFactory.get(), p.width, p.height).createMaze(0, 0);
+			new IterativeDFS(grid).createMaze(0, 0);
+			break;
 		case "bfs":
-			return (ObservableGridGraph2D<TraversalState, Integer>) new RandomBFS(ObservableMazesFactory.get(), p.width, p.height).createMaze(0, 0);
+			new RandomBFS(grid).createMaze(0, 0);
+			break;
 		case "kruskal":
-			return (ObservableGridGraph2D<TraversalState, Integer>) new KruskalMST(ObservableMazesFactory.get(), p.width, p.height).createMaze(0, 0);
+			new KruskalMST(grid).createMaze(0, 0);
+			break;
 		case "wilson":
-			return (ObservableGridGraph2D<TraversalState, Integer>) new WilsonUSTRandomCell(ObservableMazesFactory.get(), p.width, p.height).createMaze(0, 0);
+			new WilsonUSTRandomCell(grid).createMaze(0, 0);
+			break;
 		case "division":
-			return (ObservableGridGraph2D<TraversalState, Integer>) new RecursiveDivision(
-					ObservableMazesFactory.get(), p.width, p.height).createMaze(0, 0);
+			new RecursiveDivision(grid).createMaze(0, 0);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown algorithm: " + p.alg);
 		}
+		return grid;
 	}
 }

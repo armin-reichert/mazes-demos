@@ -23,9 +23,8 @@ import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKill;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.Sidewinder;
-import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableMazesFactory;
+import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
@@ -111,10 +110,8 @@ public class MazeGenerationRecordingApp {
 		for (Class<?> generatorClass : generatorClasses) {
 			JFrame window = new JFrame();
 			try {
-				MazeGenerator generator = (MazeGenerator) generatorClass
-						.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
-						.newInstance(ObservableMazesFactory.get(), numCols, numRows);
-				GridGraph2D<TraversalState, Integer> grid = generator.getGrid();
+				GridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(numCols, numRows,
+						TraversalState.UNVISITED);
 				GridCanvas canvas = new GridCanvas(grid, cellSize);
 				canvas.pushRenderer(createRenderer((ObservableGridGraph2D<TraversalState, Integer>) grid, cellSize));
 				canvas.drawGrid();
@@ -131,6 +128,8 @@ public class MazeGenerationRecordingApp {
 					recorder.setScanRate(scanRate);
 					recorder.start(IMAGE_PATH,
 							String.format(IMAGE_NAME, grid.numCols(), grid.numRows(), generatorClass.getSimpleName()));
+					MazeGenerator generator = (MazeGenerator) generatorClass.getConstructor(GridGraph2D.class)
+							.newInstance(grid);
 					generator.createMaze(0, 0);
 				}
 			} catch (Exception e) {

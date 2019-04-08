@@ -24,7 +24,7 @@ import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
-import de.amr.maze.alg.core.ObservableMazesFactory;
+import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 
 /**
@@ -135,8 +135,8 @@ public class DepthFirstSearchApp {
 	}
 
 	private void newMaze(int gridSize) {
-		grid = (ObservableGridGraph2D<TraversalState, Integer>) new KruskalMST(ObservableMazesFactory.get(),
-				gridSize, gridSize).createMaze(0, 0);
+		grid = ObservableGridFactory.get().emptyGrid(gridSize, gridSize, TraversalState.UNVISITED);
+		new KruskalMST(grid).createMaze(0, 0);
 		solution = null;
 	}
 

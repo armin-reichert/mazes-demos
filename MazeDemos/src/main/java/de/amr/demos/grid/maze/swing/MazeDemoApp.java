@@ -4,11 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.stream.IntStream;
 
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
-import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableMazesFactory;
+import de.amr.maze.alg.core.ObservableGridFactory;
 
 /**
  * Helper class for visualizing maze creation and flood-fill.
@@ -52,10 +52,9 @@ public class MazeDemoApp extends SwingGridSampleApp {
 		setAppName(appName);
 	}
 
-	private MazeGenerator createGenerator(int width, int height) {
+	private MazeGenerator createGenerator(GridGraph2D<TraversalState, Integer> grid) {
 		try {
-			return generatorClass.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
-					.newInstance(ObservableMazesFactory.get(), width, height);
+			return generatorClass.getConstructor(GridGraph2D.class).newInstance(grid);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
@@ -67,10 +66,12 @@ public class MazeDemoApp extends SwingGridSampleApp {
 	public void run() {
 		IntStream.of(128, 64, 32, 16, 8, 4, 2).forEach(cellSize -> {
 			setCellSize(cellSize);
-			MazeGenerator generator = createGenerator(getCanvas().getWidth() / cellSize,
-					getCanvas().getHeight() / cellSize);
-			setGrid((ObservableGridGraph<TraversalState, Integer>) generator.getGrid());
-			generator.createMaze(0, 0);
+			int numCols = getCanvas().getWidth() / cellSize;
+			int numRows = getCanvas().getHeight() / cellSize;
+			GridGraph2D<TraversalState, Integer> grid = ObservableGridFactory.get().emptyGrid(numCols, numRows,
+					TraversalState.UNVISITED);
+			setGrid((ObservableGridGraph<TraversalState, Integer>) grid);
+			createGenerator(grid).createMaze(0, 0);
 			floodFill();
 			sleep(1000);
 			getCanvas().clear();

@@ -16,9 +16,8 @@ import de.amr.maze.alg.BinaryTreeRandom;
 import de.amr.maze.alg.Eller;
 import de.amr.maze.alg.HuntAndKillRandom;
 import de.amr.maze.alg.RecursiveDivision;
-import de.amr.maze.alg.core.MazeGridFactory;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.core.ObservableMazesFactory;
+import de.amr.maze.alg.core.ObservableGridFactory;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;
@@ -69,7 +68,7 @@ public class MazeDemoFX extends Application {
 
 	private Canvas canvas;
 	private Timer timer;
-	private GridGraph2D<TraversalState, Integer> maze;
+	private GridGraph2D<TraversalState, Integer> grid;
 	private int cols;
 	private int rows;
 	private int cellSize;
@@ -128,18 +127,17 @@ public class MazeDemoFX extends Application {
 
 	private void nextMaze() {
 		canvas.resize((cols + 1) * cellSize, (rows + 1) * cellSize);
-		MazeGenerator generator = randomMazeGenerator();
-		maze = generator.createMaze(0, 0);
+		grid = ObservableGridFactory.get().emptyGrid(cols, rows, TraversalState.UNVISITED);
+		randomMazeGenerator(grid).createMaze(0, 0);
 		drawGrid();
-		Path path = new BreadthFirstSearch(maze).findPath(maze.cell(TOP_LEFT), maze.cell(BOTTOM_RIGHT));
+		Path path = new BreadthFirstSearch(grid).findPath(grid.cell(TOP_LEFT), grid.cell(BOTTOM_RIGHT));
 		drawPath(path);
 	}
 
-	private MazeGenerator randomMazeGenerator() {
+	private static MazeGenerator randomMazeGenerator(GridGraph2D<TraversalState, Integer> grid) {
 		Class<?> generatorClass = GENERATOR_CLASSES[new Random().nextInt(GENERATOR_CLASSES.length)];
 		try {
-			return (MazeGenerator) generatorClass.getConstructor(MazeGridFactory.class, Integer.TYPE, Integer.TYPE)
-					.newInstance(ObservableMazesFactory.get(), cols, rows);
+			return (MazeGenerator) generatorClass.getConstructor(GridGraph2D.class).newInstance(grid);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not create maze generator instance");
@@ -148,8 +146,8 @@ public class MazeDemoFX extends Application {
 
 	private void drawPassage(Integer u, Integer v) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.strokeLine(maze.col(u) * cellSize, maze.row(u) * cellSize, maze.col(v) * cellSize,
-				maze.row(v) * cellSize);
+		gc.strokeLine(grid.col(u) * cellSize, grid.row(u) * cellSize, grid.col(v) * cellSize,
+				grid.row(v) * cellSize);
 	}
 
 	private void drawGrid() {
@@ -160,7 +158,7 @@ public class MazeDemoFX extends Application {
 		gc.translate(cellSize, cellSize);
 		gc.setStroke(Color.WHITE);
 		gc.setLineWidth(cellSize / 2);
-		maze.edges().forEach(edge -> {
+		grid.edges().forEach(edge -> {
 			int u = edge.either(), v = edge.other();
 			drawPassage(u, v);
 		});
