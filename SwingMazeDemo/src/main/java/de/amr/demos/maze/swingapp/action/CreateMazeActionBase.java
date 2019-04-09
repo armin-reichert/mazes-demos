@@ -41,6 +41,7 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 		}
 		else {
 			canvas().enableAnimation(false);
+			canvas().clear();
 			StopWatch watch = new StopWatch();
 			watch.measure(() -> generator.createMaze(x, y));
 			app().showMessage(format("Maze generation: %.2f seconds.", watch.getSeconds()));
