@@ -21,7 +21,5 @@ public class CreateEmptyGridAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		canvas().setGrid(GridFactory.emptyObservableGrid(model().getGridWidth(), model().getGridHeight(),
 				Top4.get(), TraversalState.COMPLETED, 0));
-		canvas().clear();
-		canvas().drawGrid();
 	}
 }
