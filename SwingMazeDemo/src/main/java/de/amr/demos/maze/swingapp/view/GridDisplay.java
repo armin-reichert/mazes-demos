@@ -1,13 +1,13 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
+import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.GridGraph;
@@ -23,16 +23,18 @@ import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
  * 
  * @author Armin Reichert
  */
-public class DisplayArea extends GridCanvas {
+public class GridDisplay extends GridCanvas {
 
+	private final MazeDemoModel model;
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
 
-	public DisplayArea() {
-		super(model().getGrid(), model().getGridCellSize());
-		pushRenderer(createRenderer());
+	public GridDisplay(MazeDemoModel model) {
+		super(model.getGrid(), model.getGridCellSize());
+		this.model = model;
+		replaceRenderer(createRenderer());
 		animation = new GridCanvasAnimation<>(this);
-		animation.fnDelay = () -> model().getDelay();
-		model().getGrid().addGraphObserver(animation);
+		animation.fnDelay = () -> model.getDelay();
+		model.getGrid().addGraphObserver(animation);
 	}
 
 	@Override
@@ -50,6 +52,12 @@ public class DisplayArea extends GridCanvas {
 		animation.setEnabled(enabled);
 	}
 
+	@Override
+	public void drawGrid() {
+		super.drawGrid();
+		System.out.println("Drawing grid " + getGrid());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setGrid(GridGraph<?, ?> grid) {
@@ -57,48 +65,39 @@ public class DisplayArea extends GridCanvas {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) getGrid();
 		ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) grid;
 		oldGrid.removeGraphObserver(animation);
-		model().setGrid(newGrid);
+		model.setGrid(newGrid);
 		newGrid.addGraphObserver(animation);
 	}
 
-	public void updateRenderer() {
-		popRenderer();
-		pushRenderer(createRenderer());
-		repaint();
-	}
-
 	private ConfigurableGridRenderer createRenderer() {
-		ConfigurableGridRenderer r = model().getStyle() == Style.PEARLS ? new PearlsGridRenderer()
+		ConfigurableGridRenderer r = model.getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
 		r.fnGridBgColor = () -> Color.BLACK;
-		r.fnCellSize = () -> model().getGridCellSize();
+		r.fnCellSize = () -> model.getGridCellSize();
 		r.fnPassageWidth = (u, v) -> {
-			int passageWidth = model().getGridCellSize() * model().getPassageWidthPercentage() / 100;
-			if (model().isPassageWidthFluent()) {
-				float factor = (float) model().getGrid().col(u) / model().getGridWidth();
+			int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
+			if (model.isPassageWidthFluent()) {
+				float factor = (float) model.getGrid().col(u) / model.getGridWidth();
 				passageWidth = Math.round(factor * passageWidth);
 			}
 			passageWidth = max(1, passageWidth);
-			passageWidth = min(model().getGridCellSize() - 1, passageWidth);
+			passageWidth = min(model.getGridCellSize() - 1, passageWidth);
 			return passageWidth;
 		};
 		r.fnCellBgColor = cell -> {
-			TraversalState state = model().getGrid().get(cell);
+			TraversalState state = model.getGrid().get(cell);
 			switch (state) {
 			case COMPLETED:
-				return model().getCompletedCellColor();
+				return model.getCompletedCellColor();
 			case UNVISITED:
-				return model().getUnvisitedCellColor();
+				return model.getUnvisitedCellColor();
 			case VISITED:
-				return model().getVisitedCellColor();
+				return model.getVisitedCellColor();
 			default:
-				return r.fnGridBgColor.get();
+				return r.getGridBgColor();
 			}
 		};
 		r.fnPassageColor = (u, dir) -> {
-			if (model().getGrid().degree(u) == 0) {
-				return Color.BLACK;
-			}
 			return r.getCellBgColor(u);
 		};
 		return r;

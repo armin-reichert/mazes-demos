@@ -37,7 +37,7 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
-import de.amr.demos.maze.swingapp.view.DisplayArea;
+import de.amr.demos.maze.swingapp.view.GridDisplay;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
@@ -77,7 +77,7 @@ public class MazeDemoApp {
 		return APP.wndControl;
 	}
 
-	public static DisplayArea canvas() {
+	public static GridDisplay canvas() {
 		return APP.canvas;
 	}
 
@@ -87,7 +87,7 @@ public class MazeDemoApp {
 	private final MazeDemoModel model;
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
-	private DisplayArea canvas;
+	private GridDisplay canvas;
 
 	public final Action actionCreateMaze = new CreateMazeAction();
 	public final Action actionCreateAllMazes = new CreateAllMazesAction();
@@ -168,7 +168,7 @@ public class MazeDemoApp {
 	}
 
 	private void newCanvas() {
-		canvas = new DisplayArea();
+		canvas = new GridDisplay(model);
 		canvas.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		canvas.getActionMap().put("showSettings", actionShowControls);
 	}

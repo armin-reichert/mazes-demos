@@ -23,11 +23,11 @@ public class CreateMazeAction extends CreateMazeActionBase {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(generatorInfo -> {
-			app().enableUI(false);
+			app().provideGrid(generatorInfo);
+			canvas().clear();
 			app().startWorkerThread(() -> {
+				app().enableUI(false);
 				try {
-					app().provideGrid(generatorInfo);
-					canvas().drawGrid();
 					createMaze(generatorInfo, model().getGenerationStart());
 					if (model().isFloodFillAfterGeneration()) {
 						pause(1);
@@ -39,7 +39,6 @@ public class CreateMazeAction extends CreateMazeActionBase {
 				} catch (Exception | StackOverflowError x) {
 					app().showMessage("Error during generation: " + x.getClass().getSimpleName());
 					app().resetDisplay();
-					x.printStackTrace(System.err);
 				} finally {
 					app().enableUI(true);
 				}
