@@ -97,7 +97,7 @@ public class DisplayArea extends GridCanvas {
 		};
 		r.fnPassageColor = (u, dir) -> {
 			if (model().getGrid().degree(u) == 0) {
-				return Color.red;
+				return Color.BLACK;
 			}
 			return r.getCellBgColor(u);
 		};
