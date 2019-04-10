@@ -73,6 +73,9 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 				oldGrid.removeGraphObserver(animation);
 				newGrid.addGraphObserver(animation);
 			}
+		} else if ("passageWidthPercentage".equals(change.getPropertyName())) {
+			clear();
+			drawGrid();
 		}
 	}
 

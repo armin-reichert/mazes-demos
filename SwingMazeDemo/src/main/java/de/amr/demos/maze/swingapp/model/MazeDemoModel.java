@@ -202,8 +202,10 @@ public class MazeDemoModel {
 		return passageWidthPercentage;
 	}
 
-	public void setPassageWidthPercentage(int percent) {
-		this.passageWidthPercentage = percent;
+	public void setPassageWidthPercentage(int newWidthPercentage) {
+		int oldWidthPercentage = this.passageWidthPercentage;
+		this.passageWidthPercentage = newWidthPercentage;
+		changeHandler.firePropertyChange("passageWidthPercentage", oldWidthPercentage, newWidthPercentage);
 	}
 
 	public boolean isPassageWidthFluent() {

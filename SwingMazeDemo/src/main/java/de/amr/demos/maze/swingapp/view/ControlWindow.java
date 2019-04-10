@@ -67,7 +67,7 @@ public class ControlWindow extends JFrame {
 		controlPanel.getSliderPassageWidth().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
-				app().setGridPassageThickness(slider.getValue());
+				model().setPassageWidthPercentage(slider.getValue());
 			}
 		});
 
