@@ -45,7 +45,7 @@ public class SolveMazeAction extends AbstractAction {
 	public void actionPerformed(ActionEvent e) {
 		controlWindow().solverMenu.getSelectedAlgorithm().ifPresent(solver -> {
 			app().enableUI(false);
-			canvas().drawGrid();
+			canvas().drawGrid(); // to possibly overwrite older search
 			app().startWorkerThread(() -> {
 				try {
 					runSolverAnimation(solver);
