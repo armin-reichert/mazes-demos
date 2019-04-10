@@ -165,8 +165,9 @@ public class MazeDemoApp {
 	}
 
 	public void resetDisplay() {
-		wndDisplayArea.setContentPane(new GridDisplay(model));
+		model.changeHandler.removePropertyChangeListener(canvas());
 		setGrid(false, TraversalState.UNVISITED);
+		wndDisplayArea.setContentPane(new GridDisplay(model));
 		wndDisplayArea.validate();
 	}
 
