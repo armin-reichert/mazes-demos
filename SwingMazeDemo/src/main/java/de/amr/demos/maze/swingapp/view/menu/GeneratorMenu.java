@@ -33,7 +33,7 @@ public class GeneratorMenu extends AlgorithmMenu {
 		JMenu menu = new JMenu(title);
 		Stream.of(GENERATOR_ALGORITHMS).filter(filter).forEach(alg -> {
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-			item.addActionListener(e -> app().onGeneratorChange(alg));
+			item.addActionListener(e -> app().changeGenerator(alg));
 			item.setText(alg.getDescription());
 			item.putClientProperty("algorithm", alg);
 			btnGroup.add(item);

@@ -35,6 +35,7 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
+import de.amr.demos.maze.swingapp.view.ControlPanel;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
 import de.amr.graph.core.api.TraversalState;
@@ -74,6 +75,10 @@ public class MazeDemoApp {
 
 	public static GridDisplay canvas() {
 		return (GridDisplay) APP.wndDisplayArea.getContentPane();
+	}
+
+	public static ControlPanel controlPanel() {
+		return APP.wndControl.controlPanel;
 	}
 
 	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -141,7 +146,7 @@ public class MazeDemoApp {
 		// initialize generator and path finder
 		MazeDemoModel.find(GENERATOR_ALGORITHMS, IterativeDFS.class).ifPresent(generatorInfo -> {
 			wndControl.generatorMenu.selectAlgorithm(generatorInfo);
-			onGeneratorChange(generatorInfo);
+			changeGenerator(generatorInfo);
 		});
 
 		MazeDemoModel
@@ -149,7 +154,7 @@ public class MazeDemoApp {
 						pathfinderInfo -> pathfinderInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class)
 				.ifPresent(alg -> {
 					wndControl.solverMenu.selectAlgorithm(alg);
-					onSolverChange(alg);
+					changeSolver(alg);
 				});
 
 		// hide details initially
@@ -168,29 +173,25 @@ public class MazeDemoApp {
 		wndDisplayArea.validate();
 	}
 
-	public void prepareGridForGenerator(AlgorithmInfo generatorInfo) {
+	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-	}
-
-	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
-		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
-		prepareGridForGenerator(generatorInfo);
 		canvas().clear();
+		controlPanel().getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
 	}
 
-	public void onSolverChange(AlgorithmInfo solverInfo) {
+	public void changeSolver(AlgorithmInfo solverInfo) {
 		String label = solverInfo.getDescription();
 		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
 			String text = model.getMetric().name().substring(0, 1)
 					+ model.getMetric().name().substring(1).toLowerCase();
 			label += " (" + text + ")";
 		}
-		wndControl.controlPanel.getLblSolver().setText(label);
+		controlPanel().getLblSolver().setText(label);
 	}
 
 	public void showMessage(String msg) {
-		wndControl.controlPanel.showMessage(msg + "\n");
+		controlPanel().showMessage(msg + "\n");
 	}
 
 	public void enableUI(boolean enabled) {
@@ -203,7 +204,7 @@ public class MazeDemoApp {
 		actionCreateMaze.setEnabled(enabled);
 		actionCreateAllMazes.setEnabled(enabled);
 		actionRunMazeSolver.setEnabled(enabled);
-		wndControl.controlPanel.getSliderPassageWidth().setEnabled(enabled);
+		controlPanel().getSliderPassageWidth().setEnabled(enabled);
 	}
 
 	public void startWorkerThread(Runnable work) {

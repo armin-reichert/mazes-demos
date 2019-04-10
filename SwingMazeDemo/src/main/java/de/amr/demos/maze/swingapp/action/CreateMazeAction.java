@@ -7,6 +7,8 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
+import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 
 /**
@@ -23,7 +25,8 @@ public class CreateMazeAction extends CreateMazeActionBase {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(generatorInfo -> {
-			app().prepareGridForGenerator(generatorInfo);
+			boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+			model().setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 			canvas().clear();
 			app().startWorkerThread(() -> {
 				app().enableUI(false);

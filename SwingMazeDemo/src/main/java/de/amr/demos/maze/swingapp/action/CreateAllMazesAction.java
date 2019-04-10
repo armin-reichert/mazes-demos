@@ -49,7 +49,7 @@ public class CreateAllMazesAction extends CreateMazeActionBase {
 				.collect(Collectors.toList());
 		for (AlgorithmInfo algo : generators) {
 			controlWindow().generatorMenu.selectAlgorithm(algo);
-			app().onGeneratorChange(algo);
+			app().changeGenerator(algo);
 			try {
 				createMaze(algo, model().getGenerationStart());
 				if (model().isFloodFillAfterGeneration()) {

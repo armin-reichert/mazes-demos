@@ -53,7 +53,7 @@ public class SolverMenu extends AlgorithmMenu {
 			JRadioButtonMenuItem rb = new JRadioButtonMenuItem(text);
 			rb.addActionListener(e -> {
 				model().setMetric(metric);
-				getSelectedAlgorithm().ifPresent(app()::onSolverChange);
+				getSelectedAlgorithm().ifPresent(app()::changeSolver);
 			});
 			radio.add(rb);
 			menu.add(rb);
@@ -64,7 +64,7 @@ public class SolverMenu extends AlgorithmMenu {
 
 	private void addRadioButton(AlgorithmInfo alg) {
 		JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-		item.addActionListener(e -> app().onSolverChange(alg));
+		item.addActionListener(e -> app().changeSolver(alg));
 		item.setText(alg.getDescription());
 		item.putClientProperty("algorithm", alg);
 		btnGroup.add(item);
