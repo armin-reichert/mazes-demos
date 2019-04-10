@@ -183,8 +183,8 @@ public class MazeDemoApp {
 	public void changeSolver(AlgorithmInfo solverInfo) {
 		String label = solverInfo.getDescription();
 		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
-			String text = model.getMetric().name().substring(0, 1)
-					+ model.getMetric().name().substring(1).toLowerCase();
+			String metricName = model.getMetric().toString();
+			String text = metricName.substring(0, 1) + metricName.substring(1).toLowerCase();
 			label += " (" + text + ")";
 		}
 		controlPanel().getLblSolver().setText(label);

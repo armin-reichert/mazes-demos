@@ -94,7 +94,7 @@ public class MazeDemoModel {
 	public static final AlgorithmInfo[] GENERATOR_ALGORITHMS = {
 		/*@formatter:off*/
 		new AlgorithmInfo(RecursiveDFS.class, "Random recursive DFS (small grids only!)", Traversal, SmallGrid),
-		new AlgorithmInfo(IterativeDFS.class, "Random nonrecursive DFS", Traversal),
+		new AlgorithmInfo(IterativeDFS.class, "Random non-recursive DFS", Traversal),
 		new AlgorithmInfo(RandomBFS.class, "Random BFS", Traversal),
 		new AlgorithmInfo(GrowingTreeAlwaysFirst.class, "Growing Tree (always select first)", Traversal),
 		new AlgorithmInfo(GrowingTreeAlwaysLast.class, "Growing Tree (always select last)", Traversal),
