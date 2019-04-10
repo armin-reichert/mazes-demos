@@ -23,7 +23,7 @@ public class CreateMazeAction extends CreateMazeActionBase {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(generatorInfo -> {
-			app().provideGrid(generatorInfo);
+			app().prepareGridForGenerator(generatorInfo);
 			canvas().clear();
 			app().startWorkerThread(() -> {
 				app().enableUI(false);

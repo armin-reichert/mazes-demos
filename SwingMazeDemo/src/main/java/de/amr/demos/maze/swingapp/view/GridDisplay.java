@@ -40,7 +40,6 @@ public class GridDisplay extends GridCanvas {
 		model.getGrid().addGraphObserver(animation);
 		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		getActionMap().put("showSettings", app().actionShowControls);
-
 	}
 
 	@Override

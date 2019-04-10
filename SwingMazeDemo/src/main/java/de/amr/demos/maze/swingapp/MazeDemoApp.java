@@ -197,18 +197,27 @@ public class MazeDemoApp {
 
 	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
 		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
-		provideGrid(generatorInfo);
+		prepareGridForGenerator(generatorInfo);
 		canvas.clear();
 	}
 
-	public void provideGrid(AlgorithmInfo generatorInfo) {
+	public void prepareGridForGenerator(AlgorithmInfo generatorInfo) {
 		if (generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired)) {
+			setGrid(true, TraversalState.COMPLETED);
+		}
+		else {
+			setGrid(false, TraversalState.UNVISITED);
+		}
+	}
+
+	public void setGrid(boolean full, TraversalState defaultCellState) {
+		if (full) {
 			canvas.setGrid(GridFactory.fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
-					TraversalState.COMPLETED, 0));
+					defaultCellState, 0));
 		}
 		else {
 			canvas.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
-					TraversalState.UNVISITED, 0));
+					defaultCellState, 0));
 		}
 	}
 
