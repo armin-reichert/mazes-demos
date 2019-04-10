@@ -5,6 +5,8 @@ import static de.amr.demos.maze.swingapp.model.MazeDemoModel.PATHFINDER_ALGORITH
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.CENTER;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
+import static de.amr.graph.grid.impl.GridFactory.emptyObservableGrid;
+import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
 import java.awt.Color;
 import java.awt.DisplayMode;
@@ -129,11 +131,10 @@ public class MazeDemoApp {
 		model.setGridCellSize(32);
 		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
 		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
-		model.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
-				TraversalState.UNVISITED, 0));
+		setGrid(false, TraversalState.UNVISITED);
 
+		// create grid display
 		canvas = new GridDisplay(model);
-
 		wndDisplayArea = new JFrame("Maze Display Window");
 		wndDisplayArea.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		wndDisplayArea.setUndecorated(true);
@@ -143,12 +144,15 @@ public class MazeDemoApp {
 		wndControl = new ControlWindow();
 		wndControl.setAlwaysOnTop(true);
 
-		// initialize generator and pathfinder selection
-		MazeDemoModel.find(GENERATOR_ALGORITHMS, IterativeDFS.class).ifPresent(alg -> {
-			wndControl.generatorMenu.selectAlgorithm(alg);
-			onGeneratorChange(alg);
+		// initialize generator and path finder
+		MazeDemoModel.find(GENERATOR_ALGORITHMS, IterativeDFS.class).ifPresent(generatorInfo -> {
+			wndControl.generatorMenu.selectAlgorithm(generatorInfo);
+			onGeneratorChange(generatorInfo);
 		});
-		MazeDemoModel.find(PATHFINDER_ALGORITHMS, alg -> alg.getAlgorithmClass() == BidiBreadthFirstSearch.class)
+
+		MazeDemoModel
+				.find(PATHFINDER_ALGORITHMS,
+						pathfinderInfo -> pathfinderInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class)
 				.ifPresent(alg -> {
 					wndControl.solverMenu.selectAlgorithm(alg);
 					onSolverChange(alg);
@@ -157,10 +161,37 @@ public class MazeDemoApp {
 		// hide details initially
 		actionToggleControlPanel.setMinimized(true);
 
+		// show windows
 		wndDisplayArea.setVisible(true);
-
 		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
 		wndControl.setVisible(true);
+	}
+
+	public void setGrid(boolean full, TraversalState defaultState) {
+		model.setGrid(
+				full ? fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(), defaultState, 0)
+						: emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(), defaultState, 0));
+	}
+
+	public void prepareGridForGenerator(AlgorithmInfo generatorInfo) {
+		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+		setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+	}
+
+	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
+		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
+		prepareGridForGenerator(generatorInfo);
+		canvas.clear();
+	}
+
+	public void onSolverChange(AlgorithmInfo solverInfo) {
+		String label = solverInfo.getDescription();
+		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
+			String text = model.getMetric().name().substring(0, 1)
+					+ model.getMetric().name().substring(1).toLowerCase();
+			label += " (" + text + ")";
+		}
+		wndControl.controlPanel.getLblSolver().setText(label);
 	}
 
 	public void resetDisplay() {
@@ -193,43 +224,6 @@ public class MazeDemoApp {
 		actionCreateAllMazes.setEnabled(enabled);
 		actionRunMazeSolver.setEnabled(enabled);
 		wndControl.controlPanel.getSliderPassageWidth().setEnabled(enabled);
-	}
-
-	public void onGeneratorChange(AlgorithmInfo generatorInfo) {
-		wndControl.controlPanel.getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
-		prepareGridForGenerator(generatorInfo);
-		canvas.clear();
-	}
-
-	public void prepareGridForGenerator(AlgorithmInfo generatorInfo) {
-		if (generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired)) {
-			setGrid(true, TraversalState.COMPLETED);
-		}
-		else {
-			setGrid(false, TraversalState.UNVISITED);
-		}
-	}
-
-	public void setGrid(boolean full, TraversalState defaultCellState) {
-		if (full) {
-			model.setGrid(GridFactory.fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
-					defaultCellState, 0));
-		}
-		else {
-			model.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
-					defaultCellState, 0));
-		}
-		canvas.setGrid(model.getGrid()); // TODO use event
-	}
-
-	public void onSolverChange(AlgorithmInfo solverInfo) {
-		String label = solverInfo.getDescription();
-		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
-			String text = model.getMetric().name().substring(0, 1)
-					+ model.getMetric().name().substring(1).toLowerCase();
-			label += " (" + text + ")";
-		}
-		wndControl.controlPanel.getLblSolver().setText(label);
 	}
 
 	public void startWorkerThread(Runnable work) {

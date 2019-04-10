@@ -7,6 +7,8 @@ import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.KeyStroke;
 
@@ -26,7 +28,7 @@ import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
  * 
  * @author Armin Reichert
  */
-public class GridDisplay extends GridCanvas {
+public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
@@ -34,6 +36,7 @@ public class GridDisplay extends GridCanvas {
 	public GridDisplay(MazeDemoModel model) {
 		super(model.getGrid(), model.getGridCellSize());
 		this.model = model;
+		model.changeHandler.addPropertyChangeListener(this);
 		replaceRenderer(createRenderer());
 		animation = new GridCanvasAnimation<>(this);
 		animation.fnDelay = () -> model.getDelay();
@@ -57,20 +60,32 @@ public class GridDisplay extends GridCanvas {
 		animation.setEnabled(enabled);
 	}
 
-	@Override
-	public void drawGrid() {
-		super.drawGrid();
-		System.out.println("Drawing grid " + getGrid());
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
+	public void propertyChange(PropertyChangeEvent change) {
+		if ("grid".equals(change.getPropertyName())) {
+			if (change.getOldValue() != null) {
+				ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) change
+						.getOldValue();
+				ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
+						.getNewValue();
+				setGrid(newGrid);
+				oldGrid.removeGraphObserver(animation);
+				newGrid.addGraphObserver(animation);
+			}
+		}
+	}
+
+	@Override
+	public void drawGrid() {
+		System.out.println("GridDisplay.drawGrid: " + getGrid());
+		super.drawGrid();
+	}
+	
+	@Override
 	public void setGrid(GridGraph<?, ?> grid) {
+		System.out.println("GridDisplay.setGrid:  " + grid);
 		super.setGrid(grid);
-		ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) getGrid();
-		ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) grid;
-		oldGrid.removeGraphObserver(animation);
-		newGrid.addGraphObserver(animation);
 	}
 
 	private ConfigurableGridRenderer createRenderer() {

@@ -11,6 +11,7 @@ import static de.amr.demos.maze.swingapp.model.PathFinderTag.DFS;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.INFORMED;
 
 import java.awt.Color;
+import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -179,6 +180,8 @@ public class MazeDemoModel {
 	private Color pathColor;
 	private Style style;
 
+	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
+
 	public int[] getGridCellSizes() {
 		return gridCellSizes;
 	}
@@ -256,7 +259,9 @@ public class MazeDemoModel {
 	}
 
 	public void setGrid(ObservableGridGraph<TraversalState, Integer> grid) {
+		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
 		this.grid = grid;
+		changeHandler.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public int getDelay() {
