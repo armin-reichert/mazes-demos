@@ -1,11 +1,14 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Graphics;
+
+import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
@@ -35,6 +38,9 @@ public class GridDisplay extends GridCanvas {
 		animation = new GridCanvasAnimation<>(this);
 		animation.fnDelay = () -> model.getDelay();
 		model.getGrid().addGraphObserver(animation);
+		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
+		getActionMap().put("showSettings", app().actionShowControls);
+
 	}
 
 	@Override

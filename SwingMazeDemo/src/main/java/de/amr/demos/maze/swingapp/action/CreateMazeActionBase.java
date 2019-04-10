@@ -8,6 +8,7 @@ import static java.lang.String.format;
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
@@ -31,7 +32,8 @@ public abstract class CreateMazeActionBase extends AbstractAction {
 
 	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition)
 			throws Exception, StackOverflowError {
-		MazeGenerator generator = app().createMazeGenerator(generatorInfo);
+		MazeGenerator generator = (MazeGenerator) generatorInfo.getAlgorithmClass()
+				.getConstructor(GridGraph2D.class).newInstance(model().getGrid());
 		int startCell = model().getGrid().cell(startPosition);
 		int x = model().getGrid().col(startCell), y = model().getGrid().row(startCell);
 		app().showMessage(
