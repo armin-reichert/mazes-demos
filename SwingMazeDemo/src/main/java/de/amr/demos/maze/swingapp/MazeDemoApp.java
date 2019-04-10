@@ -5,8 +5,6 @@ import static de.amr.demos.maze.swingapp.model.MazeDemoModel.PATHFINDER_ALGORITH
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.CENTER;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
-import static de.amr.graph.grid.impl.GridFactory.emptyObservableGrid;
-import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
 import java.awt.Color;
 import java.awt.DisplayMode;
@@ -40,7 +38,6 @@ import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
@@ -129,7 +126,7 @@ public class MazeDemoApp {
 		model.setGridCellSize(32);
 		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
 		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
-		setGrid(false, TraversalState.UNVISITED);
+		model.setGrid(false, TraversalState.UNVISITED);
 
 		// create grid display
 		wndDisplayArea = new JFrame("Maze Display Window");
@@ -166,20 +163,14 @@ public class MazeDemoApp {
 
 	public void resetDisplay() {
 		model.changeHandler.removePropertyChangeListener(canvas());
-		setGrid(false, TraversalState.UNVISITED);
+		model.setGrid(false, TraversalState.UNVISITED);
 		wndDisplayArea.setContentPane(new GridDisplay(model));
 		wndDisplayArea.validate();
 	}
 
-	public void setGrid(boolean full, TraversalState defaultState) {
-		model.setGrid(
-				full ? fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(), defaultState, 0)
-						: emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(), defaultState, 0));
-	}
-
 	public void prepareGridForGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-		setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 	}
 
 	public void onGeneratorChange(AlgorithmInfo generatorInfo) {

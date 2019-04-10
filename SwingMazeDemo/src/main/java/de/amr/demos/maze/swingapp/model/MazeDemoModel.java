@@ -9,6 +9,8 @@ import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.UST;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.BFS;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.DFS;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.INFORMED;
+import static de.amr.graph.grid.impl.GridFactory.emptyObservableGrid;
+import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
 import java.awt.Color;
 import java.beans.PropertyChangeSupport;
@@ -20,6 +22,7 @@ import java.util.function.Predicate;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
+import de.amr.graph.grid.impl.Top4;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.graph.pathfinder.impl.BidiAStarSearch;
@@ -260,9 +263,10 @@ public class MazeDemoModel {
 		return grid;
 	}
 
-	public void setGrid(ObservableGridGraph<TraversalState, Integer> grid) {
+	public void setGrid(boolean full, TraversalState defaultState) {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
-		this.grid = grid;
+		grid = full ? fullObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0)
+				: emptyObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0);
 		changeHandler.firePropertyChange("grid", oldGrid, grid);
 	}
 

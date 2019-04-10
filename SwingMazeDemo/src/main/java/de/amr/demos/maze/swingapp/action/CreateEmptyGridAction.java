@@ -1,11 +1,10 @@
 package de.amr.demos.maze.swingapp.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import de.amr.demos.maze.swingapp.MazeDemoApp;
 import de.amr.graph.core.api.TraversalState;
 
 public class CreateEmptyGridAction extends AbstractAction {
@@ -16,6 +15,6 @@ public class CreateEmptyGridAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().setGrid(false, TraversalState.COMPLETED);
+		MazeDemoApp.model().setGrid(false, TraversalState.COMPLETED);
 	}
 }
