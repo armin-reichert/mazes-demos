@@ -212,13 +212,14 @@ public class MazeDemoApp {
 
 	public void setGrid(boolean full, TraversalState defaultCellState) {
 		if (full) {
-			canvas.setGrid(GridFactory.fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+			model.setGrid(GridFactory.fullObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
 					defaultCellState, 0));
 		}
 		else {
-			canvas.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
+			model.setGrid(GridFactory.emptyObservableGrid(model.getGridWidth(), model.getGridHeight(), Top4.get(),
 					defaultCellState, 0));
 		}
+		canvas.setGrid(model.getGrid()); // TODO use event
 	}
 
 	public void onSolverChange(AlgorithmInfo solverInfo) {

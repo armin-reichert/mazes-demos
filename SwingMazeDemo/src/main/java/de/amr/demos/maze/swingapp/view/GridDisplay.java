@@ -70,7 +70,6 @@ public class GridDisplay extends GridCanvas {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) getGrid();
 		ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) grid;
 		oldGrid.removeGraphObserver(animation);
-		model.setGrid(newGrid);
 		newGrid.addGraphObserver(animation);
 	}
 
