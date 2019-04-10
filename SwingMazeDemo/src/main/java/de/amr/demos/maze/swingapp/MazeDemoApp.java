@@ -165,10 +165,8 @@ public class MazeDemoApp {
 	}
 
 	public void resetDisplay() {
+		wndDisplayArea.setContentPane(new GridDisplay(model));
 		setGrid(false, TraversalState.UNVISITED);
-		GridDisplay canvas = new GridDisplay(model);
-		canvas.clear();
-		wndDisplayArea.setContentPane(canvas);
 		wndDisplayArea.validate();
 	}
 

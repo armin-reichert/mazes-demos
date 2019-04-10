@@ -15,7 +15,6 @@ import javax.swing.KeyStroke;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
@@ -36,13 +35,14 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 	public GridDisplay(MazeDemoModel model) {
 		super(model.getGrid(), model.getGridCellSize());
 		this.model = model;
-		model.changeHandler.addPropertyChangeListener(this);
-		replaceRenderer(createRenderer());
 		animation = new GridCanvasAnimation<>(this);
 		animation.fnDelay = () -> model.getDelay();
 		model.getGrid().addGraphObserver(animation);
+		model.changeHandler.addPropertyChangeListener(this);
 		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		getActionMap().put("showSettings", app().actionShowControls);
+		replaceRenderer(createRenderer());
+		clear();
 	}
 
 	@Override
@@ -73,7 +73,8 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 				oldGrid.removeGraphObserver(animation);
 				newGrid.addGraphObserver(animation);
 			}
-		} else if ("passageWidthPercentage".equals(change.getPropertyName())) {
+		}
+		else if ("passageWidthPercentage".equals(change.getPropertyName())) {
 			clear();
 			drawGrid();
 		}
@@ -83,12 +84,6 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 	public void drawGrid() {
 		System.out.println("GridDisplay.drawGrid: " + getGrid());
 		super.drawGrid();
-	}
-	
-	@Override
-	public void setGrid(GridGraph<?, ?> grid) {
-		System.out.println("GridDisplay.setGrid:  " + grid);
-		super.setGrid(grid);
 	}
 
 	private ConfigurableGridRenderer createRenderer() {
