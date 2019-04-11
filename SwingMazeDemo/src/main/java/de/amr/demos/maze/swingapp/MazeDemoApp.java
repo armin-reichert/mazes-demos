@@ -59,6 +59,10 @@ public class MazeDemoApp {
 		return IT.canvas;
 	}
 
+	public static ControlWindow controlWindow() {
+		return IT.wndControl;
+	}
+
 	private final MazeDemoModel model;
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
@@ -129,10 +133,6 @@ public class MazeDemoApp {
 	public void changeSolver(AlgorithmInfo solverInfo) {
 		wndControl.solverMenu.selectAlgorithm(solverInfo);
 		wndControl.controlPanel.updateSolverText(solverInfo);
-	}
-
-	public void showControlWindow(boolean show) {
-		wndControl.setVisible(show);
 	}
 
 	private void createCanvas() {
