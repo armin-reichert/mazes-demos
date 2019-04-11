@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.demos.maze.swingapp.model.MazeDemoModel.GENERATOR_ALGORITHMS;
-import static de.amr.demos.maze.swingapp.model.MazeDemoModel.PATHFINDER_ALGORITHMS;
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.CENTER;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
@@ -135,16 +133,8 @@ public class MazeDemoApp {
 		wndControl.setAlwaysOnTop(true);
 
 		// initialize generator and path finder
-		MazeDemoModel.find(GENERATOR_ALGORITHMS, IterativeDFS.class).ifPresent(generatorInfo -> {
-			changeGenerator(generatorInfo);
-		});
-
-		MazeDemoModel
-				.find(PATHFINDER_ALGORITHMS,
-						pathfinderInfo -> pathfinderInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class)
-				.ifPresent(alg -> {
-					changeSolver(alg);
-				});
+		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
+		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
 
 		// hide details initially
 		wndControl.minimize();

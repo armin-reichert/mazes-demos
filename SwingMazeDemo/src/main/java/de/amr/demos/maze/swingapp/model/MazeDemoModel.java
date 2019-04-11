@@ -14,9 +14,7 @@ import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
@@ -152,14 +150,6 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
-	public static Optional<AlgorithmInfo> find(AlgorithmInfo[] algorithms, Class<?> clazz) {
-		return find(algorithms, alg -> alg.getAlgorithmClass() == clazz);
-	}
-
-	public static Optional<AlgorithmInfo> find(AlgorithmInfo[] algorithms, Predicate<AlgorithmInfo> predicate) {
-		return Arrays.stream(algorithms).filter(Objects::nonNull).filter(predicate).findFirst();
-	}
-
 	private int gridWidth;
 	private int gridHeight;
 	private ObservableGridGraph<TraversalState, Integer> grid;
@@ -178,6 +168,16 @@ public class MazeDemoModel {
 	private GridPosition pathFinderTarget;
 
 	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
+
+	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
+		return Arrays.stream(GENERATOR_ALGORITHMS)
+				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
+	}
+
+	public Optional<AlgorithmInfo> findSolver(Class<?> clazz) {
+		return Arrays.stream(PATHFINDER_ALGORITHMS)
+				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
+	}
 
 	public int[] getGridCellSizes() {
 		return gridCellSizes;
