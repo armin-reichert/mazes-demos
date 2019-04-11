@@ -56,22 +56,22 @@ public class MazeDemoApp {
 		EventQueue.invokeLater(MazeDemoApp::new);
 	}
 
-	private static MazeDemoApp APP;
+	private static MazeDemoApp IT;
 
 	public static MazeDemoApp app() {
-		return APP;
+		return IT;
 	}
 
 	public static MazeDemoModel model() {
-		return APP.model;
+		return IT.model;
 	}
 
 	public static GridDisplay canvas() {
-		return APP.canvas;
+		return IT.canvas;
 	}
 
 	public static ControlPanel controlPanel() {
-		return APP.wndControl.controlPanel;
+		return IT.wndControl.controlPanel;
 	}
 
 	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -81,6 +81,7 @@ public class MazeDemoApp {
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
 	private GridDisplay canvas;
+	private Thread workerThread;
 
 	public final Action actionCreateMaze = new CreateMazeAction();
 	public final Action actionCreateAllMazes = new CreateAllMazesAction();
@@ -95,11 +96,8 @@ public class MazeDemoApp {
 	public final Action actionChangeGridResolution = new ChangeGridResolutionAction();
 	public final Action actionShowControls = new ShowControlWindowAction();
 
-	private Thread workerThread;
-
 	public MazeDemoApp() {
-
-		APP = this;
+		IT = this;
 
 		// initialize data
 		model = new MazeDemoModel();
@@ -131,13 +129,11 @@ public class MazeDemoApp {
 		// create control window
 		wndControl = new ControlWindow();
 		wndControl.setAlwaysOnTop(true);
+		wndControl.minimize();
 
 		// initialize generator and path finder
 		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
-
-		// hide details initially
-		wndControl.minimize();
 
 		// show windows
 		wndDisplayArea.setVisible(true);
@@ -171,12 +167,22 @@ public class MazeDemoApp {
 	}
 
 	private void createCanvas() {
+		GridDisplay oldCanvas = canvas;
 		canvas = new GridDisplay(model);
-		canvas.setCompletedCellColor(Color.WHITE);
-		canvas.setVisitedCellColor(Color.BLUE);
-		canvas.setUnvisitedCellColor(Color.BLACK);
-		canvas.setPathColor(Color.RED);
-		canvas.setStyle(Style.WALL_PASSAGES);
+		if (oldCanvas == null) {
+			canvas.setCompletedCellColor(Color.WHITE);
+			canvas.setVisitedCellColor(Color.BLUE);
+			canvas.setUnvisitedCellColor(Color.BLACK);
+			canvas.setPathColor(Color.RED);
+			canvas.setStyle(Style.WALL_PASSAGES);
+		}
+		else {
+			canvas.setCompletedCellColor(oldCanvas.getCompletedCellColor());
+			canvas.setVisitedCellColor(oldCanvas.getVisitedCellColor());
+			canvas.setUnvisitedCellColor(oldCanvas.getUnvisitedCellColor());
+			canvas.setPathColor(oldCanvas.getPathColor());
+			canvas.setStyle(oldCanvas.getStyle());
+		}
 	}
 
 	public void resetDisplay() {
