@@ -31,6 +31,10 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
+	private Color unvisitedCellColor;
+	private Color visitedCellColor;
+	private Color completedCellColor;
+	private Color pathColor;
 
 	public GridDisplay(MazeDemoModel model) {
 		super(model.getGrid(), model.getGridCellSize());
@@ -58,6 +62,38 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	public void enableAnimation(boolean enabled) {
 		animation.setEnabled(enabled);
+	}
+
+	public Color getUnvisitedCellColor() {
+		return unvisitedCellColor;
+	}
+
+	public void setUnvisitedCellColor(Color unvisitedCellColor) {
+		this.unvisitedCellColor = unvisitedCellColor;
+	}
+
+	public Color getVisitedCellColor() {
+		return visitedCellColor;
+	}
+
+	public void setVisitedCellColor(Color visitedCellColor) {
+		this.visitedCellColor = visitedCellColor;
+	}
+
+	public Color getCompletedCellColor() {
+		return completedCellColor;
+	}
+
+	public void setCompletedCellColor(Color completedCellColor) {
+		this.completedCellColor = completedCellColor;
+	}
+
+	public Color getPathColor() {
+		return pathColor;
+	}
+
+	public void setPathColor(Color pathColor) {
+		this.pathColor = pathColor;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -105,11 +141,11 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 			TraversalState state = model.getGrid().get(cell);
 			switch (state) {
 			case COMPLETED:
-				return model.getCompletedCellColor();
+				return getCompletedCellColor();
 			case UNVISITED:
-				return model.getUnvisitedCellColor();
+				return getUnvisitedCellColor();
 			case VISITED:
-				return model.getVisitedCellColor();
+				return getVisitedCellColor();
 			default:
 				return r.getGridBgColor();
 			}

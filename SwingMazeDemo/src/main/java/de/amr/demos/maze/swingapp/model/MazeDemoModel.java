@@ -12,7 +12,6 @@ import static de.amr.demos.maze.swingapp.model.PathFinderTag.INFORMED;
 import static de.amr.graph.grid.impl.GridFactory.emptyObservableGrid;
 import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
-import java.awt.Color;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Objects;
@@ -177,10 +176,6 @@ public class MazeDemoModel {
 	private Metric metric;
 	private GridPosition pathFinderStart;
 	private GridPosition pathFinderTarget;
-	private Color unvisitedCellColor;
-	private Color visitedCellColor;
-	private Color completedCellColor;
-	private Color pathColor;
 	private Style style;
 
 	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
@@ -326,35 +321,4 @@ public class MazeDemoModel {
 		this.pathFinderTarget = pos;
 	}
 
-	public Color getUnvisitedCellColor() {
-		return unvisitedCellColor;
-	}
-
-	public void setUnvisitedCellColor(Color unvisitedCellColor) {
-		this.unvisitedCellColor = unvisitedCellColor;
-	}
-
-	public Color getVisitedCellColor() {
-		return visitedCellColor;
-	}
-
-	public void setVisitedCellColor(Color visitedCellColor) {
-		this.visitedCellColor = visitedCellColor;
-	}
-
-	public Color getCompletedCellColor() {
-		return completedCellColor;
-	}
-
-	public void setCompletedCellColor(Color completedCellColor) {
-		this.completedCellColor = completedCellColor;
-	}
-
-	public Color getPathColor() {
-		return pathColor;
-	}
-
-	public void setPathColor(Color pathColor) {
-		this.pathColor = pathColor;
-	}
 }

@@ -114,10 +114,6 @@ public class MazeDemoApp {
 		model.setPassageWidthPercentage(100);
 		model.setStyle(Style.WALL_PASSAGES);
 		model.setDelay(0);
-		model.setCompletedCellColor(Color.WHITE);
-		model.setVisitedCellColor(Color.BLUE);
-		model.setUnvisitedCellColor(Color.BLACK);
-		model.setPathColor(Color.RED);
 		model.setGenerationStart(CENTER);
 		model.setPathFinderStart(TOP_LEFT);
 		model.setPathFinderTarget(BOTTOM_RIGHT);
@@ -138,6 +134,10 @@ public class MazeDemoApp {
 		wndDisplayArea.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		wndDisplayArea.setUndecorated(true);
 		wndDisplayArea.setContentPane(new GridDisplay(model));
+		canvas().setCompletedCellColor(Color.WHITE);
+		canvas().setVisitedCellColor(Color.BLUE);
+		canvas().setUnvisitedCellColor(Color.BLACK);
+		canvas().setPathColor(Color.RED);
 
 		// create control window
 		wndControl = new ControlWindow();

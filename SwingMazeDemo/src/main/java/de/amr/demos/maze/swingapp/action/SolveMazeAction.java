@@ -106,13 +106,13 @@ public class SolveMazeAction extends AbstractAction {
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(PathFinderTag.BFS)) {
 			BFSAnimation anim = BFSAnimation.builder().canvas(canvas()).delay(() -> model().getDelay())
-					.pathColor(model().getPathColor()).distanceVisible(model().isDistancesVisible()).build();
+					.pathColor(canvas().getPathColor()).distanceVisible(model().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
 			DFSAnimation anim = DFSAnimation.builder().canvas(canvas()).delay(() -> model().getDelay())
-					.pathColor(model().getPathColor()).build();
+					.pathColor(canvas().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed
