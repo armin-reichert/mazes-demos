@@ -43,9 +43,9 @@ public class SolveMazeAction extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		app().currentSolver().ifPresent(solver -> {
-			app().enableUI(false);
 			canvas().drawGrid(); // to possibly overwrite older search
-			app().startWorkerThread(() -> {
+			app().startBackgroundThread(() -> {
+				app().setBusy(true);
 				try {
 					runSolverAnimation(solver);
 				} catch (AnimationInterruptedException x) {
@@ -55,7 +55,7 @@ public class SolveMazeAction extends AbstractAction {
 					x.printStackTrace();
 					app().showMessage("Error during path finding: " + x.getMessage());
 				} finally {
-					app().enableUI(true);
+					app().setBusy(false);
 				}
 			});
 		});

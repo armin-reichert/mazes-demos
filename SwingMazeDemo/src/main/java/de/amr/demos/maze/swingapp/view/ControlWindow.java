@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
@@ -16,6 +15,11 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JSlider;
 
+import de.amr.demos.maze.swingapp.action.CancelTaskAction;
+import de.amr.demos.maze.swingapp.action.ChangeGridResolutionAction;
+import de.amr.demos.maze.swingapp.action.CreateAllMazesAction;
+import de.amr.demos.maze.swingapp.action.CreateMazeAction;
+import de.amr.demos.maze.swingapp.action.SolveMazeAction;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.view.menu.CanvasMenu;
 import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
@@ -33,6 +37,27 @@ public class ControlWindow extends JFrame {
 	private static final ImageIcon ZOOM_OUT = new ImageIcon(ControlWindow.class.getResource("/zoom_out.png"));
 
 	private static final int COLLAPSED_HEIGHT = 160;
+
+	private static ComboBoxModel<String> createGridResolutionModel() {
+		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
+		String[] entries = Arrays.stream(model().getGridCellSizes()).mapToObj(cellSize -> {
+			int numCols = DISPLAY_MODE.getWidth() / cellSize;
+			int numRows = DISPLAY_MODE.getHeight() / cellSize;
+			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
+		}).toArray(String[]::new);
+		return new DefaultComboBoxModel<>(entries);
+	}
+
+	private static int getSelectedGridResolutionIndex(MazeDemoModel model) {
+		int index = 0;
+		for (int size : model.getGridCellSizes()) {
+			if (size == model.getGridCellSize()) {
+				return index;
+			}
+			++index;
+		}
+		return -1;
+	}
 
 	public final GeneratorMenu generatorMenu;
 	public final CanvasMenu canvasMenu;
@@ -66,26 +91,11 @@ public class ControlWindow extends JFrame {
 		}
 	};
 
-	private static ComboBoxModel<String> createGridResolutionModel() {
-		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
-		String[] entries = Arrays.stream(model().getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = DISPLAY_MODE.getWidth() / cellSize;
-			int numRows = DISPLAY_MODE.getHeight() / cellSize;
-			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
-		}).toArray(String[]::new);
-		return new DefaultComboBoxModel<>(entries);
-	}
-
-	private static int getSelectedGridResolutionIndex(MazeDemoModel model) {
-		int index = 0;
-		for (int size : model.getGridCellSizes()) {
-			if (size == model.getGridCellSize()) {
-				return index;
-			}
-			++index;
-		}
-		return -1;
-	}
+	private final Action actionCreateMaze = new CreateMazeAction();
+	private final Action actionCreateAllMazes = new CreateAllMazesAction();
+	private final Action actionRunMazeSolver = new SolveMazeAction();
+	private final Action actionCancelTask = new CancelTaskAction();
+	private final Action actionChangeGridResolution = new ChangeGridResolutionAction();
 
 	public ControlWindow() {
 		setTitle("Mazes");
@@ -96,7 +106,7 @@ public class ControlWindow extends JFrame {
 
 		controlPanel.getComboGridResolution().setModel(createGridResolutionModel());
 		controlPanel.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex(model()));
-		controlPanel.getComboGridResolution().setAction(app().actionChangeGridResolution);
+		controlPanel.getComboGridResolution().setAction(actionChangeGridResolution);
 
 		controlPanel.getSliderPassageWidth().setValue(model().getPassageWidthPercentage());
 		controlPanel.getSliderPassageWidth().addChangeListener(e -> {
@@ -118,10 +128,10 @@ public class ControlWindow extends JFrame {
 			}
 		});
 
-		controlPanel.getBtnCreateMaze().setAction(app().actionCreateMaze);
-		controlPanel.getBtnCreateAllMazes().setAction(app().actionCreateAllMazes);
-		controlPanel.getBtnFindPath().setAction(app().actionRunMazeSolver);
-		controlPanel.getBtnStop().setAction(app().actionCancelTask);
+		controlPanel.getBtnCreateMaze().setAction(actionCreateMaze);
+		controlPanel.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
+		controlPanel.getBtnFindPath().setAction(actionRunMazeSolver);
+		controlPanel.getBtnStop().setAction(actionCancelTask);
 
 		setContentPane(controlPanel);
 
@@ -149,5 +159,18 @@ public class ControlWindow extends JFrame {
 		controlPanel.getControls().setVisible(true);
 		controlPanel.getBtnShowHideDetails().setAction(actionMinimize);
 		pack();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		generatorMenu.setEnabled(enabled);
+		solverMenu.setEnabled(enabled);
+		canvasMenu.setEnabled(enabled);
+		optionMenu.setEnabled(enabled);
+		actionChangeGridResolution.setEnabled(enabled);
+		actionCreateMaze.setEnabled(enabled);
+		actionCreateAllMazes.setEnabled(enabled);
+		actionRunMazeSolver.setEnabled(enabled);
+		controlPanel.getSliderPassageWidth().setEnabled(enabled);
 	}
 }

@@ -14,6 +14,6 @@ public class CancelTaskAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().stopWorkerThread();
+		app().stopBackgroundThread();
 	}
 }

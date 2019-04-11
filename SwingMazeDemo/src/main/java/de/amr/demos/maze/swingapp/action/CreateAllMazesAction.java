@@ -26,8 +26,8 @@ public class CreateAllMazesAction extends CreateMazeActionBase {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().enableUI(false);
-		app().startWorkerThread(() -> {
+		app().setBusy(true);
+		app().startBackgroundThread(() -> {
 			try {
 				createAllMazes();
 			} catch (AnimationInterruptedException x) {
@@ -38,7 +38,7 @@ public class CreateAllMazesAction extends CreateMazeActionBase {
 				app().resetDisplay();
 				x.printStackTrace(System.err);
 			} finally {
-				app().enableUI(true);
+				app().setBusy(false);
 			}
 		});
 	}

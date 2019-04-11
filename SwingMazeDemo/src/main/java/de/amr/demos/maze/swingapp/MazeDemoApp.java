@@ -15,18 +15,13 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
-import de.amr.demos.maze.swingapp.action.CancelTaskAction;
-import de.amr.demos.maze.swingapp.action.ChangeGridResolutionAction;
 import de.amr.demos.maze.swingapp.action.ClearCanvasAction;
-import de.amr.demos.maze.swingapp.action.CreateAllMazesAction;
 import de.amr.demos.maze.swingapp.action.CreateEmptyGridAction;
 import de.amr.demos.maze.swingapp.action.CreateFullGridAction;
-import de.amr.demos.maze.swingapp.action.CreateMazeAction;
 import de.amr.demos.maze.swingapp.action.FloodFillAction;
 import de.amr.demos.maze.swingapp.action.RedrawGridAction;
 import de.amr.demos.maze.swingapp.action.SaveImageAction;
 import de.amr.demos.maze.swingapp.action.ShowControlWindowAction;
-import de.amr.demos.maze.swingapp.action.SolveMazeAction;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
@@ -81,19 +76,14 @@ public class MazeDemoApp {
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
 	private GridDisplay canvas;
-	private Thread workerThread;
+	private Thread bgThread;
 
-	public final Action actionCreateMaze = new CreateMazeAction();
-	public final Action actionCreateAllMazes = new CreateAllMazesAction();
-	public final Action actionRunMazeSolver = new SolveMazeAction();
-	public final Action actionCancelTask = new CancelTaskAction();
 	public final Action actionClearCanvas = new ClearCanvasAction();
 	public final Action actionRedrawGrid = new RedrawGridAction();
 	public final Action actionFloodFill = new FloodFillAction();
 	public final Action actionSaveImage = new SaveImageAction();
 	public final Action actionEmptyGrid = new CreateEmptyGridAction();
 	public final Action actionFullGrid = new CreateFullGridAction();
-	public final Action actionChangeGridResolution = new ChangeGridResolutionAction();
 	public final Action actionShowControls = new ShowControlWindowAction();
 
 	public MazeDemoApp() {
@@ -197,25 +187,17 @@ public class MazeDemoApp {
 		controlPanel().showMessage(msg + "\n");
 	}
 
-	public void enableUI(boolean enabled) {
-		wndControl.setVisible(enabled || !model.isHidingControlsWhenRunning());
-		wndControl.generatorMenu.setEnabled(enabled);
-		wndControl.solverMenu.setEnabled(enabled);
-		wndControl.canvasMenu.setEnabled(enabled);
-		wndControl.optionMenu.setEnabled(enabled);
-		actionChangeGridResolution.setEnabled(enabled);
-		actionCreateMaze.setEnabled(enabled);
-		actionCreateAllMazes.setEnabled(enabled);
-		actionRunMazeSolver.setEnabled(enabled);
-		controlPanel().getSliderPassageWidth().setEnabled(enabled);
+	public void setBusy(boolean busy) {
+		wndControl.setVisible(!busy || !model.isHidingControlsWhenRunning());
+		wndControl.setEnabled(!busy);
 	}
 
-	public void startWorkerThread(Runnable work) {
-		workerThread = new Thread(work);
-		workerThread.start();
+	public void startBackgroundThread(Runnable code) {
+		bgThread = new Thread(code);
+		bgThread.start();
 	}
 
-	public void stopWorkerThread() {
-		workerThread.interrupt();
+	public void stopBackgroundThread() {
+		bgThread.interrupt();
 	}
 }

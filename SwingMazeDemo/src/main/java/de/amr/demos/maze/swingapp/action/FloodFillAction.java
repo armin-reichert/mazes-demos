@@ -29,9 +29,9 @@ public class FloodFillAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().enableUI(false);
 		canvas().drawGrid();
-		app().startWorkerThread(() -> {
+		app().startBackgroundThread(() -> {
+			app().setBusy(true);
 			try {
 				StopWatch watch = new StopWatch();
 				watch.measure(this::runFloodFill);
@@ -39,7 +39,7 @@ public class FloodFillAction extends AbstractAction {
 			} catch (Exception x) {
 				x.printStackTrace();
 			} finally {
-				app().enableUI(true);
+				app().setBusy(false);
 			}
 		});
 	}

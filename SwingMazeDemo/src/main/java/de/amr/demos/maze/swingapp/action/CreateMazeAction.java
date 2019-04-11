@@ -27,8 +27,8 @@ public class CreateMazeAction extends CreateMazeActionBase {
 			boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 			model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 			canvas().clear();
-			app().startWorkerThread(() -> {
-				app().enableUI(false);
+			app().startBackgroundThread(() -> {
+				app().setBusy(true);
 				try {
 					createMaze(generatorInfo, model().getGenerationStart());
 					if (model().isFloodFillAfterGeneration()) {
@@ -42,7 +42,7 @@ public class CreateMazeAction extends CreateMazeActionBase {
 					app().showMessage("Error during generation: " + x.getClass().getSimpleName());
 					app().resetDisplay();
 				} finally {
-					app().enableUI(true);
+					app().setBusy(false);
 				}
 			});
 		});
