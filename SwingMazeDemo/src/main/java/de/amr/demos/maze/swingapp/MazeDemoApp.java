@@ -27,7 +27,6 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
-import de.amr.demos.maze.swingapp.view.ControlPanel;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
 import de.amr.graph.core.api.TraversalState;
@@ -63,10 +62,6 @@ public class MazeDemoApp {
 
 	public static GridDisplay canvas() {
 		return IT.canvas;
-	}
-
-	public static ControlPanel controlPanel() {
-		return IT.wndControl.controlPanel;
 	}
 
 	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -140,7 +135,7 @@ public class MazeDemoApp {
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		canvas.clear();
 		wndControl.generatorMenu.selectAlgorithm(generatorInfo);
-		controlPanel().updateGeneratorText(generatorInfo);
+		wndControl.controlPanel.updateGeneratorText(generatorInfo);
 	}
 
 	public Optional<AlgorithmInfo> currentSolver() {
@@ -149,7 +144,7 @@ public class MazeDemoApp {
 
 	public void changeSolver(AlgorithmInfo solverInfo) {
 		wndControl.solverMenu.selectAlgorithm(solverInfo);
-		controlPanel().updateSolverText(solverInfo);
+		wndControl.controlPanel.updateSolverText(solverInfo);
 	}
 
 	public void showControlWindow(boolean show) {
@@ -184,7 +179,7 @@ public class MazeDemoApp {
 	}
 
 	public void showMessage(String msg) {
-		controlPanel().showMessage(msg + "\n");
+		wndControl.controlPanel.showMessage(msg + "\n");
 	}
 
 	public void setBusy(boolean busy) {
