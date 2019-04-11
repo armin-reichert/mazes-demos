@@ -10,18 +10,10 @@ import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
 import java.util.Optional;
 
-import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
-import de.amr.demos.maze.swingapp.action.ClearCanvasAction;
-import de.amr.demos.maze.swingapp.action.CreateEmptyGridAction;
-import de.amr.demos.maze.swingapp.action.CreateFullGridAction;
-import de.amr.demos.maze.swingapp.action.FloodFillAction;
-import de.amr.demos.maze.swingapp.action.RedrawGridAction;
-import de.amr.demos.maze.swingapp.action.SaveImageAction;
-import de.amr.demos.maze.swingapp.action.ShowControlWindowAction;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
@@ -50,6 +42,9 @@ public class MazeDemoApp {
 		EventQueue.invokeLater(MazeDemoApp::new);
 	}
 
+	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
+			.getDefaultScreenDevice().getDisplayMode();
+
 	private static MazeDemoApp IT;
 
 	public static MazeDemoApp app() {
@@ -64,22 +59,11 @@ public class MazeDemoApp {
 		return IT.canvas;
 	}
 
-	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice().getDisplayMode();
-
 	private final MazeDemoModel model;
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
 	private GridDisplay canvas;
 	private Thread bgThread;
-
-	public final Action actionClearCanvas = new ClearCanvasAction();
-	public final Action actionRedrawGrid = new RedrawGridAction();
-	public final Action actionFloodFill = new FloodFillAction();
-	public final Action actionSaveImage = new SaveImageAction();
-	public final Action actionEmptyGrid = new CreateEmptyGridAction();
-	public final Action actionFullGrid = new CreateFullGridAction();
-	public final Action actionShowControls = new ShowControlWindowAction();
 
 	public MazeDemoApp() {
 		IT = this;

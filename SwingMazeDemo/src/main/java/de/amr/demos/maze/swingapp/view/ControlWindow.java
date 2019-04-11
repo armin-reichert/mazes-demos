@@ -12,16 +12,22 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JSlider;
 
 import de.amr.demos.maze.swingapp.action.CancelTaskAction;
 import de.amr.demos.maze.swingapp.action.ChangeGridResolutionAction;
+import de.amr.demos.maze.swingapp.action.ClearCanvasAction;
 import de.amr.demos.maze.swingapp.action.CreateAllMazesAction;
+import de.amr.demos.maze.swingapp.action.CreateEmptyGridAction;
+import de.amr.demos.maze.swingapp.action.CreateFullGridAction;
 import de.amr.demos.maze.swingapp.action.CreateMazeAction;
+import de.amr.demos.maze.swingapp.action.FloodFillAction;
+import de.amr.demos.maze.swingapp.action.RedrawGridAction;
+import de.amr.demos.maze.swingapp.action.SaveImageAction;
 import de.amr.demos.maze.swingapp.action.SolveMazeAction;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.view.menu.CanvasMenu;
 import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
 import de.amr.demos.maze.swingapp.view.menu.OptionMenu;
 import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
@@ -60,7 +66,7 @@ public class ControlWindow extends JFrame {
 	}
 
 	public final GeneratorMenu generatorMenu;
-	public final CanvasMenu canvasMenu;
+	public final JMenu canvasMenu;
 	public final SolverMenu solverMenu;
 	public final OptionMenu optionMenu;
 	public final ControlPanel controlPanel;
@@ -96,6 +102,12 @@ public class ControlWindow extends JFrame {
 	private final Action actionRunMazeSolver = new SolveMazeAction();
 	private final Action actionCancelTask = new CancelTaskAction();
 	private final Action actionChangeGridResolution = new ChangeGridResolutionAction();
+	private final Action actionClearCanvas = new ClearCanvasAction();
+	private final Action actionRedrawGrid = new RedrawGridAction();
+	private final Action actionFloodFill = new FloodFillAction();
+	private final Action actionSaveImage = new SaveImageAction();
+	private final Action actionEmptyGrid = new CreateEmptyGridAction();
+	private final Action actionFullGrid = new CreateFullGridAction();
 
 	public ControlWindow() {
 		setTitle("Mazes");
@@ -142,7 +154,16 @@ public class ControlWindow extends JFrame {
 		mb.add(generatorMenu);
 		solverMenu = new SolverMenu();
 		mb.add(solverMenu);
-		canvasMenu = new CanvasMenu();
+		canvasMenu = new JMenu("Canvas");
+		canvasMenu.add(actionClearCanvas);
+		canvasMenu.add(actionRedrawGrid);
+		canvasMenu.add(actionFloodFill);
+		canvasMenu.addSeparator();
+		canvasMenu.add(actionEmptyGrid);
+		canvasMenu.add(actionFullGrid);
+		canvasMenu.addSeparator();
+		canvasMenu.add(actionSaveImage);
+
 		mb.add(canvasMenu);
 		optionMenu = new OptionMenu();
 		mb.add(optionMenu);

@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -10,8 +9,10 @@ import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import de.amr.demos.maze.swingapp.action.ShowControlWindowAction;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
@@ -30,6 +31,7 @@ import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
+	private final Action actionShowControls = new ShowControlWindowAction();
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
@@ -45,7 +47,7 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 		model.getGrid().addGraphObserver(animation);
 		model.changeHandler.addPropertyChangeListener(this);
 		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
-		getActionMap().put("showSettings", app().actionShowControls);
+		getActionMap().put("showSettings", actionShowControls);
 		replaceRenderer(createRenderer());
 		clear();
 	}
