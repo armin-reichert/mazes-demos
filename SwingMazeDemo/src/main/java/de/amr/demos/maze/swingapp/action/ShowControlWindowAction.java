@@ -14,6 +14,6 @@ public class ShowControlWindowAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MazeDemoApp.controlWindow().setVisible(true);
+		MazeDemoApp.app().showControlWindow(true);
 	}
 }

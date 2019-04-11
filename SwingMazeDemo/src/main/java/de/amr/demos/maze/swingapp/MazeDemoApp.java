@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
+import java.util.Optional;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -28,7 +29,6 @@ import de.amr.demos.maze.swingapp.action.RedrawGridAction;
 import de.amr.demos.maze.swingapp.action.SaveImageAction;
 import de.amr.demos.maze.swingapp.action.ShowControlWindowAction;
 import de.amr.demos.maze.swingapp.action.SolveMazeAction;
-import de.amr.demos.maze.swingapp.action.ToggleControlPanelAction;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
@@ -69,10 +69,6 @@ public class MazeDemoApp {
 		return APP.model;
 	}
 
-	public static ControlWindow controlWindow() {
-		return APP.wndControl;
-	}
-
 	public static GridDisplay canvas() {
 		return APP.canvas;
 	}
@@ -101,7 +97,6 @@ public class MazeDemoApp {
 	public final Action actionFullGrid = new CreateFullGridAction();
 	public final Action actionChangeGridResolution = new ChangeGridResolutionAction();
 	public final Action actionShowControls = new ShowControlWindowAction();
-	public final ToggleControlPanelAction actionToggleControlPanel = new ToggleControlPanelAction();
 
 	private Thread workerThread;
 
@@ -155,12 +150,24 @@ public class MazeDemoApp {
 				});
 
 		// hide details initially
-		actionToggleControlPanel.setMinimized(true);
+		wndControl.setMinimized(true);
 
 		// show windows
 		wndDisplayArea.setVisible(true);
 		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
 		wndControl.setVisible(true);
+	}
+
+	public Optional<AlgorithmInfo> currentGenerator() {
+		return wndControl.generatorMenu.getSelectedAlgorithm();
+	}
+
+	public Optional<AlgorithmInfo> currentSolver() {
+		return wndControl.solverMenu.getSelectedAlgorithm();
+	}
+
+	public void showControlWindow(boolean show) {
+		wndControl.setVisible(show);
 	}
 
 	private void createCanvas() {
@@ -184,6 +191,7 @@ public class MazeDemoApp {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		canvas.clear();
+		wndControl.generatorMenu.selectAlgorithm(generatorInfo);
 		controlPanel().getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
 	}
 

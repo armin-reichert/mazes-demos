@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.controlWindow;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static de.amr.demos.maze.swingapp.model.MazeDemoModel.GENERATOR_ALGORITHMS;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
@@ -48,7 +47,6 @@ public class CreateAllMazesAction extends CreateMazeActionBase {
 		List<AlgorithmInfo> generators = Stream.of(GENERATOR_ALGORITHMS).filter(algo -> !algo.isTagged(Slow))
 				.collect(Collectors.toList());
 		for (AlgorithmInfo algo : generators) {
-			controlWindow().generatorMenu.selectAlgorithm(algo);
 			app().changeGenerator(algo);
 			try {
 				createMaze(algo, model().getGenerationStart());

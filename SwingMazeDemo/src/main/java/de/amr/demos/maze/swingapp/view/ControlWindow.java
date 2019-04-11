@@ -4,12 +4,17 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
@@ -25,11 +30,42 @@ import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
  */
 public class ControlWindow extends JFrame {
 
+	private static final ImageIcon ZOOM_IN = new ImageIcon(ControlWindow.class.getResource("/zoom_in.png"));
+	private static final ImageIcon ZOOM_OUT = new ImageIcon(ControlWindow.class.getResource("/zoom_out.png"));
+
+	private static final int COLLAPSED_HEIGHT = 160;
+
 	public final GeneratorMenu generatorMenu;
 	public final CanvasMenu canvasMenu;
 	public final SolverMenu solverMenu;
 	public final OptionMenu optionMenu;
 	public final ControlPanel controlPanel;
+
+	private final Action actionMinimize = new AbstractAction() {
+
+		{
+			putValue(Action.NAME, "Hide Details");
+			putValue(Action.LARGE_ICON_KEY, ZOOM_OUT);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			minimize();
+		}
+	};
+
+	private final Action actionMaximize = new AbstractAction() {
+
+		{
+			putValue(Action.NAME, "Show Details");
+			putValue(Action.LARGE_ICON_KEY, ZOOM_IN);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			maximize();
+		}
+	};
 
 	private static ComboBoxModel<String> createGridResolutionModel() {
 		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
@@ -87,7 +123,6 @@ public class ControlWindow extends JFrame {
 		controlPanel.getBtnCreateAllMazes().setAction(app().actionCreateAllMazes);
 		controlPanel.getBtnFindPath().setAction(app().actionRunMazeSolver);
 		controlPanel.getBtnStop().setAction(app().actionCancelTask);
-		controlPanel.getBtnShowHideDetails().setAction(app().actionToggleControlPanel);
 
 		setContentPane(controlPanel);
 
@@ -102,5 +137,30 @@ public class ControlWindow extends JFrame {
 		mb.add(canvasMenu);
 		optionMenu = new OptionMenu();
 		mb.add(optionMenu);
+	}
+
+	private void minimize() {
+		JPanel controls = controlPanel.getControls();
+		controls.setVisible(false);
+		pack();
+		setSize(getWidth(), COLLAPSED_HEIGHT);
+		controlPanel.getBtnShowHideDetails().setAction(actionMaximize);
+	}
+
+	private void maximize() {
+		JPanel controls = controlPanel.getControls();
+		controls.setVisible(true);
+		validate();
+		pack();
+		controlPanel.getBtnShowHideDetails().setAction(actionMinimize);
+	}
+
+	public void setMinimized(boolean minimized) {
+		if (minimized) {
+			minimize();
+		}
+		else {
+			maximize();
+		}
 	}
 }
