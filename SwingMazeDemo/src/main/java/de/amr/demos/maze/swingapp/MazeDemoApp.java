@@ -150,7 +150,7 @@ public class MazeDemoApp {
 				});
 
 		// hide details initially
-		wndControl.setMinimized(true);
+		wndControl.minimize();
 
 		// show windows
 		wndDisplayArea.setVisible(true);

@@ -14,7 +14,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
@@ -139,28 +138,16 @@ public class ControlWindow extends JFrame {
 		mb.add(optionMenu);
 	}
 
-	private void minimize() {
-		JPanel controls = controlPanel.getControls();
-		controls.setVisible(false);
+	public void minimize() {
+		controlPanel.getControls().setVisible(false);
+		controlPanel.getBtnShowHideDetails().setAction(actionMaximize);
 		pack();
 		setSize(getWidth(), COLLAPSED_HEIGHT);
-		controlPanel.getBtnShowHideDetails().setAction(actionMaximize);
 	}
 
-	private void maximize() {
-		JPanel controls = controlPanel.getControls();
-		controls.setVisible(true);
-		validate();
-		pack();
+	public void maximize() {
+		controlPanel.getControls().setVisible(true);
 		controlPanel.getBtnShowHideDetails().setAction(actionMinimize);
-	}
-
-	public void setMinimized(boolean minimized) {
-		if (minimized) {
-			minimize();
-		}
-		else {
-			maximize();
-		}
+		pack();
 	}
 }
