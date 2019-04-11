@@ -1,5 +1,7 @@
 package de.amr.demos.maze.swingapp.view;
 
+import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,6 +17,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -54,7 +58,6 @@ public class ControlPanel extends JPanel {
 		controls.add(lblGenerator, "cell 0 0,growx");
 
 		lblGeneratorName = new JLabel("Generator Algorithm");
-		lblGenerator.setLabelFor(lblGeneratorName);
 		lblGeneratorName.setBorder(new EmptyBorder(5, 0, 5, 0));
 		lblGeneratorName.setForeground(Color.BLUE);
 		lblGeneratorName.setFont(new Font("Arial Black", Font.PLAIN, 14));
@@ -65,7 +68,6 @@ public class ControlPanel extends JPanel {
 		controls.add(lblSolver, "flowx,cell 0 1,growx");
 
 		lblSolverName = new JLabel("Solver Algorithm");
-		lblSolver.setLabelFor(lblSolverName);
 		controls.add(lblSolverName, "cell 2 1");
 		lblSolverName.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSolverName.setForeground(Color.BLUE);
@@ -138,6 +140,20 @@ public class ControlPanel extends JPanel {
 		textArea.setCaretPosition(textArea.getDocument().getLength());
 	}
 
+	public void updateSolverText(AlgorithmInfo solverInfo) {
+		String text = solverInfo.getDescription();
+		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
+			String metric = model().getMetric().toString();
+			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
+			text += " (" + metric + ")";
+		}
+		lblSolverName.setText(text);
+	}
+
+	public void updateGeneratorText(AlgorithmInfo generatorInfo) {
+		lblGeneratorName.setText(generatorInfo.getDescription());
+	}
+
 	public JButton getBtnCreateMaze() {
 		return btnCreateMaze;
 	}
@@ -167,16 +183,8 @@ public class ControlPanel extends JPanel {
 		return btnStop;
 	}
 
-	public JLabel getLblGenerationAlgorithm() {
-		return lblGeneratorName;
-	}
-
 	public JButton getBtnFindPath() {
 		return btnSolve;
-	}
-
-	public JLabel getLblSolver() {
-		return lblSolverName;
 	}
 
 	public JPanel getControls() {

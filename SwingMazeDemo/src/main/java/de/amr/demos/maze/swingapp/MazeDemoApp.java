@@ -34,7 +34,6 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
-import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.ControlPanel;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
@@ -137,7 +136,6 @@ public class MazeDemoApp {
 
 		// initialize generator and path finder
 		MazeDemoModel.find(GENERATOR_ALGORITHMS, IterativeDFS.class).ifPresent(generatorInfo -> {
-			wndControl.generatorMenu.selectAlgorithm(generatorInfo);
 			changeGenerator(generatorInfo);
 		});
 
@@ -145,7 +143,6 @@ public class MazeDemoApp {
 				.find(PATHFINDER_ALGORITHMS,
 						pathfinderInfo -> pathfinderInfo.getAlgorithmClass() == BidiBreadthFirstSearch.class)
 				.ifPresent(alg -> {
-					wndControl.solverMenu.selectAlgorithm(alg);
 					changeSolver(alg);
 				});
 
@@ -162,8 +159,21 @@ public class MazeDemoApp {
 		return wndControl.generatorMenu.getSelectedAlgorithm();
 	}
 
+	public void changeGenerator(AlgorithmInfo generatorInfo) {
+		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		canvas.clear();
+		wndControl.generatorMenu.selectAlgorithm(generatorInfo);
+		controlPanel().updateGeneratorText(generatorInfo);
+	}
+
 	public Optional<AlgorithmInfo> currentSolver() {
 		return wndControl.solverMenu.getSelectedAlgorithm();
+	}
+
+	public void changeSolver(AlgorithmInfo solverInfo) {
+		wndControl.solverMenu.selectAlgorithm(solverInfo);
+		controlPanel().updateSolverText(solverInfo);
 	}
 
 	public void showControlWindow(boolean show) {
@@ -185,24 +195,6 @@ public class MazeDemoApp {
 		createCanvas();
 		wndDisplayArea.setContentPane(canvas);
 		wndDisplayArea.validate();
-	}
-
-	public void changeGenerator(AlgorithmInfo generatorInfo) {
-		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		canvas.clear();
-		wndControl.generatorMenu.selectAlgorithm(generatorInfo);
-		controlPanel().getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
-	}
-
-	public void changeSolver(AlgorithmInfo solverInfo) {
-		String label = solverInfo.getDescription();
-		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
-			String metricName = model.getMetric().toString();
-			String text = metricName.substring(0, 1) + metricName.substring(1).toLowerCase();
-			label += " (" + text + ")";
-		}
-		controlPanel().getLblSolver().setText(label);
 	}
 
 	public void showMessage(String msg) {
