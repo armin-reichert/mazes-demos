@@ -35,6 +35,7 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 	private Color visitedCellColor;
 	private Color completedCellColor;
 	private Color pathColor;
+	private Style style;
 
 	public GridDisplay(MazeDemoModel model) {
 		super(model.getGrid(), model.getGridCellSize());
@@ -96,6 +97,14 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 		this.pathColor = pathColor;
 	}
 
+	public Style getStyle() {
+		return style;
+	}
+
+	public void setStyle(Style style) {
+		this.style = style;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
@@ -123,7 +132,7 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 	}
 
 	private ConfigurableGridRenderer createRenderer() {
-		ConfigurableGridRenderer r = model.getStyle() == Style.PEARLS ? new PearlsGridRenderer()
+		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
 		r.fnGridBgColor = () -> Color.BLACK;
 		r.fnCellSize = () -> model.getGridCellSize();

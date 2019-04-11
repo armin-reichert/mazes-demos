@@ -15,6 +15,6 @@ public class CreateEmptyGridAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		MazeDemoApp.model().setGrid(false, TraversalState.COMPLETED);
+		MazeDemoApp.model().createGrid(false, TraversalState.COMPLETED);
 	}
 }

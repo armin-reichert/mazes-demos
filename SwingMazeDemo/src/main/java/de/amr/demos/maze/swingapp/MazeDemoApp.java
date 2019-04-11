@@ -74,7 +74,7 @@ public class MazeDemoApp {
 	}
 
 	public static GridDisplay canvas() {
-		return (GridDisplay) APP.wndDisplayArea.getContentPane();
+		return APP.canvas;
 	}
 
 	public static ControlPanel controlPanel() {
@@ -87,6 +87,7 @@ public class MazeDemoApp {
 	private final MazeDemoModel model;
 	private final ControlWindow wndControl;
 	private final JFrame wndDisplayArea;
+	private GridDisplay canvas;
 
 	public final Action actionCreateMaze = new CreateMazeAction();
 	public final Action actionCreateAllMazes = new CreateAllMazesAction();
@@ -112,7 +113,6 @@ public class MazeDemoApp {
 		model = new MazeDemoModel();
 		model.setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
 		model.setPassageWidthPercentage(100);
-		model.setStyle(Style.WALL_PASSAGES);
 		model.setDelay(0);
 		model.setGenerationStart(CENTER);
 		model.setPathFinderStart(TOP_LEFT);
@@ -127,17 +127,14 @@ public class MazeDemoApp {
 		model.setGridCellSize(32);
 		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
 		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
-		model.setGrid(false, TraversalState.UNVISITED);
+		model.createGrid(false, TraversalState.UNVISITED);
 
 		// create grid display
+		createCanvas();
 		wndDisplayArea = new JFrame("Maze Display Window");
 		wndDisplayArea.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		wndDisplayArea.setUndecorated(true);
-		wndDisplayArea.setContentPane(new GridDisplay(model));
-		canvas().setCompletedCellColor(Color.WHITE);
-		canvas().setVisitedCellColor(Color.BLUE);
-		canvas().setUnvisitedCellColor(Color.BLACK);
-		canvas().setPathColor(Color.RED);
+		wndDisplayArea.setContentPane(canvas);
 
 		// create control window
 		wndControl = new ControlWindow();
@@ -166,17 +163,27 @@ public class MazeDemoApp {
 		wndControl.setVisible(true);
 	}
 
+	private void createCanvas() {
+		canvas = new GridDisplay(model);
+		canvas.setCompletedCellColor(Color.WHITE);
+		canvas.setVisitedCellColor(Color.BLUE);
+		canvas.setUnvisitedCellColor(Color.BLACK);
+		canvas.setPathColor(Color.RED);
+		canvas.setStyle(Style.WALL_PASSAGES);
+	}
+
 	public void resetDisplay() {
-		model.changeHandler.removePropertyChangeListener(canvas());
-		model.setGrid(false, TraversalState.UNVISITED);
-		wndDisplayArea.setContentPane(new GridDisplay(model));
+		model.changeHandler.removePropertyChangeListener(canvas);
+		model.createGrid(false, TraversalState.UNVISITED);
+		createCanvas();
+		wndDisplayArea.setContentPane(canvas);
 		wndDisplayArea.validate();
 	}
 
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-		model.setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		canvas().clear();
+		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		canvas.clear();
 		controlPanel().getLblGenerationAlgorithm().setText(generatorInfo.getDescription());
 	}
 

@@ -176,7 +176,6 @@ public class MazeDemoModel {
 	private Metric metric;
 	private GridPosition pathFinderStart;
 	private GridPosition pathFinderTarget;
-	private Style style;
 
 	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
 
@@ -212,14 +211,6 @@ public class MazeDemoModel {
 
 	public void setPassageWidthFluent(boolean fluent) {
 		this.passageWidthFluent = fluent;
-	}
-
-	public Style getStyle() {
-		return style;
-	}
-
-	public void setStyle(Style style) {
-		this.style = style;
 	}
 
 	public boolean isGenerationAnimated() {
@@ -258,7 +249,7 @@ public class MazeDemoModel {
 		return grid;
 	}
 
-	public void setGrid(boolean full, TraversalState defaultState) {
+	public void createGrid(boolean full, TraversalState defaultState) {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
 		grid = full ? fullObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0)
 				: emptyObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0);

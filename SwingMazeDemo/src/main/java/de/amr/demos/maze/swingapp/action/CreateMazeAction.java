@@ -26,7 +26,7 @@ public class CreateMazeAction extends CreateMazeActionBase {
 	public void actionPerformed(ActionEvent e) {
 		controlWindow().generatorMenu.getSelectedAlgorithm().ifPresent(generatorInfo -> {
 			boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-			model().setGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+			model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 			canvas().clear();
 			app().startWorkerThread(() -> {
 				app().enableUI(false);
