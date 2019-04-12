@@ -9,6 +9,9 @@ import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.UST;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.BFS;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.DFS;
 import static de.amr.demos.maze.swingapp.model.PathFinderTag.INFORMED;
+import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
+import static de.amr.graph.grid.api.GridPosition.CENTER;
+import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 import static de.amr.graph.grid.impl.GridFactory.emptyObservableGrid;
 import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 
@@ -169,6 +172,20 @@ public class MazeDemoModel {
 
 	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
 
+	public MazeDemoModel() {
+		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
+		setPassageWidthPercentage(100);
+		setDelay(0);
+		setGenerationStart(CENTER);
+		setPathFinderStart(TOP_LEFT);
+		setPathFinderTarget(BOTTOM_RIGHT);
+		setMetric(Metric.EUCLIDEAN);
+		setGenerationAnimated(true);
+		setFloodFillAfterGeneration(false);
+		setDistancesVisible(false);
+		setHidingControlsWhenRunning(false);
+	}
+
 	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
 		return Arrays.stream(GENERATOR_ALGORITHMS)
 				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
@@ -311,5 +328,4 @@ public class MazeDemoModel {
 	public void setPathFinderTarget(GridPosition pos) {
 		this.pathFinderTarget = pos;
 	}
-
 }

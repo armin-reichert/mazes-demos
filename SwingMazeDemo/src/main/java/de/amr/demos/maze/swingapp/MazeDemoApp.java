@@ -1,10 +1,5 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
-import static de.amr.graph.grid.api.GridPosition.CENTER;
-import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
-
-import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
@@ -17,8 +12,6 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
-import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
@@ -74,24 +67,12 @@ public class MazeDemoApp {
 	public MazeDemoApp() {
 		IT = this;
 
-		// initialize data
 		model = new MazeDemoModel();
-		model.setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
-		model.setPassageWidthPercentage(100);
-		model.setDelay(0);
-		model.setGenerationStart(CENTER);
-		model.setPathFinderStart(TOP_LEFT);
-		model.setPathFinderTarget(BOTTOM_RIGHT);
-		model.setMetric(Metric.EUCLIDEAN);
-		model.setGenerationAnimated(true);
-		model.setFloodFillAfterGeneration(false);
-		model.setDistancesVisible(false);
-		model.setHidingControlsWhenRunning(false);
 
 		// create initial grid
 		model.setGridCellSize(32);
-		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
-		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
+		model.setGridWidth(DISPLAY_MODE.getWidth() / 32);
+		model.setGridHeight(DISPLAY_MODE.getHeight() / 32);
 		model.createGrid(false, TraversalState.UNVISITED);
 
 		// create grid display
@@ -140,15 +121,7 @@ public class MazeDemoApp {
 	private void createCanvas() {
 		GridDisplay oldCanvas = canvas;
 		canvas = new GridDisplay(model);
-		if (oldCanvas == null) {
-			canvas.setGridBackgroundColor(Color.BLACK);
-			canvas.setCompletedCellColor(Color.WHITE);
-			canvas.setVisitedCellColor(Color.BLUE);
-			canvas.setUnvisitedCellColor(Color.BLACK);
-			canvas.setPathColor(Color.RED);
-			canvas.setStyle(Style.WALL_PASSAGES);
-		}
-		else {
+		if (oldCanvas != null) {
 			canvas.setGridBackgroundColor(oldCanvas.getGridBackgroundColor());
 			canvas.setCompletedCellColor(oldCanvas.getCompletedCellColor());
 			canvas.setVisitedCellColor(oldCanvas.getVisitedCellColor());
