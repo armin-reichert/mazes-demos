@@ -22,7 +22,6 @@ import de.amr.demos.maze.swingapp.action.ChangeGridResolution;
 import de.amr.demos.maze.swingapp.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.action.FloodFill;
-import de.amr.demos.maze.swingapp.action.RedrawGrid;
 import de.amr.demos.maze.swingapp.action.SaveImage;
 import de.amr.demos.maze.swingapp.action.SolveMaze;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
@@ -133,7 +132,6 @@ public class ControlWindow extends JFrame {
 	private final Action actionCreateAllMazes = new CreateAllMazes();
 	private final Action actionSolveMaze = new SolveMaze();
 	private final Action actionChangeGridResolution = new ChangeGridResolution();
-	private final Action actionRedrawGrid = new RedrawGrid();
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
@@ -184,7 +182,6 @@ public class ControlWindow extends JFrame {
 		mb.add(solverMenu);
 		canvasMenu = new JMenu("Canvas");
 		canvasMenu.add(actionClearCanvas);
-		canvasMenu.add(actionRedrawGrid);
 		canvasMenu.add(actionFloodFill);
 		canvasMenu.addSeparator();
 		canvasMenu.add(actionCreateEmptyGrid);

@@ -40,22 +40,22 @@ public class MazeDemoApp {
 	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
 			.getDefaultScreenDevice().getDisplayMode();
 
-	private static MazeDemoApp IT;
+	private static MazeDemoApp it;
 
 	public static MazeDemoApp app() {
-		return IT;
+		return it;
 	}
 
 	public static MazeDemoModel model() {
-		return IT.model;
+		return it.model;
 	}
 
 	public static GridDisplay canvas() {
-		return IT.canvas;
+		return it.canvas;
 	}
 
 	public static ControlWindow controlWindow() {
-		return IT.wndControl;
+		return it.wndControl;
 	}
 
 	private final MazeDemoModel model;
@@ -65,7 +65,7 @@ public class MazeDemoApp {
 	private Thread bgThread;
 
 	public MazeDemoApp() {
-		IT = this;
+		it = this;
 
 		model = new MazeDemoModel();
 
