@@ -14,9 +14,9 @@ import javax.swing.JComboBox;
  * 
  * @author Armin Reichert
  */
-public class ChangeGridResolutionAction extends AbstractAction {
+public class ChangeGridResolution extends AbstractAction {
 
-	public ChangeGridResolutionAction() {
+	public ChangeGridResolution() {
 		putValue(NAME, "Change Resolution");
 	}
 

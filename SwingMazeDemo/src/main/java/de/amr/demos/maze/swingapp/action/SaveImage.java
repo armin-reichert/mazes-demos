@@ -12,9 +12,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class SaveImageAction extends AbstractAction {
+public class SaveImage extends AbstractAction {
 
-	public SaveImageAction() {
+	public SaveImage() {
 		putValue(NAME, "Save Image...");
 	}
 

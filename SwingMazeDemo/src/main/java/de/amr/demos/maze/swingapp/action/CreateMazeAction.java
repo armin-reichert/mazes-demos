@@ -3,48 +3,62 @@ package de.amr.demos.maze.swingapp.action;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
+import static java.lang.String.format;
 
-import java.awt.event.ActionEvent;
+import java.lang.reflect.InvocationTargetException;
 
-import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
-import de.amr.graph.core.api.TraversalState;
+import javax.swing.AbstractAction;
+
+import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
+import de.amr.graph.grid.ui.animation.BFSAnimation;
+import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.util.StopWatch;
 
-/**
- * Action for creating a maze using the currently selected generation algorithm.
- * 
- * @author Armin Reichert
- */
-public class CreateMazeAction extends CreateMazeActionBase {
+public abstract class CreateMazeAction extends AbstractAction {
 
-	public CreateMazeAction() {
-		putValue(NAME, "New Maze");
+	protected void pause(float seconds) {
+		try {
+			Thread.sleep(Math.round(seconds * 1000));
+		} catch (InterruptedException e) {
+			throw new AnimationInterruptedException();
+		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		app().currentGenerator().ifPresent(generatorInfo -> {
-			boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-			model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+	protected void floodFill() {
+		BFSAnimation.builder().canvas(canvas()).distanceVisible(false).build()
+				.floodFill(model().getGrid().cell(model().getGenerationStart()));
+	}
+
+	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {
+		MazeGenerator generator = null;
+		try {
+			generator = (MazeGenerator) generatorInfo.getAlgorithmClass().getConstructor(GridGraph2D.class)
+					.newInstance(model().getGrid());
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+		int startCell = model().getGrid().cell(startPosition);
+		int x = model().getGrid().col(startCell), y = model().getGrid().row(startCell);
+		app().showMessage(
+				format("\n%s (%d cells)", generatorInfo.getDescription(), model().getGrid().numVertices()));
+		if (model().isGenerationAnimated()) {
+			generator.createMaze(x, y);
+		}
+		else {
+			canvas().enableAnimation(false);
 			canvas().clear();
-			app().startBackgroundThread(() -> {
-				app().setBusy(true);
-				try {
-					createMaze(generatorInfo, model().getGenerationStart());
-					if (model().isFloodFillAfterGeneration()) {
-						pause(1);
-						floodFill();
-					}
-				} catch (AnimationInterruptedException x) {
-					app().showMessage("Animation interrupted");
-					app().resetDisplay();
-				} catch (Exception | StackOverflowError x) {
-					app().showMessage("Error during generation: " + x.getClass().getSimpleName());
-					app().resetDisplay();
-				} finally {
-					app().setBusy(false);
-				}
-			});
-		});
+			StopWatch watch = new StopWatch();
+			watch.start();
+			generator.createMaze(x, y);
+			watch.stop();
+			app().showMessage(format("Maze generation: %.2f seconds.", watch.getSeconds()));
+			watch.measure(() -> canvas().drawGrid());
+			app().showMessage(format("Grid rendering:  %.2f seconds.", watch.getSeconds()));
+			canvas().enableAnimation(true);
+		}
 	}
 }

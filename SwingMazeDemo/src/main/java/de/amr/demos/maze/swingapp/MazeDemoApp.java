@@ -9,6 +9,7 @@ import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -22,6 +23,7 @@ import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
 import de.amr.demos.maze.swingapp.view.GridDisplay;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
@@ -139,6 +141,7 @@ public class MazeDemoApp {
 		GridDisplay oldCanvas = canvas;
 		canvas = new GridDisplay(model);
 		if (oldCanvas == null) {
+			canvas.setGridBackgroundColor(Color.BLACK);
 			canvas.setCompletedCellColor(Color.WHITE);
 			canvas.setVisitedCellColor(Color.BLUE);
 			canvas.setUnvisitedCellColor(Color.BLACK);
@@ -146,6 +149,7 @@ public class MazeDemoApp {
 			canvas.setStyle(Style.WALL_PASSAGES);
 		}
 		else {
+			canvas.setGridBackgroundColor(oldCanvas.getGridBackgroundColor());
 			canvas.setCompletedCellColor(oldCanvas.getCompletedCellColor());
 			canvas.setVisitedCellColor(oldCanvas.getVisitedCellColor());
 			canvas.setUnvisitedCellColor(oldCanvas.getUnvisitedCellColor());
@@ -156,8 +160,11 @@ public class MazeDemoApp {
 
 	public void resetDisplay() {
 		model.changeHandler.removePropertyChangeListener(canvas);
-		model.createGrid(false, TraversalState.UNVISITED);
+		boolean wasFull = model.getGrid().isFull();
+		model.createGrid(wasFull, wasFull ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		createCanvas();
+		canvas.clear();
+		canvas.drawGrid();
 		wndDisplayArea.setContentPane(canvas);
 		wndDisplayArea.validate();
 	}
@@ -171,8 +178,22 @@ public class MazeDemoApp {
 		wndControl.setEnabled(!busy);
 	}
 
-	public void startBackgroundThread(Runnable code) {
-		bgThread = new Thread(code);
+	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
+			Consumer<Throwable> onFailure) {
+		bgThread = new Thread(() -> {
+			setBusy(true);
+			code.run();
+			setBusy(false);
+		});
+		bgThread.setUncaughtExceptionHandler((thread, e) -> {
+			if (e.getClass() == AnimationInterruptedException.class) {
+				onInterruption.accept((AnimationInterruptedException) e);
+			}
+			else {
+				onFailure.accept(e);
+			}
+			setBusy(false);
+		});
 		bgThread.start();
 	}
 

@@ -12,14 +12,14 @@ import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.util.StopWatch;
 
 /**
- * Action for running a "flood-fill" on the current maze.
+ * Action for running a "flood-fill" on the current grid/maze.
  * 
  * @author Armin Reichert
  */
-public class FloodFillAction extends AbstractAction {
+public class FloodFill extends AbstractAction {
 
-	public FloodFillAction() {
-		putValue(NAME, "Flood-fill");
+	public FloodFill() {
+		super("Flood-fill");
 	}
 
 	private void runFloodFill() {
@@ -29,18 +29,21 @@ public class FloodFillAction extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		canvas().drawGrid();
-		app().startBackgroundThread(() -> {
-			app().setBusy(true);
-			try {
-				StopWatch watch = new StopWatch();
-				watch.measure(this::runFloodFill);
-				app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));
-			} catch (Exception x) {
-				x.printStackTrace();
-			} finally {
-				app().setBusy(false);
-			}
-		});
+		app().startBackgroundThread(
+
+				() -> {
+					canvas().drawGrid();
+					StopWatch watch = new StopWatch();
+					watch.measure(this::runFloodFill);
+					app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));
+				},
+
+				interrupted -> {
+					app().showMessage("Flood-fill interrupted");
+				},
+
+				any -> {
+					any.printStackTrace(System.err);
+				});
 	}
 }

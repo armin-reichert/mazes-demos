@@ -24,6 +24,7 @@ import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
+import de.amr.util.StopWatch;
 
 /**
  * Display area for maze generation and traversal.
@@ -35,6 +36,7 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 	private final MazeDemoModel model;
 	private final Action actionShowControls;
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
+	private Color gridBackgroundColor;
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
 	private Color completedCellColor;
@@ -75,6 +77,14 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	public void enableAnimation(boolean enabled) {
 		animation.setEnabled(enabled);
+	}
+
+	public Color getGridBackgroundColor() {
+		return gridBackgroundColor;
+	}
+
+	public void setGridBackgroundColor(Color gridBackgroundColor) {
+		this.gridBackgroundColor = gridBackgroundColor;
 	}
 
 	public Color getUnvisitedCellColor() {
@@ -139,14 +149,15 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 
 	@Override
 	public void drawGrid() {
-		System.out.println("GridDisplay.drawGrid: " + getGrid());
-		super.drawGrid();
+		StopWatch watch = new StopWatch();
+		watch.measure(super::drawGrid);
+		System.out.println(String.format("%s, drawing time: %.0f ms", getGrid(), watch.getMillis()));
 	}
 
 	private ConfigurableGridRenderer createRenderer() {
 		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
-		r.fnGridBgColor = () -> Color.BLACK;
+		r.fnGridBgColor = () -> getGridBackgroundColor();
 		r.fnCellSize = () -> model.getGridCellSize();
 		r.fnPassageWidth = (u, v) -> {
 			int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;

@@ -1,6 +1,8 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
@@ -16,21 +18,18 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JSlider;
 
-import de.amr.demos.maze.swingapp.action.CancelTaskAction;
-import de.amr.demos.maze.swingapp.action.ChangeGridResolutionAction;
-import de.amr.demos.maze.swingapp.action.ClearCanvasAction;
-import de.amr.demos.maze.swingapp.action.CreateAllMazesAction;
-import de.amr.demos.maze.swingapp.action.CreateEmptyGridAction;
-import de.amr.demos.maze.swingapp.action.CreateFullGridAction;
-import de.amr.demos.maze.swingapp.action.CreateMazeAction;
-import de.amr.demos.maze.swingapp.action.FloodFillAction;
-import de.amr.demos.maze.swingapp.action.RedrawGridAction;
-import de.amr.demos.maze.swingapp.action.SaveImageAction;
-import de.amr.demos.maze.swingapp.action.SolveMazeAction;
+import de.amr.demos.maze.swingapp.action.ChangeGridResolution;
+import de.amr.demos.maze.swingapp.action.CreateAllMazes;
+import de.amr.demos.maze.swingapp.action.CreateSingleMaze;
+import de.amr.demos.maze.swingapp.action.FloodFill;
+import de.amr.demos.maze.swingapp.action.RedrawGrid;
+import de.amr.demos.maze.swingapp.action.SaveImage;
+import de.amr.demos.maze.swingapp.action.SolveMaze;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
 import de.amr.demos.maze.swingapp.view.menu.OptionMenu;
 import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
+import de.amr.graph.core.api.TraversalState;
 
 /**
  * Window containing menus and control panel.
@@ -97,17 +96,46 @@ public class ControlWindow extends JFrame {
 		}
 	};
 
-	private final Action actionCreateMaze = new CreateMazeAction();
-	private final Action actionCreateAllMazes = new CreateAllMazesAction();
-	private final Action actionRunMazeSolver = new SolveMazeAction();
-	private final Action actionCancelTask = new CancelTaskAction();
-	private final Action actionChangeGridResolution = new ChangeGridResolutionAction();
-	private final Action actionClearCanvas = new ClearCanvasAction();
-	private final Action actionRedrawGrid = new RedrawGridAction();
-	private final Action actionFloodFill = new FloodFillAction();
-	private final Action actionSaveImage = new SaveImageAction();
-	private final Action actionEmptyGrid = new CreateEmptyGridAction();
-	private final Action actionFullGrid = new CreateFullGridAction();
+	private final Action actionCreateEmptyGrid = new AbstractAction("Create Empty Grid") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			model().createGrid(false, TraversalState.COMPLETED);
+		}
+	};
+
+	private final Action actionCreateFullGrid = new AbstractAction("Create Full Grid") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			model().createGrid(true, TraversalState.COMPLETED);
+		}
+	};
+
+	private final Action actionStopBackgroundThread = new AbstractAction("Stop") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			app().stopBackgroundThread();
+		}
+	};
+
+	private final Action actionClearCanvas = new AbstractAction("Clear Canvas") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			canvas().clear();
+			canvas().drawGrid();
+		}
+	};
+
+	private final Action actionCreateSingleMaze = new CreateSingleMaze();
+	private final Action actionCreateAllMazes = new CreateAllMazes();
+	private final Action actionSolveMaze = new SolveMaze();
+	private final Action actionChangeGridResolution = new ChangeGridResolution();
+	private final Action actionRedrawGrid = new RedrawGrid();
+	private final Action actionFloodFill = new FloodFill();
+	private final Action actionSaveImage = new SaveImage();
 
 	public ControlWindow() {
 		setTitle("Mazes");
@@ -140,10 +168,10 @@ public class ControlWindow extends JFrame {
 			}
 		});
 
-		controlPanel.getBtnCreateMaze().setAction(actionCreateMaze);
+		controlPanel.getBtnCreateMaze().setAction(actionCreateSingleMaze);
 		controlPanel.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
-		controlPanel.getBtnFindPath().setAction(actionRunMazeSolver);
-		controlPanel.getBtnStop().setAction(actionCancelTask);
+		controlPanel.getBtnFindPath().setAction(actionSolveMaze);
+		controlPanel.getBtnStop().setAction(actionStopBackgroundThread);
 
 		setContentPane(controlPanel);
 
@@ -159,8 +187,8 @@ public class ControlWindow extends JFrame {
 		canvasMenu.add(actionRedrawGrid);
 		canvasMenu.add(actionFloodFill);
 		canvasMenu.addSeparator();
-		canvasMenu.add(actionEmptyGrid);
-		canvasMenu.add(actionFullGrid);
+		canvasMenu.add(actionCreateEmptyGrid);
+		canvasMenu.add(actionCreateFullGrid);
 		canvasMenu.addSeparator();
 		canvasMenu.add(actionSaveImage);
 
@@ -189,9 +217,9 @@ public class ControlWindow extends JFrame {
 		canvasMenu.setEnabled(enabled);
 		optionMenu.setEnabled(enabled);
 		actionChangeGridResolution.setEnabled(enabled);
-		actionCreateMaze.setEnabled(enabled);
+		actionCreateSingleMaze.setEnabled(enabled);
 		actionCreateAllMazes.setEnabled(enabled);
-		actionRunMazeSolver.setEnabled(enabled);
+		actionSolveMaze.setEnabled(enabled);
 		controlPanel.getSliderPassageWidth().setEnabled(enabled);
 	}
 }

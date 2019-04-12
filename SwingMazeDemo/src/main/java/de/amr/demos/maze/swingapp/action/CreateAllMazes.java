@@ -18,29 +18,28 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
  * 
  * @author Armin Reichert
  */
-public class CreateAllMazesAction extends CreateMazeActionBase {
+public class CreateAllMazes extends CreateMazeAction {
 
-	public CreateAllMazesAction() {
+	public CreateAllMazes() {
 		putValue(NAME, "All Mazes");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().setBusy(true);
-		app().startBackgroundThread(() -> {
-			try {
-				createAllMazes();
-			} catch (AnimationInterruptedException x) {
-				app().showMessage("Animation interrupted");
-				app().resetDisplay();
-			} catch (Exception | StackOverflowError x) {
-				app().showMessage("Error during generation: " + x.getClass().getSimpleName());
-				app().resetDisplay();
-				x.printStackTrace(System.err);
-			} finally {
-				app().setBusy(false);
-			}
-		});
+		app().startBackgroundThread(
+
+				this::createAllMazes,
+
+				interrupted -> {
+					app().showMessage("Animation interrupted");
+					app().resetDisplay();
+				},
+
+				any -> {
+					any.printStackTrace(System.err);
+					app().showMessage("Error during maze creation: " + any.getClass().getSimpleName());
+					app().resetDisplay();
+				});
 	}
 
 	private void createAllMazes() {

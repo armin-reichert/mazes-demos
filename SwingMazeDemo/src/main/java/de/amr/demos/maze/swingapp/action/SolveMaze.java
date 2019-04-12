@@ -12,7 +12,6 @@ import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
-import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
@@ -34,71 +33,72 @@ import de.amr.util.StopWatch;
  * 
  * @author Armin Reichert
  */
-public class SolveMazeAction extends AbstractAction {
+public class SolveMaze extends AbstractAction {
 
-	public SolveMazeAction() {
-		putValue(NAME, "Solve");
+	public SolveMaze() {
+		super("Solve");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		app().currentSolver().ifPresent(solver -> {
-			canvas().drawGrid(); // to possibly overwrite older search
-			app().startBackgroundThread(() -> {
-				app().setBusy(true);
-				try {
-					runSolverAnimation(solver);
-				} catch (AnimationInterruptedException x) {
-					app().showMessage("Animation interrupted");
-					app().resetDisplay();
-				} catch (Exception x) {
-					x.printStackTrace();
-					app().showMessage("Error during path finding: " + x.getMessage());
-				} finally {
-					app().setBusy(false);
-				}
-			});
+			app().startBackgroundThread(
+
+					() -> {
+						canvas().drawGrid(); // possibly overwrite older search
+						runSolverAnimation(solver);
+					},
+
+					interruption -> {
+						app().showMessage("Animation interrupted");
+						app().resetDisplay();
+					},
+
+					failure -> {
+						failure.printStackTrace(System.err);
+						app().showMessage("Solving failed: " + failure.getMessage());
+					});
 		});
 	}
 
 	private void runSolverAnimation(AlgorithmInfo info) {
 
 		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
-			runSolver(new BreadthFirstSearch(model().getGrid()), info);
+			runSolverAnimation(new BreadthFirstSearch(model().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			runSolver(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolver(new DijkstraSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new DijkstraSearch(model().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			runSolver(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolver(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			runSolverAnimation(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
-			runSolver(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), info);
+			runSolverAnimation(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
-			runSolver(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), info);
+			runSolverAnimation(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
-			runSolver(new DepthFirstSearch(model().getGrid()), info);
+			runSolverAnimation(new DepthFirstSearch(model().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch2.class) {
-			runSolver(new DepthFirstSearch2(model().getGrid()), info);
+			runSolverAnimation(new DepthFirstSearch2(model().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == IDDFS.class) {
-			runSolver(new IDDFS(model().getGrid()), info);
+			runSolverAnimation(new IDDFS(model().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolver(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			runSolverAnimation(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 	}
 
-	private void runSolver(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
+	private void runSolverAnimation(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
 		int source = model().getGrid().cell(model().getPathFinderSource());
 		int target = model().getGrid().cell(model().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
