@@ -18,6 +18,7 @@ import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
@@ -189,6 +190,10 @@ public class MazeDemoModel {
 	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
 		return Arrays.stream(GENERATOR_ALGORITHMS)
 				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
+	}
+
+	public Stream<AlgorithmInfo> findGenerators() {
+		return Arrays.stream(GENERATOR_ALGORITHMS);
 	}
 
 	public Optional<AlgorithmInfo> findSolver(Class<?> clazz) {

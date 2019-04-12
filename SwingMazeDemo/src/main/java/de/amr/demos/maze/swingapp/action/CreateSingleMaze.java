@@ -23,11 +23,11 @@ public class CreateSingleMaze extends CreateMazeAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		app().currentGenerator().ifPresent(generatorInfo -> {
-			boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-			model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 			app().startBackgroundThread(
 
 					() -> {
+						boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+						model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 						canvas().clear();
 						createMaze(generatorInfo, model().getGenerationStart());
 						if (model().isFloodFillAfterGeneration()) {

@@ -55,9 +55,9 @@ public abstract class CreateMazeAction extends AbstractAction {
 			watch.start();
 			generator.createMaze(x, y);
 			watch.stop();
-			app().showMessage(format("Maze generation: %.2f seconds.", watch.getSeconds()));
+			app().showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> canvas().drawGrid());
-			app().showMessage(format("Grid rendering:  %.2f seconds.", watch.getSeconds()));
+			app().showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
 			canvas().enableAnimation(true);
 		}
 	}

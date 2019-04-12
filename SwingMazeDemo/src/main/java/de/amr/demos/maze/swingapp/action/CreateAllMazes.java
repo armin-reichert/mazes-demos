@@ -2,13 +2,11 @@ package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
-import static de.amr.demos.maze.swingapp.model.MazeDemoModel.GENERATOR_ALGORITHMS;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
@@ -30,25 +28,25 @@ public class CreateAllMazes extends CreateMazeAction {
 
 				this::createAllMazes,
 
-				interrupted -> {
+				interruption -> {
 					app().showMessage("Animation interrupted");
 					app().resetDisplay();
 				},
 
-				any -> {
-					any.printStackTrace(System.err);
-					app().showMessage("Error during maze creation: " + any.getClass().getSimpleName());
+				failure -> {
+					failure.printStackTrace(System.err);
+					app().showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
 					app().resetDisplay();
 				});
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> generators = Stream.of(GENERATOR_ALGORITHMS).filter(algo -> !algo.isTagged(Slow))
+		List<AlgorithmInfo> fastGenerators = model().findGenerators().filter(alg -> !alg.isTagged(Slow))
 				.collect(Collectors.toList());
-		for (AlgorithmInfo algo : generators) {
-			app().changeGenerator(algo);
+		for (AlgorithmInfo generatorInfo : fastGenerators) {
+			app().changeGenerator(generatorInfo);
 			try {
-				createMaze(algo, model().getGenerationStart());
+				createMaze(generatorInfo, model().getGenerationStart());
 				if (model().isFloodFillAfterGeneration()) {
 					pause(1);
 					floodFill();
@@ -56,9 +54,7 @@ public class CreateAllMazes extends CreateMazeAction {
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError | Exception x) {
-				app().showMessage("Error during generation: " + x.getClass().getSimpleName());
-				app().resetDisplay();
-				x.printStackTrace();
+				throw new RuntimeException(x);
 			}
 			pause(2);
 		}

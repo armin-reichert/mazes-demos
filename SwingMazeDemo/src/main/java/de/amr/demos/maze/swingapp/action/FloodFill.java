@@ -38,12 +38,12 @@ public class FloodFill extends AbstractAction {
 					app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));
 				},
 
-				interrupted -> {
+				interruption -> {
 					app().showMessage("Flood-fill interrupted");
 				},
 
-				any -> {
-					any.printStackTrace(System.err);
+				failure -> {
+					failure.printStackTrace(System.err);
 				});
 	}
 }
