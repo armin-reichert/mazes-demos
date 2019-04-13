@@ -1,6 +1,8 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
@@ -25,6 +27,7 @@ import de.amr.util.StopWatch;
  */
 public class GridViewController implements PropertyChangeListener {
 
+	private MazeDemoModel model;
 	private JFrame window;
 	private GridView gridView;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
@@ -46,20 +49,21 @@ public class GridViewController implements PropertyChangeListener {
 
 	public GridViewController(MazeDemoModel model) {
 		this();
+		this.model = model;
 		model.changeHandler.addPropertyChangeListener(this);
 		createGridView(model);
 	}
 
 	private void createGridView(MazeDemoModel model) {
-		GridView oldCanvas = gridView;
-		gridView = new GridView(model);
-		if (oldCanvas != null) {
-			gridView.setGridBackgroundColor(oldCanvas.getGridBackgroundColor());
-			gridView.setCompletedCellColor(oldCanvas.getCompletedCellColor());
-			gridView.setVisitedCellColor(oldCanvas.getVisitedCellColor());
-			gridView.setUnvisitedCellColor(oldCanvas.getUnvisitedCellColor());
-			gridView.setPathColor(oldCanvas.getPathColor());
-			gridView.setStyle(oldCanvas.getStyle());
+		GridView oldGridView = gridView;
+		gridView = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
+		if (oldGridView != null) {
+			gridView.setGridBackgroundColor(oldGridView.getGridBackgroundColor());
+			gridView.setCompletedCellColor(oldGridView.getCompletedCellColor());
+			gridView.setVisitedCellColor(oldGridView.getVisitedCellColor());
+			gridView.setUnvisitedCellColor(oldGridView.getUnvisitedCellColor());
+			gridView.setPathColor(oldGridView.getPathColor());
+			gridView.setStyle(oldGridView.getStyle());
 		}
 		gridView.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		gridView.getActionMap().put("showSettings", actionShowControls);
@@ -70,6 +74,17 @@ public class GridViewController implements PropertyChangeListener {
 		animation = new GridCanvasAnimation<>(gridView);
 		animation.fnDelay = model::getDelay;
 		model.getGrid().addGraphObserver(animation);
+	}
+
+	private int computePassageWidth(int u, int v) {
+		int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
+		if (model.isPassageWidthFluent()) {
+			float factor = (float) model.getGrid().col(u) / model.getGridWidth();
+			passageWidth = Math.round(factor * passageWidth);
+		}
+		passageWidth = max(1, passageWidth);
+		passageWidth = min(model.getGridCellSize() - 1, passageWidth);
+		return passageWidth;
 	}
 
 	public void replaceGridView(MazeDemoModel model) {

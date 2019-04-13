@@ -1,15 +1,14 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.function.BiFunction;
 
-import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
@@ -22,13 +21,13 @@ import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
  */
 public class GridView extends GridCanvas {
 
-	private MazeDemoModel model;
 	private Color gridBackgroundColor;
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
 	private Color completedCellColor;
 	private Color pathColor;
 	private Style style;
+	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
 
 	public GridView() {
 		gridBackgroundColor = Color.BLACK;
@@ -37,15 +36,16 @@ public class GridView extends GridCanvas {
 		completedCellColor = Color.WHITE;
 		pathColor = Color.RED;
 		style = Style.WALL_PASSAGES;
+		fnPassageWidth = (u, v) -> 1;
 	}
 
-	public GridView(MazeDemoModel model) {
+	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize,
+			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
 		this();
-		this.model = model;
-
-		setGrid(model.getGrid(), false);
-		setCellSize(model.getGridCellSize(), false);
-		replaceRenderer(createRenderer());
+		this.fnPassageWidth = fnPassageWidth;
+		setGrid(grid, false);
+		setCellSize(cellSize, false);
+		replaceRenderer(createRenderer(cellSize));
 		clear();
 	}
 
@@ -64,40 +64,40 @@ public class GridView extends GridCanvas {
 		return gridBackgroundColor;
 	}
 
-	public void setGridBackgroundColor(Color gridBackgroundColor) {
-		this.gridBackgroundColor = gridBackgroundColor;
+	public void setGridBackgroundColor(Color color) {
+		this.gridBackgroundColor = color;
 	}
 
 	public Color getUnvisitedCellColor() {
 		return unvisitedCellColor;
 	}
 
-	public void setUnvisitedCellColor(Color unvisitedCellColor) {
-		this.unvisitedCellColor = unvisitedCellColor;
+	public void setUnvisitedCellColor(Color color) {
+		this.unvisitedCellColor = color;
 	}
 
 	public Color getVisitedCellColor() {
 		return visitedCellColor;
 	}
 
-	public void setVisitedCellColor(Color visitedCellColor) {
-		this.visitedCellColor = visitedCellColor;
+	public void setVisitedCellColor(Color color) {
+		this.visitedCellColor = color;
 	}
 
 	public Color getCompletedCellColor() {
 		return completedCellColor;
 	}
 
-	public void setCompletedCellColor(Color completedCellColor) {
-		this.completedCellColor = completedCellColor;
+	public void setCompletedCellColor(Color color) {
+		this.completedCellColor = color;
 	}
 
 	public Color getPathColor() {
 		return pathColor;
 	}
 
-	public void setPathColor(Color pathColor) {
-		this.pathColor = pathColor;
+	public void setPathColor(Color color) {
+		this.pathColor = color;
 	}
 
 	public Style getStyle() {
@@ -108,23 +108,14 @@ public class GridView extends GridCanvas {
 		this.style = style;
 	}
 
-	private ConfigurableGridRenderer createRenderer() {
+	private ConfigurableGridRenderer createRenderer(int cellSize) {
 		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
 		r.fnGridBgColor = () -> getGridBackgroundColor();
-		r.fnCellSize = () -> model.getGridCellSize();
-		r.fnPassageWidth = (u, v) -> {
-			int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
-			if (model.isPassageWidthFluent()) {
-				float factor = (float) model.getGrid().col(u) / model.getGridWidth();
-				passageWidth = Math.round(factor * passageWidth);
-			}
-			passageWidth = max(1, passageWidth);
-			passageWidth = min(model.getGridCellSize() - 1, passageWidth);
-			return passageWidth;
-		};
+		r.fnCellSize = () -> cellSize;
+		r.fnPassageWidth = fnPassageWidth;
 		r.fnCellBgColor = cell -> {
-			TraversalState state = model.getGrid().get(cell);
+			TraversalState state = (TraversalState) getGrid().get(cell);
 			switch (state) {
 			case COMPLETED:
 				return getCompletedCellColor();
