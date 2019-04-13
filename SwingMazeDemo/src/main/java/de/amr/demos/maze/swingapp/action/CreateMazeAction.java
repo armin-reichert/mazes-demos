@@ -1,7 +1,7 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.gridWindow;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static java.lang.String.format;
 
@@ -13,7 +13,6 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
-import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.util.StopWatch;
 
@@ -28,8 +27,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 	}
 
 	protected void floodFill() {
-		BFSAnimation.builder().canvas(canvas()).distanceVisible(false).build()
-				.floodFill(model().getGrid().cell(model().getGenerationStart()));
+		gridWindow().floodFill(model().getGrid().cell(model().getGenerationStart()), false);
 	}
 
 	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {
@@ -49,16 +47,16 @@ public abstract class CreateMazeAction extends AbstractAction {
 			generator.createMaze(x, y);
 		}
 		else {
-			canvas().enableAnimation(false);
-			canvas().clear();
+			gridWindow().enableGridAnimation(false);
+			gridWindow().clear();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generator.createMaze(x, y);
 			watch.stop();
 			app().showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
-			watch.measure(() -> canvas().drawGrid());
+			watch.measure(() -> gridWindow().drawGrid());
 			app().showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			canvas().enableAnimation(true);
+			gridWindow().enableGridAnimation(true);
 		}
 	}
 }

@@ -13,7 +13,6 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
-import de.amr.demos.maze.swingapp.view.GridView;
 import de.amr.demos.maze.swingapp.view.GridWindow;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
@@ -50,8 +49,8 @@ public class MazeDemoApp {
 		return it.model;
 	}
 
-	public static GridView canvas() {
-		return it.wndGrid.getGridView();
+	public static GridWindow gridWindow() {
+		return it.wndGrid;
 	}
 
 	public static ControlWindow controlWindow() {

@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -11,6 +10,8 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import de.amr.demos.maze.swingapp.MazeDemoApp;
 
 public class SaveImage extends AbstractAction {
 
@@ -29,7 +30,7 @@ public class SaveImage extends AbstractAction {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(canvas().getDrawingBuffer(), "png", pngFile);
+				ImageIO.write(MazeDemoApp.gridWindow().getGridView().getDrawingBuffer(), "png", pngFile);
 				app().showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
 				app().showMessage("Image could not be saved: " + x.getMessage());

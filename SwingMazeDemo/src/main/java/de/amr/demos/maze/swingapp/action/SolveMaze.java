@@ -1,7 +1,7 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.gridWindow;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static java.lang.String.format;
 
@@ -45,7 +45,7 @@ public class SolveMaze extends AbstractAction {
 			app().startBackgroundThread(
 
 					() -> {
-						canvas().drawGrid(); // possibly overwrite older search
+						gridWindow().drawGrid(); // possibly overwrite older search
 						runSolverAnimation(solver);
 					},
 
@@ -76,7 +76,8 @@ public class SolveMaze extends AbstractAction {
 			runSolverAnimation(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolverAnimation(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			runSolverAnimation(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())),
+					info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
 			runSolverAnimation(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), info);
@@ -94,7 +95,8 @@ public class SolveMaze extends AbstractAction {
 			runSolverAnimation(new IDDFS(model().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolverAnimation(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			runSolverAnimation(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())),
+					info);
 		}
 	}
 
@@ -104,14 +106,15 @@ public class SolveMaze extends AbstractAction {
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(PathFinderTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(canvas()).delay(() -> model().getDelay())
-					.pathColor(canvas().getPathColor()).distanceVisible(model().isDistancesVisible()).build();
+			BFSAnimation anim = BFSAnimation.builder().canvas(gridWindow().getGridView())
+					.delay(() -> model().getDelay()).pathColor(gridWindow().getGridView().getPathColor())
+					.distanceVisible(model().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(canvas()).delay(() -> model().getDelay())
-					.pathColor(canvas().getPathColor()).build();
+			DFSAnimation anim = DFSAnimation.builder().canvas(gridWindow().getGridView())
+					.delay(() -> model().getDelay()).pathColor(gridWindow().getGridView().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed

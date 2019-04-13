@@ -125,8 +125,8 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MazeDemoApp.canvas().clear();
-			MazeDemoApp.canvas().drawGrid();
+			MazeDemoApp.gridWindow().clear();
+			MazeDemoApp.gridWindow().drawGrid();
 		}
 	};
 

@@ -3,6 +3,7 @@ package de.amr.demos.maze.swingapp.view;
 import javax.swing.JFrame;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.graph.grid.ui.animation.BFSAnimation;
 
 public class GridWindow extends JFrame {
 
@@ -25,6 +26,18 @@ public class GridWindow extends JFrame {
 
 	public void clear() {
 		gridView.clear();
+	}
+
+	public void drawGrid() {
+		gridView.drawGrid();
+	}
+
+	public void floodFill(int startCell, boolean distanceVisible) {
+		BFSAnimation.builder().canvas(gridView).distanceVisible(distanceVisible).build().floodFill(startCell);
+	}
+
+	public void enableGridAnimation(boolean enabled) {
+		gridView.enableAnimation(enabled);
 	}
 
 	private void createGridView(MazeDemoModel model) {
