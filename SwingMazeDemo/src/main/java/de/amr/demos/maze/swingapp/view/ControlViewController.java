@@ -217,6 +217,7 @@ public class ControlViewController {
 
 	public void showWindow() {
 		window.setVisible(true);
+		window.requestFocusInWindow();
 	}
 
 	public void collapseWindow() {
