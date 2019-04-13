@@ -25,6 +25,6 @@ public class ChangeGridResolution extends AbstractAction {
 		app().getModel().setGridCellSize(cellSize);
 		app().getModel().setGridWidth(app().getDisplayMode().getWidth() / cellSize);
 		app().getModel().setGridHeight(app().getDisplayMode().getHeight() / cellSize);
-		app().resetDisplay();
+		app().reset();
 	}
 }

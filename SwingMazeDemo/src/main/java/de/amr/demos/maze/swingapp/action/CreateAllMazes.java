@@ -29,13 +29,13 @@ public class CreateAllMazes extends CreateMazeAction {
 
 				interruption -> {
 					app().showMessage("Animation interrupted");
-					app().resetDisplay();
+					app().reset();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
 					app().showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
-					app().resetDisplay();
+					app().reset();
 				});
 	}
 

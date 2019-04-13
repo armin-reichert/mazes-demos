@@ -49,7 +49,7 @@ public class SolveMaze extends AbstractAction {
 
 					interruption -> {
 						app().showMessage("Animation interrupted");
-						app().resetDisplay();
+						app().reset();
 					},
 
 					failure -> {

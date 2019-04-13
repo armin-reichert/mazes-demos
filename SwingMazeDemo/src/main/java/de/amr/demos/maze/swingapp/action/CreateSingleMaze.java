@@ -36,12 +36,12 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 					interruption -> {
 						app().showMessage("Animation interrupted");
-						app().resetDisplay();
+						app().reset();
 					},
 
 					failure -> {
 						app().showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
-						app().resetDisplay();
+						app().reset();
 					});
 		});
 	}

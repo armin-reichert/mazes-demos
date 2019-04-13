@@ -95,7 +95,7 @@ public class MazeDemoApp {
 		controlViewController.selectGenerator(generatorInfo);
 	}
 
-	public void resetDisplay() {
+	public void reset() {
 		boolean wasFull = model.getGrid().isFull();
 		model.createGrid(wasFull, wasFull ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.replaceGridView(model);
@@ -105,16 +105,12 @@ public class MazeDemoApp {
 		controlViewController.showMessage(msg + "\n");
 	}
 
-	public void setBusy(boolean busy) {
-		controlViewController.setBusy(busy);
-	}
-
 	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
 			Consumer<Throwable> onFailure) {
 		bgThread = new Thread(() -> {
-			setBusy(true);
+			controlViewController.setBusy(true);
 			code.run();
-			setBusy(false);
+			controlViewController.setBusy(false);
 		});
 		bgThread.setUncaughtExceptionHandler((thread, e) -> {
 			if (e.getClass() == AnimationInterruptedException.class) {
@@ -123,7 +119,7 @@ public class MazeDemoApp {
 			else {
 				onFailure.accept(e);
 			}
-			setBusy(false);
+			controlViewController.setBusy(false);
 		});
 		bgThread.start();
 	}
