@@ -69,9 +69,8 @@ public class MazeDemoApp {
 		model = new MazeDemoModel();
 
 		// create initial grid
-		model.setGridCellSize(32);
-		model.setGridWidth(DISPLAY_MODE.getWidth() / 32);
-		model.setGridHeight(DISPLAY_MODE.getHeight() / 32);
+		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
+		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
 		model.createGrid(false, TraversalState.UNVISITED);
 
 		// create grid window

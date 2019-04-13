@@ -137,10 +137,15 @@ public class ControlWindow extends JFrame {
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
+	public ControlWindow() {
+		setTitle("Mazes");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		controlView = new ControlView();
+		setContentPane(controlView);
+	}
+
 	public ControlWindow(MazeDemoModel model) {
 		this();
-
-		controlView = new ControlView();
 
 		controlView.getComboGridResolution().setModel(createGridResolutionModel());
 		controlView.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex(model()));
@@ -171,8 +176,6 @@ public class ControlWindow extends JFrame {
 		controlView.getBtnFindPath().setAction(actionSolveMaze);
 		controlView.getBtnStop().setAction(actionStopBackgroundThread);
 
-		setContentPane(controlView);
-
 		// Menus
 		JMenuBar mb = new JMenuBar();
 		setJMenuBar(mb);
@@ -192,11 +195,6 @@ public class ControlWindow extends JFrame {
 		mb.add(canvasMenu);
 		optionMenu = new OptionMenu();
 		mb.add(optionMenu);
-	}
-
-	public ControlWindow() {
-		setTitle("Mazes");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public void minimize() {

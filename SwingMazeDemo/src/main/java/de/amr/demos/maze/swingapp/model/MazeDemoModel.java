@@ -175,6 +175,7 @@ public class MazeDemoModel {
 
 	public MazeDemoModel() {
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
+		setGridCellSize(32);
 		setPassageWidthPercentage(100);
 		setDelay(0);
 		setGenerationStart(CENTER);
