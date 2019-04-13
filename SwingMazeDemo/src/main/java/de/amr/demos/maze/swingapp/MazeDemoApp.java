@@ -68,7 +68,7 @@ public class MazeDemoApp {
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
 
 		gridViewController.showWindow();
-		controlViewController.placeWindow(getDisplayMode());
+		controlViewController.placeWindow();
 		controlViewController.showWindow();
 	}
 
@@ -96,9 +96,19 @@ public class MazeDemoApp {
 	}
 
 	public void reset() {
-		boolean wasFull = model.getGrid().isFull();
-		model.createGrid(wasFull, wasFull ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		controlViewController.setBusy(true);
+		boolean full = model.getGrid().isFull();
+		model.changeHandler.removePropertyChangeListener(gridViewController);
+		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.replaceGridView(model);
+		controlViewController.setBusy(false);
+	}
+
+	public void resizeGrid(int cellSize) {
+		model.setGridCellSize(cellSize);
+		model.setGridWidth(getDisplayMode().getWidth() / cellSize);
+		model.setGridHeight(getDisplayMode().getHeight() / cellSize);
+		reset();
 	}
 
 	public void showMessage(String msg) {

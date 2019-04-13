@@ -2,10 +2,11 @@ package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
-import java.awt.DisplayMode;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -13,13 +14,11 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JSlider;
 
-import de.amr.demos.maze.swingapp.MazeDemoApp;
-import de.amr.demos.maze.swingapp.action.ChangeGridResolution;
 import de.amr.demos.maze.swingapp.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.action.FloodFill;
@@ -44,46 +43,16 @@ public class ControlViewController {
 	private static final String ICON_ZOOM_OUT = "/zoom_out.png";
 	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
-	private ComboBoxModel<String> createGridResolutionModel() {
-		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
-		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = app().getDisplayMode().getWidth() / cellSize;
-			int numRows = app().getDisplayMode().getHeight() / cellSize;
-			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
-		}).toArray(String[]::new);
-		return new DefaultComboBoxModel<>(entries);
-	}
-
-	private int getSelectedGridResolutionIndex() {
-		int index = 0;
-		for (int size : model.getGridCellSizes()) {
-			if (size == model.getGridCellSize()) {
-				return index;
-			}
-			++index;
-		}
-		return -1;
-	}
-
-	private Icon loadIcon(String resourceName) {
-		return new ImageIcon(getClass().getResource(resourceName));
-	}
-
 	private MazeDemoModel model;
 
 	private JFrame window;
+	private ControlView view;
 	private GeneratorMenu generatorMenu;
 	private JMenu canvasMenu;
 	private SolverMenu solverMenu;
 	private OptionMenu optionMenu;
-	private ControlView controlView;
 
-	private final Action actionCollapseWindow = new AbstractAction() {
-
-		{
-			putValue(Action.NAME, "Hide Details");
-			putValue(Action.LARGE_ICON_KEY, loadIcon(ICON_ZOOM_OUT));
-		}
+	private final Action actionCollapseWindow = new AbstractAction("Hide Details", loadIcon(ICON_ZOOM_OUT)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -91,16 +60,21 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionExpandWindow = new AbstractAction() {
-
-		{
-			putValue(Action.NAME, "Show Details");
-			putValue(Action.LARGE_ICON_KEY, loadIcon(ICON_ZOOM_IN));
-		}
+	private final Action actionExpandWindow = new AbstractAction("Show Details", loadIcon(ICON_ZOOM_IN)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			expandWindow();
+		}
+	};
+
+	private final Action actionChangeGridResolution = new AbstractAction("Change Resolution") {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JComboBox<?> combo = (JComboBox<?>) e.getSource();
+			int cellSize = model.getGridCellSizes()[combo.getSelectedIndex()];
+			app().resizeGrid(cellSize);
 		}
 	};
 
@@ -124,7 +98,7 @@ public class ControlViewController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MazeDemoApp.app().stopBackgroundThread();
+			app().stopBackgroundThread();
 		}
 	};
 
@@ -140,7 +114,6 @@ public class ControlViewController {
 	private final Action actionCreateSingleMaze = new CreateSingleMaze();
 	private final Action actionCreateAllMazes = new CreateAllMazes();
 	private final Action actionSolveMaze = new SolveMaze();
-	private final Action actionChangeGridResolution = new ChangeGridResolution();
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
@@ -149,50 +122,51 @@ public class ControlViewController {
 		window.setTitle("Maze Demo App - Control View");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setAlwaysOnTop(true);
-		controlView = new ControlView();
-		window.setContentPane(controlView);
+		view = new ControlView();
+		window.setContentPane(view);
 	}
 
 	public ControlViewController(MazeDemoModel model) {
 		this();
 		this.model = model;
 
-		controlView.getComboGridResolution().setModel(createGridResolutionModel());
-		controlView.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex());
-		controlView.getComboGridResolution().setAction(actionChangeGridResolution);
+		view.getComboGridResolution().setModel(createGridResolutionModel());
+		view.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex().orElse(-1));
+		view.getComboGridResolution().setAction(actionChangeGridResolution);
 
-		controlView.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
-		controlView.getSliderPassageWidth().addChangeListener(e -> {
-			JSlider slider = (JSlider) e.getSource();
-			if (!slider.getValueIsAdjusting()) {
-				model.setPassageWidthPercentage(slider.getValue());
+		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
+		view.getSliderPassageWidth().addChangeListener(e -> {
+			if (!view.getSliderPassageWidth().getValueIsAdjusting()) {
+				model.setPassageWidthPercentage(view.getSliderPassageWidth().getValue());
 			}
 		});
 
-		controlView.getSliderDelay().setMinimum(0);
-		controlView.getSliderDelay().setMaximum(100);
-		controlView.getSliderDelay().setValue(model.getDelay());
-		controlView.getSliderDelay().setMinorTickSpacing(10);
-		controlView.getSliderDelay().setMajorTickSpacing(50);
-		controlView.getSliderDelay().addChangeListener(e -> {
-			JSlider slider = (JSlider) e.getSource();
-			if (!slider.getValueIsAdjusting()) {
-				model.setDelay(slider.getValue());
+		view.getSliderDelay().setMinimum(0);
+		view.getSliderDelay().setMaximum(100);
+		view.getSliderDelay().setValue(model.getDelay());
+		view.getSliderDelay().setMinorTickSpacing(10);
+		view.getSliderDelay().setMajorTickSpacing(50);
+		view.getSliderDelay().addChangeListener(e -> {
+			if (!view.getSliderDelay().getValueIsAdjusting()) {
+				model.setDelay(view.getSliderDelay().getValue());
 			}
 		});
 
-		controlView.getBtnCreateMaze().setAction(actionCreateSingleMaze);
-		controlView.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
-		controlView.getBtnFindPath().setAction(actionSolveMaze);
-		controlView.getBtnStop().setAction(actionStopBackgroundThread);
+		view.getBtnCreateMaze().setAction(actionCreateSingleMaze);
+		view.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
+		view.getBtnFindPath().setAction(actionSolveMaze);
+		view.getBtnStop().setAction(actionStopBackgroundThread);
 
 		// Menus
-		JMenuBar mb = new JMenuBar();
-		window.setJMenuBar(mb);
+		JMenuBar menuBar = new JMenuBar();
+		window.setJMenuBar(menuBar);
+
 		generatorMenu = new GeneratorMenu(this);
-		mb.add(generatorMenu);
+		menuBar.add(generatorMenu);
+
 		solverMenu = new SolverMenu(this);
-		mb.add(solverMenu);
+		menuBar.add(solverMenu);
+
 		canvasMenu = new JMenu("Canvas");
 		canvasMenu.add(actionClearCanvas);
 		canvasMenu.add(actionFloodFill);
@@ -201,18 +175,18 @@ public class ControlViewController {
 		canvasMenu.add(actionCreateFullGrid);
 		canvasMenu.addSeparator();
 		canvasMenu.add(actionSaveImage);
+		menuBar.add(canvasMenu);
 
-		mb.add(canvasMenu);
 		optionMenu = new OptionMenu(model);
-		mb.add(optionMenu);
+		menuBar.add(optionMenu);
 	}
 
 	public MazeDemoModel getModel() {
 		return model;
 	}
 
-	public void placeWindow(DisplayMode displayMode) {
-		window.setLocation((displayMode.getWidth() - window.getWidth()) / 2, 42);
+	public void placeWindow() {
+		window.setLocation((app().getDisplayMode().getWidth() - window.getWidth()) / 2, 42);
 	}
 
 	public void showWindow() {
@@ -221,15 +195,15 @@ public class ControlViewController {
 	}
 
 	public void collapseWindow() {
-		controlView.getContent().setVisible(false);
-		controlView.getBtnShowHideDetails().setAction(actionExpandWindow);
+		view.getContent().setVisible(false);
+		view.getBtnShowHideDetails().setAction(actionExpandWindow);
 		window.pack();
 		window.setSize(window.getWidth(), COLLAPSED_WINDOW_HEIGHT);
 	}
 
 	public void expandWindow() {
-		controlView.getContent().setVisible(true);
-		controlView.getBtnShowHideDetails().setAction(actionCollapseWindow);
+		view.getContent().setVisible(true);
+		view.getBtnShowHideDetails().setAction(actionCollapseWindow);
 		window.pack();
 	}
 
@@ -244,13 +218,13 @@ public class ControlViewController {
 		actionCreateSingleMaze.setEnabled(enabled);
 		actionCreateAllMazes.setEnabled(enabled);
 		actionSolveMaze.setEnabled(enabled);
-		controlView.getSliderPassageWidth().setEnabled(enabled);
-		controlView.getBtnStop().setEnabled(busy);
+		view.getSliderPassageWidth().setEnabled(enabled);
+		view.getBtnStop().setEnabled(busy);
 	}
 
 	public void showMessage(String msg) {
-		controlView.getTextArea().append(msg);
-		controlView.getTextArea().setCaretPosition(controlView.getTextArea().getDocument().getLength());
+		view.getTextArea().append(msg);
+		view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
 	}
 
 	public Optional<AlgorithmInfo> getSelectedGenerator() {
@@ -278,10 +252,29 @@ public class ControlViewController {
 			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
 			text += " (" + metric + ")";
 		}
-		controlView.getLblSolverName().setText(text);
+		view.getLblSolverName().setText(text);
 	}
 
 	private void updateGeneratorText(AlgorithmInfo generatorInfo) {
-		controlView.getLblGeneratorName().setText(generatorInfo.getDescription());
+		view.getLblGeneratorName().setText(generatorInfo.getDescription());
+	}
+
+	private ComboBoxModel<String> createGridResolutionModel() {
+		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
+		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
+			int numCols = app().getDisplayMode().getWidth() / cellSize;
+			int numRows = app().getDisplayMode().getHeight() / cellSize;
+			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
+		}).toArray(String[]::new);
+		return new DefaultComboBoxModel<>(entries);
+	}
+
+	private OptionalInt getSelectedGridResolutionIndex() {
+		return IntStream.range(0, model.getGridCellSizes().length)
+				.filter(index -> model.getGridCellSizes()[index] == model.getGridCellSize()).findFirst();
+	}
+
+	private Icon loadIcon(String resourceName) {
+		return new ImageIcon(getClass().getResource(resourceName));
 	}
 }

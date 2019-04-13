@@ -50,7 +50,6 @@ public class GridViewController implements PropertyChangeListener {
 	public GridViewController(MazeDemoModel model) {
 		this();
 		this.model = model;
-		model.changeHandler.addPropertyChangeListener(this);
 		createGridView(model);
 	}
 
@@ -70,6 +69,8 @@ public class GridViewController implements PropertyChangeListener {
 		window.setContentPane(gridView);
 		gridView.clear();
 		gridView.drawGrid();
+
+		model.changeHandler.addPropertyChangeListener(this);
 
 		animation = new GridCanvasAnimation<>(gridView);
 		animation.fnDelay = model::getDelay;
