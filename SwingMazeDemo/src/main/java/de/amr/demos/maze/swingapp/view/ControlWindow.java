@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.view;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
@@ -44,17 +43,17 @@ public class ControlWindow extends JFrame {
 
 	private static final int COLLAPSED_HEIGHT = 160;
 
-	private static ComboBoxModel<String> createGridResolutionModel() {
+	private ComboBoxModel<String> createGridResolutionModel() {
 		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
-		String[] entries = Arrays.stream(model().getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = DISPLAY_MODE.getWidth() / cellSize;
-			int numRows = DISPLAY_MODE.getHeight() / cellSize;
+		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
+			int numCols = app().getDisplayMode().getWidth() / cellSize;
+			int numRows = app().getDisplayMode().getHeight() / cellSize;
 			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
 		}).toArray(String[]::new);
 		return new DefaultComboBoxModel<>(entries);
 	}
 
-	private static int getSelectedGridResolutionIndex(MazeDemoModel model) {
+	private int getSelectedGridResolutionIndex() {
 		int index = 0;
 		for (int size : model.getGridCellSizes()) {
 			if (size == model.getGridCellSize()) {
@@ -65,6 +64,7 @@ public class ControlWindow extends JFrame {
 		return -1;
 	}
 
+	private MazeDemoModel model;
 	private GeneratorMenu generatorMenu;
 	private JMenu canvasMenu;
 	private SolverMenu solverMenu;
@@ -101,7 +101,7 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			model().createGrid(false, TraversalState.COMPLETED);
+			model.createGrid(false, TraversalState.COMPLETED);
 		}
 	};
 
@@ -109,7 +109,7 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			model().createGrid(true, TraversalState.COMPLETED);
+			model.createGrid(true, TraversalState.COMPLETED);
 		}
 	};
 
@@ -125,8 +125,8 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MazeDemoApp.gridWindow().clear();
-			MazeDemoApp.gridWindow().drawGrid();
+			app().getGridWindow().clear();
+			app().getGridWindow().drawGrid();
 		}
 	};
 
@@ -146,28 +146,29 @@ public class ControlWindow extends JFrame {
 
 	public ControlWindow(MazeDemoModel model) {
 		this();
+		this.model = model;
 
 		controlView.getComboGridResolution().setModel(createGridResolutionModel());
-		controlView.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex(model()));
+		controlView.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex());
 		controlView.getComboGridResolution().setAction(actionChangeGridResolution);
 
-		controlView.getSliderPassageWidth().setValue(model().getPassageWidthPercentage());
+		controlView.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
 		controlView.getSliderPassageWidth().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
-				model().setPassageWidthPercentage(slider.getValue());
+				model.setPassageWidthPercentage(slider.getValue());
 			}
 		});
 
 		controlView.getSliderDelay().setMinimum(0);
 		controlView.getSliderDelay().setMaximum(100);
-		controlView.getSliderDelay().setValue(model().getDelay());
+		controlView.getSliderDelay().setValue(model.getDelay());
 		controlView.getSliderDelay().setMinorTickSpacing(10);
 		controlView.getSliderDelay().setMajorTickSpacing(50);
 		controlView.getSliderDelay().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
-				model().setDelay(slider.getValue());
+				model.setDelay(slider.getValue());
 			}
 		});
 
@@ -181,7 +182,7 @@ public class ControlWindow extends JFrame {
 		setJMenuBar(mb);
 		generatorMenu = new GeneratorMenu();
 		mb.add(generatorMenu);
-		solverMenu = new SolverMenu();
+		solverMenu = new SolverMenu(model);
 		mb.add(solverMenu);
 		canvasMenu = new JMenu("Canvas");
 		canvasMenu.add(actionClearCanvas);
@@ -193,7 +194,7 @@ public class ControlWindow extends JFrame {
 		canvasMenu.add(actionSaveImage);
 
 		mb.add(canvasMenu);
-		optionMenu = new OptionMenu();
+		optionMenu = new OptionMenu(model);
 		mb.add(optionMenu);
 	}
 
@@ -211,7 +212,7 @@ public class ControlWindow extends JFrame {
 	}
 
 	public void setBusy(boolean busy) {
-		setVisible(!busy || !model().isHidingControlsWhenRunning());
+		setVisible(!busy || !model.isHidingControlsWhenRunning());
 		boolean enabled = !busy;
 		generatorMenu.setEnabled(enabled);
 		solverMenu.setEnabled(enabled);
@@ -251,7 +252,7 @@ public class ControlWindow extends JFrame {
 	private void updateSolverText(AlgorithmInfo solverInfo) {
 		String text = solverInfo.getDescription();
 		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
-			String metric = model().getMetric().toString();
+			String metric = model.getMetric().toString();
 			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
 			text += " (" + metric + ")";
 		}

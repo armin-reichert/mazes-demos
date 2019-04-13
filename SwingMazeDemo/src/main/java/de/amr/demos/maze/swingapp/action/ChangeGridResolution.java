@@ -1,8 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
@@ -23,10 +21,10 @@ public class ChangeGridResolution extends AbstractAction {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JComboBox<?> combo = (JComboBox<?>) e.getSource();
-		int cellSize = model().getGridCellSizes()[combo.getSelectedIndex()];
-		model().setGridCellSize(cellSize);
-		model().setGridWidth(DISPLAY_MODE.getWidth() / cellSize);
-		model().setGridHeight(DISPLAY_MODE.getHeight() / cellSize);
+		int cellSize = app().getModel().getGridCellSizes()[combo.getSelectedIndex()];
+		app().getModel().setGridCellSize(cellSize);
+		app().getModel().setGridWidth(app().getDisplayMode().getWidth() / cellSize);
+		app().getModel().setGridHeight(app().getDisplayMode().getHeight() / cellSize);
 		app().resetDisplay();
 	}
 }

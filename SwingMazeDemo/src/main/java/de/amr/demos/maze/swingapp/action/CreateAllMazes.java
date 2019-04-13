@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
 
 import java.awt.event.ActionEvent;
@@ -41,13 +40,13 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> fastGenerators = model().findGenerators().filter(alg -> !alg.isTagged(Slow))
+		List<AlgorithmInfo> fastGenerators = app().getModel().findGenerators().filter(alg -> !alg.isTagged(Slow))
 				.collect(Collectors.toList());
 		for (AlgorithmInfo generatorInfo : fastGenerators) {
 			app().changeGenerator(generatorInfo);
 			try {
-				createMaze(generatorInfo, model().getGenerationStart());
-				if (model().isFloodFillAfterGeneration()) {
+				createMaze(generatorInfo, app().getModel().getGenerationStart());
+				if (app().getModel().isFloodFillAfterGeneration()) {
 					pause(1);
 					floodFill();
 				}

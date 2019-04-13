@@ -1,8 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.gridWindow;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
@@ -45,7 +43,7 @@ public class SolveMaze extends AbstractAction {
 			app().startBackgroundThread(
 
 					() -> {
-						gridWindow().drawGrid(); // possibly overwrite older search
+						app().getGridWindow().drawGrid(); // possibly overwrite older search
 						runSolverAnimation(solver);
 					},
 
@@ -64,77 +62,77 @@ public class SolveMaze extends AbstractAction {
 	private void runSolverAnimation(AlgorithmInfo info) {
 
 		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
-			runSolverAnimation(new BreadthFirstSearch(model().getGrid()), info);
+			runSolverAnimation(new BreadthFirstSearch(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			runSolverAnimation(new BidiBreadthFirstSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new BidiBreadthFirstSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolverAnimation(new DijkstraSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new DijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			runSolverAnimation(new BidiDijkstraSearch(model().getGrid(), (u, v) -> 1), info);
+			runSolverAnimation(new BidiDijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolverAnimation(new BestFirstSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())),
+			runSolverAnimation(new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
 					info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
-			runSolverAnimation(new AStarSearch(model().getGrid(), (u, v) -> 1, metric()), info);
+			runSolverAnimation(new AStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
-			runSolverAnimation(new BidiAStarSearch(model().getGrid(), (u, v) -> 1, metric(), metric()), info);
+			runSolverAnimation(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
-			runSolverAnimation(new DepthFirstSearch(model().getGrid()), info);
+			runSolverAnimation(new DepthFirstSearch(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch2.class) {
-			runSolverAnimation(new DepthFirstSearch2(model().getGrid()), info);
+			runSolverAnimation(new DepthFirstSearch2(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == IDDFS.class) {
-			runSolverAnimation(new IDDFS(model().getGrid()), info);
+			runSolverAnimation(new IDDFS(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolverAnimation(new HillClimbingSearch(model().getGrid(), v -> metric().applyAsDouble(v, target())),
+			runSolverAnimation(new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
 					info);
 		}
 	}
 
 	private void runSolverAnimation(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
-		int source = model().getGrid().cell(model().getPathFinderSource());
-		int target = model().getGrid().cell(model().getPathFinderTarget());
+		int source = app().getModel().getGrid().cell(app().getModel().getPathFinderSource());
+		int target = app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(PathFinderTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(gridWindow().getGridView())
-					.delay(() -> model().getDelay()).pathColor(gridWindow().getGridView().getPathColor())
-					.distanceVisible(model().isDistancesVisible()).build();
+			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridWindow().getGridView())
+					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridWindow().getGridView().getPathColor())
+					.distanceVisible(app().getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(gridWindow().getGridView())
-					.delay(() -> model().getDelay()).pathColor(gridWindow().getGridView().getPathColor()).build();
+			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridWindow().getGridView())
+					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridWindow().getGridView().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed
-				? format("%s (%s): %.2f seconds.", solverInfo.getDescription(), model().getMetric(),
+				? format("%s (%s): %.2f seconds.", solverInfo.getDescription(), app().getModel().getMetric(),
 						watch.getSeconds())
 				: format("%s: %.2f seconds.", solverInfo.getDescription(), watch.getSeconds()));
 	}
 
 	private int target() {
-		return model().getGrid().cell(model().getPathFinderTarget());
+		return app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
 	}
 
 	private ToDoubleBiFunction<Integer, Integer> metric() {
-		switch (model().getMetric()) {
+		switch (app().getModel().getMetric()) {
 		case CHEBYSHEV:
-			return model().getGrid()::chebyshev;
+			return app().getModel().getGrid()::chebyshev;
 		case EUCLIDEAN:
-			return model().getGrid()::euclidean;
+			return app().getModel().getGrid()::euclidean;
 		case MANHATTAN:
-			return model().getGrid()::manhattan;
+			return app().getModel().getGrid()::manhattan;
 		}
 		throw new IllegalStateException();
 	}

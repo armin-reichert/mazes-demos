@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.view.menu;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
-
 import java.awt.event.ItemEvent;
 import java.util.ResourceBundle;
 import java.util.function.BooleanSupplier;
@@ -13,6 +11,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.grid.api.GridPosition;
 
 /**
@@ -22,24 +21,24 @@ import de.amr.graph.grid.api.GridPosition;
  */
 public class OptionMenu extends JMenu {
 
-	public OptionMenu() {
+	public OptionMenu(MazeDemoModel model) {
 		setText("Options");
-		addPositionMenu("Generation Start", model()::setGenerationStart, model()::getGenerationStart);
-		addPositionMenu("Solution Start", model()::setPathFinderStart, model()::getPathFinderSource);
-		addPositionMenu("Solution Target", model()::setPathFinderTarget, model()::getPathFinderTarget);
+		addPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart);
+		addPositionMenu("Solution Start", model::setPathFinderStart, model::getPathFinderSource);
+		addPositionMenu("Solution Target", model::setPathFinderTarget, model::getPathFinderTarget);
 		addSeparator();
-		addCheckBox("Animate Generation", model()::setGenerationAnimated, model()::isGenerationAnimated);
-		addCheckBox("Flood-fill after generation", model()::setFloodFillAfterGeneration,
-				model()::isFloodFillAfterGeneration);
-		addCheckBox("Show distances", model()::setDistancesVisible, model()::isDistancesVisible);
+		addCheckBox("Animate Generation", model::setGenerationAnimated, model::isGenerationAnimated);
+		addCheckBox("Flood-fill after generation", model::setFloodFillAfterGeneration,
+				model::isFloodFillAfterGeneration);
+		addCheckBox("Show distances", model::setDistancesVisible, model::isDistancesVisible);
 		// addCheckBox("Pearls style", checked -> {
-		// model().setStyle(checked ? Style.PEARLS : Style.WALL_PASSAGES);
+		// model.setStyle(checked ? Style.PEARLS : Style.WALL_PASSAGES);
 		// canvas().updateRenderer();
-		// }, () -> model().getStyle() == Style.PEARLS);
-		addCheckBox("Fluent Passage Width", model()::setPassageWidthFluent, model()::isPassageWidthFluent);
+		// }, () -> model.getStyle() == Style.PEARLS);
+		addCheckBox("Fluent Passage Width", model::setPassageWidthFluent, model::isPassageWidthFluent);
 		addSeparator();
-		addCheckBox("Hide this dialog when running", model()::setHidingControlsWhenRunning,
-				model()::isHidingControlsWhenRunning);
+		addCheckBox("Hide this dialog when running", model::setHidingControlsWhenRunning,
+				model::isHidingControlsWhenRunning);
 	}
 
 	private void addCheckBox(String title, Consumer<Boolean> onChecked, BooleanSupplier selection) {

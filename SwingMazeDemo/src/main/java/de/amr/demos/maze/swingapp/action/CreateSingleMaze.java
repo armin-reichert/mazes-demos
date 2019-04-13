@@ -1,8 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.gridWindow;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
@@ -27,10 +25,10 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 					() -> {
 						boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
-						model().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-						gridWindow().clear();
-						createMaze(generatorInfo, model().getGenerationStart());
-						if (model().isFloodFillAfterGeneration()) {
+						app().getModel().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+						app().getGridWindow().clear();
+						createMaze(generatorInfo, app().getModel().getGenerationStart());
+						if (app().getModel().isFloodFillAfterGeneration()) {
 							pause(1);
 							floodFill();
 						}

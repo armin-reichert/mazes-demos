@@ -11,8 +11,6 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.amr.demos.maze.swingapp.MazeDemoApp;
-
 public class SaveImage extends AbstractAction {
 
 	public SaveImage() {
@@ -30,7 +28,7 @@ public class SaveImage extends AbstractAction {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(MazeDemoApp.gridWindow().getGridView().getDrawingBuffer(), "png", pngFile);
+				ImageIO.write(app().getGridWindow().getGridView().getDrawingBuffer(), "png", pngFile);
 				app().showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
 				app().showMessage("Image could not be saved: " + x.getMessage());

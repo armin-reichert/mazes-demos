@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.view.menu;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 import static de.amr.demos.maze.swingapp.model.MazeDemoModel.PATHFINDER_ALGORITHMS;
 
 import java.util.ArrayList;
@@ -14,6 +13,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
 
@@ -27,7 +27,7 @@ public class SolverMenu extends AlgorithmMenu {
 	private final List<AlgorithmInfo> informedSolvers = new ArrayList<>();
 	private final List<AlgorithmInfo> uninformedSolvers = new ArrayList<>();
 
-	public SolverMenu() {
+	public SolverMenu(MazeDemoModel model) {
 		setText("Solvers");
 		Stream.of(PATHFINDER_ALGORITHMS).forEach(alg -> {
 			if (alg.isTagged(PathFinderTag.INFORMED)) {
@@ -41,23 +41,23 @@ public class SolverMenu extends AlgorithmMenu {
 		uninformedSolvers.forEach(this::addRadioButton);
 		addSeparator();
 		add(new JMenuItem("Informed Solvers")).setEnabled(false);
-		addHeuristicsMenu();
+		addHeuristicsMenu(model);
 		informedSolvers.forEach(this::addRadioButton);
 	}
 
-	private void addHeuristicsMenu() {
+	private void addHeuristicsMenu(MazeDemoModel model) {
 		JMenu menu = new JMenu("Metric");
 		ButtonGroup radio = new ButtonGroup();
 		for (Metric metric : Metric.values()) {
 			String text = metric.name().substring(0, 1) + metric.name().substring(1).toLowerCase();
 			JRadioButtonMenuItem rb = new JRadioButtonMenuItem(text);
 			rb.addActionListener(e -> {
-				model().setMetric(metric);
+				model.setMetric(metric);
 				getSelectedAlgorithm().ifPresent(app()::changeSolver);
 			});
 			radio.add(rb);
 			menu.add(rb);
-			rb.setSelected(metric == model().getMetric());
+			rb.setSelected(metric == model.getMetric());
 		}
 		add(menu);
 	}

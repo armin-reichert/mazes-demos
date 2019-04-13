@@ -1,8 +1,6 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.gridWindow;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 
@@ -23,8 +21,8 @@ public class FloodFill extends AbstractAction {
 	}
 
 	private void runFloodFill() {
-		MazeDemoApp.gridWindow().floodFill(model().getGrid().cell(model().getPathFinderSource()),
-				model().isDistancesVisible());
+		MazeDemoApp.app().getGridWindow().floodFill(app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
+				app().getModel().isDistancesVisible());
 	}
 
 	@Override
@@ -32,7 +30,7 @@ public class FloodFill extends AbstractAction {
 		app().startBackgroundThread(
 
 				() -> {
-					gridWindow().drawGrid();
+					app().getGridWindow().drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::runFloodFill);
 					app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));

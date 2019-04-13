@@ -27,68 +27,63 @@ import de.amr.maze.alg.traversal.IterativeDFS;
  */
 public class MazeDemoApp {
 
+	private static final MazeDemoApp theApp = new MazeDemoApp();
+
+	public static MazeDemoApp app() {
+		return theApp;
+	}
+
 	public static void main(String... args) {
 		try {
 			UIManager.setLookAndFeel(NimbusLookAndFeel.class.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		EventQueue.invokeLater(MazeDemoApp::new);
-	}
-
-	public static final DisplayMode DISPLAY_MODE = GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice().getDisplayMode();
-
-	private static MazeDemoApp it;
-
-	public static MazeDemoApp app() {
-		return it;
-	}
-
-	public static MazeDemoModel model() {
-		return it.model;
-	}
-
-	public static GridWindow gridWindow() {
-		return it.wndGrid;
-	}
-
-	public static ControlWindow controlWindow() {
-		return it.wndControl;
+		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
 	private final MazeDemoModel model;
-	private final ControlWindow wndControl;
-	private final GridWindow wndGrid;
+	private ControlWindow wndControl;
+	private GridWindow wndGrid;
 	private Thread bgThread;
 
 	public MazeDemoApp() {
-		it = this;
-
 		model = new MazeDemoModel();
-
-		// create initial grid
-		model.setGridWidth(DISPLAY_MODE.getWidth() / model.getGridCellSize());
-		model.setGridHeight(DISPLAY_MODE.getHeight() / model.getGridCellSize());
+		model.setGridWidth(getDisplayMode().getWidth() / model.getGridCellSize());
+		model.setGridHeight(getDisplayMode().getHeight() / model.getGridCellSize());
 		model.createGrid(false, TraversalState.UNVISITED);
+	}
 
-		// create grid window
+	private void createAndShowUI() {
 		wndGrid = new GridWindow(model);
 
-		// create control window
 		wndControl = new ControlWindow(model);
 		wndControl.setAlwaysOnTop(true);
 		wndControl.minimize();
 		wndControl.setBusy(false);
 
-		// initialize generator and path finder
 		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
 
-		// show windows
 		wndGrid.setVisible(true);
-		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
+		wndControl.setLocation((getDisplayMode().getWidth() - wndControl.getWidth()) / 2, 42);
 		wndControl.setVisible(true);
+	}
+
+	public DisplayMode getDisplayMode() {
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+	}
+
+	public MazeDemoModel getModel() {
+		return model;
+	}
+
+	public ControlWindow getControlWindow() {
+		return wndControl;
+	}
+
+	public GridWindow getGridWindow() {
+		return wndGrid;
 	}
 
 	public Optional<AlgorithmInfo> currentGenerator() {

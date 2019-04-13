@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.view;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.controlWindow;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -15,6 +14,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
+import de.amr.demos.maze.swingapp.MazeDemoApp;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
@@ -46,7 +46,7 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			controlWindow().setVisible(true);
+			MazeDemoApp.app().getControlWindow().setVisible(true);
 		}
 	};
 
@@ -80,8 +80,8 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		int dx = (DISPLAY_MODE.getWidth() - getPreferredSize().width) / 2;
-		int dy = (DISPLAY_MODE.getHeight() - getPreferredSize().height) / 2;
+		int dx = (app().getDisplayMode().getWidth() - getPreferredSize().width) / 2;
+		int dy = (app().getDisplayMode().getHeight() - getPreferredSize().height) / 2;
 		g.translate(dx, dy);
 		super.paintComponent(g);
 		g.translate(-dx, -dy);
