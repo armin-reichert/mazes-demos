@@ -43,8 +43,7 @@ public class GridView extends GridCanvas {
 			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
 		this();
 		this.fnPassageWidth = fnPassageWidth;
-		setCellSize(cellSize, false);
-		setGrid(grid, false);
+		resize(grid, cellSize);
 		replaceRenderer(createRenderer(cellSize));
 		clear();
 	}
