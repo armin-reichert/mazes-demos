@@ -39,7 +39,7 @@ public class SolveMaze extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().currentSolver().ifPresent(solver -> {
+		app().getControlViewController().getSelectedSolver().ifPresent(solver -> {
 			app().startBackgroundThread(
 
 					() -> {
@@ -74,14 +74,15 @@ public class SolveMaze extends AbstractAction {
 			runSolverAnimation(new BidiDijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolverAnimation(new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
-					info);
+			runSolverAnimation(
+					new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
 			runSolverAnimation(new AStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
-			runSolverAnimation(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()), info);
+			runSolverAnimation(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()),
+					info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
 			runSolverAnimation(new DepthFirstSearch(app().getModel().getGrid()), info);
@@ -93,8 +94,8 @@ public class SolveMaze extends AbstractAction {
 			runSolverAnimation(new IDDFS(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolverAnimation(new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
-					info);
+			runSolverAnimation(
+					new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 	}
 
@@ -105,14 +106,16 @@ public class SolveMaze extends AbstractAction {
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(PathFinderTag.BFS)) {
 			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridViewController().getGridView())
-					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridViewController().getGridView().getPathColor())
+					.delay(() -> app().getModel().getDelay())
+					.pathColor(app().getGridViewController().getGridView().getPathColor())
 					.distanceVisible(app().getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
 			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridViewController().getGridView())
-					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridViewController().getGridView().getPathColor()).build();
+					.delay(() -> app().getModel().getDelay())
+					.pathColor(app().getGridViewController().getGridView().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed

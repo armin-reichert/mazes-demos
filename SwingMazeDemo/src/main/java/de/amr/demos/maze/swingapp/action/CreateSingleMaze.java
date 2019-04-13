@@ -20,7 +20,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().currentGenerator().ifPresent(generatorInfo -> {
+		app().getControlViewController().getSelectedGenerator().ifPresent(generatorInfo -> {
 			app().startBackgroundThread(
 
 					() -> {

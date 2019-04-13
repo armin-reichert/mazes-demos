@@ -3,7 +3,6 @@ package de.amr.demos.maze.swingapp;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.UIManager;
@@ -89,19 +88,11 @@ public class MazeDemoApp {
 		return gridViewController;
 	}
 
-	public Optional<AlgorithmInfo> currentGenerator() {
-		return controlViewController.getSelectedGenerator();
-	}
-
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.clear();
 		controlViewController.selectGenerator(generatorInfo);
-	}
-
-	public Optional<AlgorithmInfo> currentSolver() {
-		return controlViewController.getSelectedSolver();
 	}
 
 	public void changeSolver(AlgorithmInfo solverInfo) {
