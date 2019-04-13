@@ -43,7 +43,7 @@ public class SolveMaze extends AbstractAction {
 			app().startBackgroundThread(
 
 					() -> {
-						app().getGridWindow().drawGrid(); // possibly overwrite older search
+						app().getGridViewController().drawGrid(); // possibly overwrite older search
 						runSolverAnimation(solver);
 					},
 
@@ -104,15 +104,15 @@ public class SolveMaze extends AbstractAction {
 		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(PathFinderTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridWindow().getGridView())
-					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridWindow().getGridView().getPathColor())
+			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridViewController().getGridView())
+					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridViewController().getGridView().getPathColor())
 					.distanceVisible(app().getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridWindow().getGridView())
-					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridWindow().getGridView().getPathColor()).build();
+			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridViewController().getGridView())
+					.delay(() -> app().getModel().getDelay()).pathColor(app().getGridViewController().getGridView().getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed

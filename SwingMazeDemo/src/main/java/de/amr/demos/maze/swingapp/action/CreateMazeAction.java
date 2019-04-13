@@ -25,7 +25,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 	}
 
 	protected void floodFill() {
-		app().getGridWindow().floodFill(app().getModel().getGrid().cell(app().getModel().getGenerationStart()), false);
+		app().getGridViewController().floodFill(app().getModel().getGrid().cell(app().getModel().getGenerationStart()), false);
 	}
 
 	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {
@@ -45,16 +45,16 @@ public abstract class CreateMazeAction extends AbstractAction {
 			generator.createMaze(x, y);
 		}
 		else {
-			app().getGridWindow().enableGridAnimation(false);
-			app().getGridWindow().clear();
+			app().getGridViewController().enableGridAnimation(false);
+			app().getGridViewController().clear();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generator.createMaze(x, y);
 			watch.stop();
 			app().showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
-			watch.measure(() -> app().getGridWindow().drawGrid());
+			watch.measure(() -> app().getGridViewController().drawGrid());
 			app().showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			app().getGridWindow().enableGridAnimation(true);
+			app().getGridViewController().enableGridAnimation(true);
 		}
 	}
 }

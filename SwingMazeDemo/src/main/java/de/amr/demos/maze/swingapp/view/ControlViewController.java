@@ -2,6 +2,7 @@ package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
+import java.awt.DisplayMode;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -32,16 +34,15 @@ import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
 import de.amr.graph.core.api.TraversalState;
 
 /**
- * Window containing menus and control panel.
+ * View controller for control UI.
  * 
  * @author Armin Reichert
  */
-public class ControlWindow extends JFrame {
+public class ControlViewController {
 
-	private static final ImageIcon ZOOM_IN = new ImageIcon(ControlWindow.class.getResource("/zoom_in.png"));
-	private static final ImageIcon ZOOM_OUT = new ImageIcon(ControlWindow.class.getResource("/zoom_out.png"));
-
-	private static final int COLLAPSED_HEIGHT = 160;
+	private static final String ICON_ZOOM_IN = "/zoom_in.png";
+	private static final String ICON_ZOOM_OUT = "/zoom_out.png";
+	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
 	private ComboBoxModel<String> createGridResolutionModel() {
 		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
@@ -64,36 +65,42 @@ public class ControlWindow extends JFrame {
 		return -1;
 	}
 
+	private Icon loadIcon(String resourceName) {
+		return new ImageIcon(getClass().getResource(resourceName));
+	}
+
 	private MazeDemoModel model;
+
+	private JFrame window;
 	private GeneratorMenu generatorMenu;
 	private JMenu canvasMenu;
 	private SolverMenu solverMenu;
 	private OptionMenu optionMenu;
 	private ControlView controlView;
 
-	private final Action actionMinimize = new AbstractAction() {
+	private final Action actionCollapseWindow = new AbstractAction() {
 
 		{
 			putValue(Action.NAME, "Hide Details");
-			putValue(Action.LARGE_ICON_KEY, ZOOM_OUT);
+			putValue(Action.LARGE_ICON_KEY, loadIcon(ICON_ZOOM_OUT));
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			minimize();
+			collapseWindow();
 		}
 	};
 
-	private final Action actionMaximize = new AbstractAction() {
+	private final Action actionExpandWindow = new AbstractAction() {
 
 		{
 			putValue(Action.NAME, "Show Details");
-			putValue(Action.LARGE_ICON_KEY, ZOOM_IN);
+			putValue(Action.LARGE_ICON_KEY, loadIcon(ICON_ZOOM_IN));
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			maximize();
+			expandWindow();
 		}
 	};
 
@@ -125,8 +132,8 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().getGridWindow().clear();
-			app().getGridWindow().drawGrid();
+			app().getGridViewController().clear();
+			app().getGridViewController().drawGrid();
 		}
 	};
 
@@ -137,14 +144,16 @@ public class ControlWindow extends JFrame {
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
-	public ControlWindow() {
-		setTitle("Mazes");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ControlViewController() {
+		window = new JFrame();
+		window.setTitle("Maze Demo App - Control View");
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setAlwaysOnTop(true);
 		controlView = new ControlView();
-		setContentPane(controlView);
+		window.setContentPane(controlView);
 	}
 
-	public ControlWindow(MazeDemoModel model) {
+	public ControlViewController(MazeDemoModel model) {
 		this();
 		this.model = model;
 
@@ -179,7 +188,7 @@ public class ControlWindow extends JFrame {
 
 		// Menus
 		JMenuBar mb = new JMenuBar();
-		setJMenuBar(mb);
+		window.setJMenuBar(mb);
 		generatorMenu = new GeneratorMenu();
 		mb.add(generatorMenu);
 		solverMenu = new SolverMenu(model);
@@ -198,21 +207,29 @@ public class ControlWindow extends JFrame {
 		mb.add(optionMenu);
 	}
 
-	public void minimize() {
-		controlView.getControls().setVisible(false);
-		controlView.getBtnShowHideDetails().setAction(actionMaximize);
-		pack();
-		setSize(getWidth(), COLLAPSED_HEIGHT);
+	public void placeWindow(DisplayMode displayMode) {
+		window.setLocation((displayMode.getWidth() - window.getWidth()) / 2, 42);
 	}
 
-	public void maximize() {
-		controlView.getControls().setVisible(true);
-		controlView.getBtnShowHideDetails().setAction(actionMinimize);
-		pack();
+	public void showWindow() {
+		window.setVisible(true);
+	}
+
+	public void collapseWindow() {
+		controlView.getContent().setVisible(false);
+		controlView.getBtnShowHideDetails().setAction(actionExpandWindow);
+		window.pack();
+		window.setSize(window.getWidth(), COLLAPSED_WINDOW_HEIGHT);
+	}
+
+	public void expandWindow() {
+		controlView.getContent().setVisible(true);
+		controlView.getBtnShowHideDetails().setAction(actionCollapseWindow);
+		window.pack();
 	}
 
 	public void setBusy(boolean busy) {
-		setVisible(!busy || !model.isHidingControlsWhenRunning());
+		window.setVisible(!busy || !model.isHidingControlsWhenRunning());
 		boolean enabled = !busy;
 		generatorMenu.setEnabled(enabled);
 		solverMenu.setEnabled(enabled);

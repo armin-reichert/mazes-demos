@@ -14,7 +14,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.KeyStroke;
 
-import de.amr.demos.maze.swingapp.MazeDemoApp;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
@@ -46,7 +45,7 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			MazeDemoApp.app().getControlWindow().setVisible(true);
+			app().getControlViewController().showWindow();
 		}
 	};
 

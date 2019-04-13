@@ -5,19 +5,30 @@ import javax.swing.JFrame;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 
-public class GridWindow extends JFrame {
+/**
+ * View Controller for the grid display UI.
+ * 
+ * @author Armin Reichert
+ */
+public class GridViewController {
 
+	private JFrame window;
 	private GridView gridView;
 
-	public GridWindow() {
-		setTitle("Maze Display Window");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setUndecorated(true);
+	public GridViewController() {
+		window = new JFrame();
+		window.setTitle("Maze Demo App - Display View");
+		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		window.setUndecorated(true);
 	}
 
-	public GridWindow(MazeDemoModel model) {
+	public GridViewController(MazeDemoModel model) {
 		this();
 		createGridView(model);
+	}
+
+	public void showWindow() {
+		window.setVisible(true);
 	}
 
 	public GridView getGridView() {
@@ -52,7 +63,7 @@ public class GridWindow extends JFrame {
 			gridView.setPathColor(oldCanvas.getPathColor());
 			gridView.setStyle(oldCanvas.getStyle());
 		}
-		setContentPane(gridView);
+		window.setContentPane(gridView);
 	}
 
 	public void replaceGridView(MazeDemoModel model) {
@@ -60,8 +71,7 @@ public class GridWindow extends JFrame {
 		createGridView(model);
 		gridView.clear();
 		gridView.drawGrid();
-		setContentPane(gridView);
-		validate();
+		window.setContentPane(gridView);
+		window.validate();
 	}
-
 }

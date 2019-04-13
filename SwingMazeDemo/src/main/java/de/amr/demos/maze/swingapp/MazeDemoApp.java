@@ -12,16 +12,20 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
-import de.amr.demos.maze.swingapp.view.ControlWindow;
-import de.amr.demos.maze.swingapp.view.GridWindow;
+import de.amr.demos.maze.swingapp.view.ControlViewController;
+import de.amr.demos.maze.swingapp.view.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
 
 /**
- * This application visualizes different maze generation algorithms and path finders. The grid size
- * and display style can be changed interactively.
+ * This application visualizes different maze generation algorithms and path finders.
+ * <p>
+ * The application provides an undecorated full-screen preview area where the maze generation and
+ * path finding algorithms are displayed as animations. Using a control window one can change the
+ * maze generation algorithm and the path finder algorithm. The size/resolution of the grid can also
+ * be changed interactively.
  * 
  * @author Armin Reichert
  */
@@ -43,8 +47,8 @@ public class MazeDemoApp {
 	}
 
 	private final MazeDemoModel model;
-	private ControlWindow wndControl;
-	private GridWindow wndGrid;
+	private ControlViewController controlViewController;
+	private GridViewController gridViewController;
 	private Thread bgThread;
 
 	public MazeDemoApp() {
@@ -55,19 +59,18 @@ public class MazeDemoApp {
 	}
 
 	private void createAndShowUI() {
-		wndGrid = new GridWindow(model);
+		gridViewController = new GridViewController(model);
 
-		wndControl = new ControlWindow(model);
-		wndControl.setAlwaysOnTop(true);
-		wndControl.minimize();
-		wndControl.setBusy(false);
+		controlViewController = new ControlViewController(model);
+		controlViewController.collapseWindow();
+		controlViewController.setBusy(false);
 
 		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
 
-		wndGrid.setVisible(true);
-		wndControl.setLocation((getDisplayMode().getWidth() - wndControl.getWidth()) / 2, 42);
-		wndControl.setVisible(true);
+		gridViewController.showWindow();
+		controlViewController.placeWindow(getDisplayMode());
+		controlViewController.showWindow();
 	}
 
 	public DisplayMode getDisplayMode() {
@@ -78,45 +81,45 @@ public class MazeDemoApp {
 		return model;
 	}
 
-	public ControlWindow getControlWindow() {
-		return wndControl;
+	public ControlViewController getControlViewController() {
+		return controlViewController;
 	}
 
-	public GridWindow getGridWindow() {
-		return wndGrid;
+	public GridViewController getGridViewController() {
+		return gridViewController;
 	}
 
 	public Optional<AlgorithmInfo> currentGenerator() {
-		return wndControl.getSelectedGenerator();
+		return controlViewController.getSelectedGenerator();
 	}
 
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		wndGrid.clear();
-		wndControl.selectGenerator(generatorInfo);
+		gridViewController.clear();
+		controlViewController.selectGenerator(generatorInfo);
 	}
 
 	public Optional<AlgorithmInfo> currentSolver() {
-		return wndControl.getSelectedSolver();
+		return controlViewController.getSelectedSolver();
 	}
 
 	public void changeSolver(AlgorithmInfo solverInfo) {
-		wndControl.selectSolver(solverInfo);
+		controlViewController.selectSolver(solverInfo);
 	}
 
 	public void resetDisplay() {
 		boolean wasFull = model.getGrid().isFull();
 		model.createGrid(wasFull, wasFull ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		wndGrid.replaceGridView(model);
+		gridViewController.replaceGridView(model);
 	}
 
 	public void showMessage(String msg) {
-		wndControl.showMessage(msg + "\n");
+		controlViewController.showMessage(msg + "\n");
 	}
 
 	public void setBusy(boolean busy) {
-		wndControl.setBusy(busy);
+		controlViewController.setBusy(busy);
 	}
 
 	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,

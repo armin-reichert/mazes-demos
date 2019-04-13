@@ -38,7 +38,7 @@ public class ControlView extends JPanel {
 	private JLabel lblGenerator;
 	private JLabel lblSolver;
 	private JScrollPane scrollPane;
-	private JPanel controls;
+	private JPanel content;
 	private JButton btnShowHideDetails;
 
 	public ControlView() {
@@ -46,40 +46,40 @@ public class ControlView extends JPanel {
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
 
-		controls = new JPanel();
-		add(controls, BorderLayout.CENTER);
-		controls.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][]"));
+		content = new JPanel();
+		add(content, BorderLayout.CENTER);
+		content.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][]"));
 
 		lblGenerator = new JLabel("Generator");
-		controls.add(lblGenerator, "cell 0 0,growx");
+		content.add(lblGenerator, "cell 0 0,growx");
 
 		lblGeneratorName = new JLabel("Generator Algorithm");
 		lblGeneratorName.setBorder(new EmptyBorder(5, 0, 5, 0));
 		lblGeneratorName.setForeground(Color.BLUE);
 		lblGeneratorName.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		lblGeneratorName.setHorizontalAlignment(SwingConstants.LEFT);
-		controls.add(lblGeneratorName, "flowy,cell 2 0,alignx left");
+		content.add(lblGeneratorName, "flowy,cell 2 0,alignx left");
 
 		lblSolver = new JLabel("Solver");
-		controls.add(lblSolver, "flowx,cell 0 1,growx");
+		content.add(lblSolver, "flowx,cell 0 1,growx");
 
 		lblSolverName = new JLabel("Solver Algorithm");
-		controls.add(lblSolverName, "cell 2 1");
+		content.add(lblSolverName, "cell 2 1");
 		lblSolverName.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSolverName.setForeground(Color.BLUE);
 		lblSolverName.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		lblSolverName.setBorder(new EmptyBorder(5, 0, 5, 0));
 
 		JLabel lblGridResolution = new JLabel("Grid Resolution");
-		controls.add(lblGridResolution, "cell 0 2,growx");
+		content.add(lblGridResolution, "cell 0 2,growx");
 
 		comboGridResolution = new JComboBox<>();
 		comboGridResolution.setMaximumRowCount(16);
 		lblGridResolution.setLabelFor(comboGridResolution);
-		controls.add(comboGridResolution, "cell 2 2,growx");
+		content.add(comboGridResolution, "cell 2 2,growx");
 
 		lblPassageWidth = new JLabel("Passage Width (%)");
-		controls.add(lblPassageWidth, "cell 0 3,growx,aligny top");
+		content.add(lblPassageWidth, "cell 0 3,growx,aligny top");
 
 		sliderPassageWidth = new JSlider();
 		lblPassageWidth.setLabelFor(sliderPassageWidth);
@@ -88,10 +88,10 @@ public class ControlView extends JPanel {
 		sliderPassageWidth.setPaintLabels(true);
 		sliderPassageWidth.setToolTipText("Passage Width (%)");
 		sliderPassageWidth.setPaintTicks(true);
-		controls.add(sliderPassageWidth, "cell 2 3,growx");
+		content.add(sliderPassageWidth, "cell 2 3,growx");
 
 		scrollPane = new JScrollPane();
-		controls.add(scrollPane, "cell 0 5 3 1,grow");
+		content.add(scrollPane, "cell 0 5 3 1,grow");
 
 		textArea = new JTextArea();
 		textArea.setEditable(false);
@@ -172,8 +172,8 @@ public class ControlView extends JPanel {
 		return btnSolve;
 	}
 
-	public JPanel getControls() {
-		return controls;
+	public JPanel getContent() {
+		return content;
 	}
 
 	public JButton getBtnShowHideDetails() {

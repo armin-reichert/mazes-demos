@@ -21,7 +21,7 @@ public class FloodFill extends AbstractAction {
 	}
 
 	private void runFloodFill() {
-		MazeDemoApp.app().getGridWindow().floodFill(app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
+		MazeDemoApp.app().getGridViewController().floodFill(app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
 				app().getModel().isDistancesVisible());
 	}
 
@@ -30,7 +30,7 @@ public class FloodFill extends AbstractAction {
 		app().startBackgroundThread(
 
 				() -> {
-					app().getGridWindow().drawGrid();
+					app().getGridViewController().drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::runFloodFill);
 					app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));
