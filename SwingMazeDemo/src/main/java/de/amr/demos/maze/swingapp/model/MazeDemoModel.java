@@ -92,7 +92,7 @@ public class MazeDemoModel {
 		EUCLIDEAN, MANHATTAN, CHEBYSHEV
 	}
 
-	public static final AlgorithmInfo[] GENERATOR_ALGORITHMS = {
+	private static final AlgorithmInfo[] GENERATOR_ALGORITHMS = {
 		/*@formatter:off*/
 		new AlgorithmInfo(RecursiveDFS.class, "Random recursive DFS (small grids only!)", Traversal, SmallGrid),
 		new AlgorithmInfo(IterativeDFS.class, "Random non-recursive DFS", Traversal),
@@ -138,7 +138,7 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
-	public static final AlgorithmInfo[] PATHFINDER_ALGORITHMS = {
+	private static final AlgorithmInfo[] PATHFINDER_ALGORITHMS = {
 		/*@formatter:off*/
 		new AlgorithmInfo(BreadthFirstSearch.class, "Breadth-First Search", BFS),
 		new AlgorithmInfo(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", BFS),
@@ -189,17 +189,19 @@ public class MazeDemoModel {
 	}
 
 	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
-		return Arrays.stream(GENERATOR_ALGORITHMS)
-				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
+		return generators().filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
 	}
 
-	public Stream<AlgorithmInfo> findGenerators() {
+	public Stream<AlgorithmInfo> generators() {
 		return Arrays.stream(GENERATOR_ALGORITHMS);
 	}
 
+	public Stream<AlgorithmInfo> solvers() {
+		return Arrays.stream(PATHFINDER_ALGORITHMS);
+	}
+
 	public Optional<AlgorithmInfo> findSolver(Class<?> clazz) {
-		return Arrays.stream(PATHFINDER_ALGORITHMS)
-				.filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
+		return solvers().filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
 	}
 
 	public int[] getGridCellSizes() {

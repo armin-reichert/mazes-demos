@@ -40,7 +40,7 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> fastGenerators = app().getModel().findGenerators().filter(alg -> !alg.isTagged(Slow))
+		List<AlgorithmInfo> fastGenerators = app().getModel().generators().filter(alg -> !alg.isTagged(Slow))
 				.collect(Collectors.toList());
 		for (AlgorithmInfo generatorInfo : fastGenerators) {
 			app().changeGenerator(generatorInfo);

@@ -1,18 +1,16 @@
 package de.amr.demos.maze.swingapp.view.menu;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.model.MazeDemoModel.GENERATOR_ALGORITHMS;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.MST;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Traversal;
 import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.UST;
 
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.view.ControlViewController;
 
 /**
  * Menu for selecting the maze generation algorithm.
@@ -21,7 +19,10 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
  */
 public class GeneratorMenu extends AlgorithmMenu {
 
-	public GeneratorMenu() {
+	private final ControlViewController controller;
+
+	public GeneratorMenu(ControlViewController controller) {
+		this.controller = controller;
 		setText("Generators");
 		addMenu("Graph Traversal", alg -> alg.isTagged(Traversal));
 		addMenu("Minimum Spanning Tree", alg -> alg.isTagged(MST));
@@ -29,14 +30,14 @@ public class GeneratorMenu extends AlgorithmMenu {
 		addMenu("Others", alg -> !(alg.isTagged(Traversal) || alg.isTagged(MST) || alg.isTagged(UST)));
 	}
 
-	private void addMenu(String title, Predicate<AlgorithmInfo> filter) {
+	private void addMenu(String title, Predicate<AlgorithmInfo> includeInMenu) {
 		JMenu menu = new JMenu(title);
-		Stream.of(GENERATOR_ALGORITHMS).filter(filter).forEach(alg -> {
+		controller.getModel().generators().filter(includeInMenu).forEach(generatorInfo -> {
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-			item.addActionListener(e -> app().changeGenerator(alg));
-			item.setText(alg.getDescription());
-			item.putClientProperty("algorithm", alg);
-			btnGroup.add(item);
+			item.addActionListener(e -> controller.selectGenerator(generatorInfo));
+			item.setText(generatorInfo.getDescription());
+			item.putClientProperty("algorithm", generatorInfo);
+			buttonGroup.add(item);
 			menu.add(item);
 		});
 		add(menu);

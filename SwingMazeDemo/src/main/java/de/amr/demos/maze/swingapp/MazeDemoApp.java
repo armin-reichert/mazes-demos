@@ -65,7 +65,7 @@ public class MazeDemoApp {
 		controlViewController.setBusy(false);
 
 		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
-		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
+		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
 
 		gridViewController.showWindow();
 		controlViewController.placeWindow(getDisplayMode());
@@ -93,10 +93,6 @@ public class MazeDemoApp {
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.clear();
 		controlViewController.selectGenerator(generatorInfo);
-	}
-
-	public void changeSolver(AlgorithmInfo solverInfo) {
-		controlViewController.selectSolver(solverInfo);
 	}
 
 	public void resetDisplay() {

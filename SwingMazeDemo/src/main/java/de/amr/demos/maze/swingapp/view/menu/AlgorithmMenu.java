@@ -17,19 +17,19 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
  */
 public abstract class AlgorithmMenu extends JMenu {
 
-	protected final ButtonGroup btnGroup = new ButtonGroup();
+	protected final ButtonGroup buttonGroup = new ButtonGroup();
 
-	protected Stream<AbstractButton> btnStream() {
-		return Collections.list(btnGroup.getElements()).stream();
+	protected Stream<AbstractButton> buttons() {
+		return Collections.list(buttonGroup.getElements()).stream();
 	}
 
 	public Optional<AlgorithmInfo> getSelectedAlgorithm() {
-		return btnStream().filter(AbstractButton::isSelected)
+		return buttons().filter(AbstractButton::isSelected)
 				.map(btn -> (AlgorithmInfo) btn.getClientProperty("algorithm")).findFirst();
 	}
 
 	public void selectAlgorithm(AlgorithmInfo alg) {
-		btnStream().filter(item -> alg.equals(item.getClientProperty("algorithm"))).findFirst()
+		buttons().filter(item -> alg.equals(item.getClientProperty("algorithm"))).findFirst()
 				.ifPresent(btn -> btn.setSelected(true));
 	}
 }

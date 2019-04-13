@@ -189,9 +189,9 @@ public class ControlViewController {
 		// Menus
 		JMenuBar mb = new JMenuBar();
 		window.setJMenuBar(mb);
-		generatorMenu = new GeneratorMenu();
+		generatorMenu = new GeneratorMenu(this);
 		mb.add(generatorMenu);
-		solverMenu = new SolverMenu(model);
+		solverMenu = new SolverMenu(this);
 		mb.add(solverMenu);
 		canvasMenu = new JMenu("Canvas");
 		canvasMenu.add(actionClearCanvas);
@@ -205,6 +205,10 @@ public class ControlViewController {
 		mb.add(canvasMenu);
 		optionMenu = new OptionMenu(model);
 		mb.add(optionMenu);
+	}
+
+	public MazeDemoModel getModel() {
+		return model;
 	}
 
 	public void placeWindow(DisplayMode displayMode) {

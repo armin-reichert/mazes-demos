@@ -1,21 +1,14 @@
 package de.amr.demos.maze.swingapp.view.menu;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.model.MazeDemoModel.PATHFINDER_ALGORITHMS;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
-import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.PathFinderTag;
+import de.amr.demos.maze.swingapp.view.ControlViewController;
 
 /**
  * Menu for selecting the path finder algorithm.
@@ -24,50 +17,44 @@ import de.amr.demos.maze.swingapp.model.PathFinderTag;
  */
 public class SolverMenu extends AlgorithmMenu {
 
-	private final List<AlgorithmInfo> informedSolvers = new ArrayList<>();
-	private final List<AlgorithmInfo> uninformedSolvers = new ArrayList<>();
+	private final ControlViewController controller;
 
-	public SolverMenu(MazeDemoModel model) {
+	public SolverMenu(ControlViewController controller) {
+		this.controller = controller;
 		setText("Solvers");
-		Stream.of(PATHFINDER_ALGORITHMS).forEach(alg -> {
-			if (alg.isTagged(PathFinderTag.INFORMED)) {
-				informedSolvers.add(alg);
-			}
-			else {
-				uninformedSolvers.add(alg);
-			}
-		});
 		add(new JMenuItem("Uninformed Solvers")).setEnabled(false);
-		uninformedSolvers.forEach(this::addRadioButton);
+		controller.getModel().solvers().filter(solverInfo -> !solverInfo.isTagged(PathFinderTag.INFORMED))
+				.forEach(this::addSolverMenuItem);
 		addSeparator();
 		add(new JMenuItem("Informed Solvers")).setEnabled(false);
-		addHeuristicsMenu(model);
-		informedSolvers.forEach(this::addRadioButton);
+		addMetricsMenu();
+		controller.getModel().solvers().filter(solverInfo -> solverInfo.isTagged(PathFinderTag.INFORMED))
+				.forEach(this::addSolverMenuItem);
 	}
 
-	private void addHeuristicsMenu(MazeDemoModel model) {
+	private void addSolverMenuItem(AlgorithmInfo solverInfo) {
+		JRadioButtonMenuItem item = new JRadioButtonMenuItem();
+		item.addActionListener(event -> controller.selectSolver(solverInfo));
+		item.setText(solverInfo.getDescription());
+		item.putClientProperty("algorithm", solverInfo);
+		buttonGroup.add(item);
+		add(item);
+	}
+
+	private void addMetricsMenu() {
 		JMenu menu = new JMenu("Metric");
 		ButtonGroup radio = new ButtonGroup();
 		for (Metric metric : Metric.values()) {
 			String text = metric.name().substring(0, 1) + metric.name().substring(1).toLowerCase();
 			JRadioButtonMenuItem rb = new JRadioButtonMenuItem(text);
 			rb.addActionListener(e -> {
-				model.setMetric(metric);
-				getSelectedAlgorithm().ifPresent(app()::changeSolver);
+				controller.getModel().setMetric(metric);
+				getSelectedAlgorithm().ifPresent(controller::selectSolver);
 			});
 			radio.add(rb);
 			menu.add(rb);
-			rb.setSelected(metric == model.getMetric());
+			rb.setSelected(metric == controller.getModel().getMetric());
 		}
 		add(menu);
-	}
-
-	private void addRadioButton(AlgorithmInfo alg) {
-		JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-		item.addActionListener(e -> app().changeSolver(alg));
-		item.setText(alg.getDescription());
-		item.putClientProperty("algorithm", alg);
-		btnGroup.add(item);
-		add(item);
 	}
 }
