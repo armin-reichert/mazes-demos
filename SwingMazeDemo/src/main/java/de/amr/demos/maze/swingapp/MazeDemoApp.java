@@ -6,7 +6,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
@@ -14,7 +13,8 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.view.ControlWindow;
-import de.amr.demos.maze.swingapp.view.GridDisplay;
+import de.amr.demos.maze.swingapp.view.GridView;
+import de.amr.demos.maze.swingapp.view.GridWindow;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
@@ -50,8 +50,8 @@ public class MazeDemoApp {
 		return it.model;
 	}
 
-	public static GridDisplay canvas() {
-		return it.canvas;
+	public static GridView canvas() {
+		return it.wndGrid.getGridView();
 	}
 
 	public static ControlWindow controlWindow() {
@@ -60,8 +60,7 @@ public class MazeDemoApp {
 
 	private final MazeDemoModel model;
 	private final ControlWindow wndControl;
-	private final JFrame wndDisplayArea;
-	private GridDisplay canvas;
+	private final GridWindow wndGrid;
 	private Thread bgThread;
 
 	public MazeDemoApp() {
@@ -75,12 +74,8 @@ public class MazeDemoApp {
 		model.setGridHeight(DISPLAY_MODE.getHeight() / 32);
 		model.createGrid(false, TraversalState.UNVISITED);
 
-		// create grid display
-		createCanvas();
-		wndDisplayArea = new JFrame("Maze Display Window");
-		wndDisplayArea.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		wndDisplayArea.setUndecorated(true);
-		wndDisplayArea.setContentPane(canvas);
+		// create grid window
+		wndGrid = new GridWindow(model);
 
 		// create control window
 		wndControl = new ControlWindow(model);
@@ -93,7 +88,7 @@ public class MazeDemoApp {
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(this::changeSolver);
 
 		// show windows
-		wndDisplayArea.setVisible(true);
+		wndGrid.setVisible(true);
 		wndControl.setLocation((DISPLAY_MODE.getWidth() - wndControl.getWidth()) / 2, 42);
 		wndControl.setVisible(true);
 	}
@@ -105,7 +100,7 @@ public class MazeDemoApp {
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		canvas.clear();
+		wndGrid.clear();
 		wndControl.selectGenerator(generatorInfo);
 	}
 
@@ -117,28 +112,10 @@ public class MazeDemoApp {
 		wndControl.selectSolver(solverInfo);
 	}
 
-	private void createCanvas() {
-		GridDisplay oldCanvas = canvas;
-		canvas = new GridDisplay(model);
-		if (oldCanvas != null) {
-			canvas.setGridBackgroundColor(oldCanvas.getGridBackgroundColor());
-			canvas.setCompletedCellColor(oldCanvas.getCompletedCellColor());
-			canvas.setVisitedCellColor(oldCanvas.getVisitedCellColor());
-			canvas.setUnvisitedCellColor(oldCanvas.getUnvisitedCellColor());
-			canvas.setPathColor(oldCanvas.getPathColor());
-			canvas.setStyle(oldCanvas.getStyle());
-		}
-	}
-
 	public void resetDisplay() {
-		model.changeHandler.removePropertyChangeListener(canvas);
 		boolean wasFull = model.getGrid().isFull();
 		model.createGrid(wasFull, wasFull ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		createCanvas();
-		canvas.clear();
-		canvas.drawGrid();
-		wndDisplayArea.setContentPane(canvas);
-		wndDisplayArea.validate();
+		wndGrid.replaceGridView(model);
 	}
 
 	public void showMessage(String msg) {

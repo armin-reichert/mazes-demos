@@ -31,7 +31,7 @@ import de.amr.util.StopWatch;
  * 
  * @author Armin Reichert
  */
-public class GridDisplay extends GridCanvas implements PropertyChangeListener {
+public class GridView extends GridCanvas implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 	private final GridCanvasAnimation<TraversalState, Integer> animation;
@@ -50,7 +50,7 @@ public class GridDisplay extends GridCanvas implements PropertyChangeListener {
 		}
 	};
 
-	public GridDisplay(MazeDemoModel model) {
+	public GridView(MazeDemoModel model) {
 		super(model.getGrid(), model.getGridCellSize());
 
 		this.model = model;
