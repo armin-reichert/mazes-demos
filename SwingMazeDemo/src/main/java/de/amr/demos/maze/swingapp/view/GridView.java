@@ -6,48 +6,29 @@ import static java.lang.Math.min;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
-import de.amr.util.StopWatch;
 
 /**
  * Display area for maze generation and traversal.
  * 
  * @author Armin Reichert
  */
-public class GridView extends GridCanvas implements PropertyChangeListener {
+public class GridView extends GridCanvas {
 
 	private MazeDemoModel model;
-	private GridCanvasAnimation<TraversalState, Integer> animation;
 	private Color gridBackgroundColor;
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
 	private Color completedCellColor;
 	private Color pathColor;
 	private Style style;
-
-	private final Action actionShowControls = new AbstractAction("Show Controls") {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			app().getControlViewController().showWindow();
-		}
-	};
 
 	public GridView() {
 		gridBackgroundColor = Color.BLACK;
@@ -61,13 +42,6 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 	public GridView(MazeDemoModel model) {
 		this();
 		this.model = model;
-
-		animation = new GridCanvasAnimation<>(this);
-		animation.fnDelay = () -> model.getDelay();
-		model.getGrid().addGraphObserver(animation);
-
-		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
-		getActionMap().put("showSettings", actionShowControls);
 
 		setGrid(model.getGrid(), false);
 		setCellSize(model.getGridCellSize(), false);
@@ -84,10 +58,6 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 		g.translate(dx, dy);
 		super.paintComponent(g);
 		g.translate(-dx, -dy);
-	}
-
-	public void enableAnimation(boolean enabled) {
-		animation.setEnabled(enabled);
 	}
 
 	public Color getGridBackgroundColor() {
@@ -136,33 +106,6 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 
 	public void setStyle(Style style) {
 		this.style = style;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void propertyChange(PropertyChangeEvent change) {
-		if ("grid".equals(change.getPropertyName())) {
-			if (change.getOldValue() != null) {
-				ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) change
-						.getOldValue();
-				ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
-						.getNewValue();
-				setGrid(newGrid);
-				oldGrid.removeGraphObserver(animation);
-				newGrid.addGraphObserver(animation);
-			}
-		}
-		else if ("passageWidthPercentage".equals(change.getPropertyName())) {
-			clear();
-			drawGrid();
-		}
-	}
-
-	@Override
-	public void drawGrid() {
-		StopWatch watch = new StopWatch();
-		watch.measure(super::drawGrid);
-		System.out.println(String.format("%s, drawing time: %.0f ms", getGrid(), watch.getMillis()));
 	}
 
 	private ConfigurableGridRenderer createRenderer() {
