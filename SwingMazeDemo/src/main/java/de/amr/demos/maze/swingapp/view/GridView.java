@@ -33,8 +33,8 @@ import de.amr.util.StopWatch;
  */
 public class GridView extends GridCanvas implements PropertyChangeListener {
 
-	private final MazeDemoModel model;
-	private final GridCanvasAnimation<TraversalState, Integer> animation;
+	private MazeDemoModel model;
+	private GridCanvasAnimation<TraversalState, Integer> animation;
 	private Color gridBackgroundColor;
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
@@ -50,26 +50,28 @@ public class GridView extends GridCanvas implements PropertyChangeListener {
 		}
 	};
 
-	public GridView(MazeDemoModel model) {
-		super(model.getGrid(), model.getGridCellSize());
-
-		this.model = model;
-		model.changeHandler.addPropertyChangeListener(this);
-
-		animation = new GridCanvasAnimation<>(this);
-		animation.fnDelay = () -> model.getDelay();
-		model.getGrid().addGraphObserver(animation);
-
+	public GridView() {
 		gridBackgroundColor = Color.BLACK;
 		unvisitedCellColor = Color.BLACK;
 		visitedCellColor = Color.BLUE;
 		completedCellColor = Color.WHITE;
 		pathColor = Color.RED;
 		style = Style.WALL_PASSAGES;
+	}
+
+	public GridView(MazeDemoModel model) {
+		this();
+		this.model = model;
+
+		animation = new GridCanvasAnimation<>(this);
+		animation.fnDelay = () -> model.getDelay();
+		model.getGrid().addGraphObserver(animation);
 
 		getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		getActionMap().put("showSettings", actionShowControls);
 
+		setGrid(model.getGrid(), false);
+		setCellSize(model.getGridCellSize(), false);
 		replaceRenderer(createRenderer());
 		clear();
 	}
