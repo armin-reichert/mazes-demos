@@ -1,12 +1,11 @@
 package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.DISPLAY_MODE;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.MazeDemoApp.canvas;
 import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
 
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -18,13 +17,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JSlider;
 
+import de.amr.demos.maze.swingapp.MazeDemoApp;
 import de.amr.demos.maze.swingapp.action.ChangeGridResolution;
 import de.amr.demos.maze.swingapp.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.action.FloodFill;
 import de.amr.demos.maze.swingapp.action.SaveImage;
 import de.amr.demos.maze.swingapp.action.SolveMaze;
+import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
 import de.amr.demos.maze.swingapp.view.menu.OptionMenu;
 import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
@@ -63,11 +65,11 @@ public class ControlWindow extends JFrame {
 		return -1;
 	}
 
-	public final GeneratorMenu generatorMenu;
-	public final JMenu canvasMenu;
-	public final SolverMenu solverMenu;
-	public final OptionMenu optionMenu;
-	public final ControlPanel controlPanel;
+	private GeneratorMenu generatorMenu;
+	private JMenu canvasMenu;
+	private SolverMenu solverMenu;
+	private OptionMenu optionMenu;
+	private ControlView controlView;
 
 	private final Action actionMinimize = new AbstractAction() {
 
@@ -115,7 +117,7 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().stopBackgroundThread();
+			MazeDemoApp.app().stopBackgroundThread();
 		}
 	};
 
@@ -123,8 +125,8 @@ public class ControlWindow extends JFrame {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			canvas().clear();
-			canvas().drawGrid();
+			MazeDemoApp.canvas().clear();
+			MazeDemoApp.canvas().drawGrid();
 		}
 	};
 
@@ -135,43 +137,41 @@ public class ControlWindow extends JFrame {
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
-	public ControlWindow() {
-		setTitle("Mazes");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public ControlWindow(MazeDemoModel model) {
+		this();
 
-		// Control panel
-		controlPanel = new ControlPanel();
+		controlView = new ControlView();
 
-		controlPanel.getComboGridResolution().setModel(createGridResolutionModel());
-		controlPanel.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex(model()));
-		controlPanel.getComboGridResolution().setAction(actionChangeGridResolution);
+		controlView.getComboGridResolution().setModel(createGridResolutionModel());
+		controlView.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex(model()));
+		controlView.getComboGridResolution().setAction(actionChangeGridResolution);
 
-		controlPanel.getSliderPassageWidth().setValue(model().getPassageWidthPercentage());
-		controlPanel.getSliderPassageWidth().addChangeListener(e -> {
+		controlView.getSliderPassageWidth().setValue(model().getPassageWidthPercentage());
+		controlView.getSliderPassageWidth().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
 				model().setPassageWidthPercentage(slider.getValue());
 			}
 		});
 
-		controlPanel.getSliderDelay().setMinimum(0);
-		controlPanel.getSliderDelay().setMaximum(100);
-		controlPanel.getSliderDelay().setValue(model().getDelay());
-		controlPanel.getSliderDelay().setMinorTickSpacing(10);
-		controlPanel.getSliderDelay().setMajorTickSpacing(50);
-		controlPanel.getSliderDelay().addChangeListener(e -> {
+		controlView.getSliderDelay().setMinimum(0);
+		controlView.getSliderDelay().setMaximum(100);
+		controlView.getSliderDelay().setValue(model().getDelay());
+		controlView.getSliderDelay().setMinorTickSpacing(10);
+		controlView.getSliderDelay().setMajorTickSpacing(50);
+		controlView.getSliderDelay().addChangeListener(e -> {
 			JSlider slider = (JSlider) e.getSource();
 			if (!slider.getValueIsAdjusting()) {
 				model().setDelay(slider.getValue());
 			}
 		});
 
-		controlPanel.getBtnCreateMaze().setAction(actionCreateSingleMaze);
-		controlPanel.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
-		controlPanel.getBtnFindPath().setAction(actionSolveMaze);
-		controlPanel.getBtnStop().setAction(actionStopBackgroundThread);
+		controlView.getBtnCreateMaze().setAction(actionCreateSingleMaze);
+		controlView.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
+		controlView.getBtnFindPath().setAction(actionSolveMaze);
+		controlView.getBtnStop().setAction(actionStopBackgroundThread);
 
-		setContentPane(controlPanel);
+		setContentPane(controlView);
 
 		// Menus
 		JMenuBar mb = new JMenuBar();
@@ -194,21 +194,27 @@ public class ControlWindow extends JFrame {
 		mb.add(optionMenu);
 	}
 
+	public ControlWindow() {
+		setTitle("Mazes");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
 	public void minimize() {
-		controlPanel.getControls().setVisible(false);
-		controlPanel.getBtnShowHideDetails().setAction(actionMaximize);
+		controlView.getControls().setVisible(false);
+		controlView.getBtnShowHideDetails().setAction(actionMaximize);
 		pack();
 		setSize(getWidth(), COLLAPSED_HEIGHT);
 	}
 
 	public void maximize() {
-		controlPanel.getControls().setVisible(true);
-		controlPanel.getBtnShowHideDetails().setAction(actionMinimize);
+		controlView.getControls().setVisible(true);
+		controlView.getBtnShowHideDetails().setAction(actionMinimize);
 		pack();
 	}
 
-	@Override
-	public void setEnabled(boolean enabled) {
+	public void setBusy(boolean busy) {
+		setVisible(!busy || !model().isHidingControlsWhenRunning());
+		boolean enabled = !busy;
 		generatorMenu.setEnabled(enabled);
 		solverMenu.setEnabled(enabled);
 		canvasMenu.setEnabled(enabled);
@@ -217,6 +223,44 @@ public class ControlWindow extends JFrame {
 		actionCreateSingleMaze.setEnabled(enabled);
 		actionCreateAllMazes.setEnabled(enabled);
 		actionSolveMaze.setEnabled(enabled);
-		controlPanel.getSliderPassageWidth().setEnabled(enabled);
+		controlView.getSliderPassageWidth().setEnabled(enabled);
+		controlView.getBtnStop().setEnabled(busy);
+	}
+
+	public void showMessage(String msg) {
+		controlView.getTextArea().append(msg);
+		controlView.getTextArea().setCaretPosition(controlView.getTextArea().getDocument().getLength());
+	}
+
+	public Optional<AlgorithmInfo> getSelectedGenerator() {
+		return generatorMenu.getSelectedAlgorithm();
+	}
+
+	public void selectSolver(AlgorithmInfo solverInfo) {
+		solverMenu.selectAlgorithm(solverInfo);
+		updateSolverText(solverInfo);
+	}
+
+	public Optional<AlgorithmInfo> getSelectedSolver() {
+		return solverMenu.getSelectedAlgorithm();
+	}
+
+	public void selectGenerator(AlgorithmInfo generatorInfo) {
+		generatorMenu.selectAlgorithm(generatorInfo);
+		updateGeneratorText(generatorInfo);
+	}
+
+	private void updateSolverText(AlgorithmInfo solverInfo) {
+		String text = solverInfo.getDescription();
+		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
+			String metric = model().getMetric().toString();
+			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
+			text += " (" + metric + ")";
+		}
+		controlView.getLblSolverName().setText(text);
+	}
+
+	private void updateGeneratorText(AlgorithmInfo generatorInfo) {
+		controlView.getLblGeneratorName().setText(generatorInfo.getDescription());
 	}
 }

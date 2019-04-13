@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.view;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.model;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,16 +15,14 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
-import de.amr.demos.maze.swingapp.model.PathFinderTag;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * Panel for setting parameters and running maze generator and path finder.
+ * View for setting parameters and running maze generator and path finder.
  * 
  * @author Armin Reichert
  */
-public class ControlPanel extends JPanel {
+public class ControlView extends JPanel {
 
 	private JButton btnCreateMaze;
 	private JComboBox<?> comboGridResolution;
@@ -45,7 +41,7 @@ public class ControlPanel extends JPanel {
 	private JPanel controls;
 	private JButton btnShowHideDetails;
 
-	public ControlPanel() {
+	public ControlView() {
 		setPreferredSize(new Dimension(520, 400));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
@@ -135,23 +131,12 @@ public class ControlPanel extends JPanel {
 		sliderDelay.setMajorTickSpacing(50);
 	}
 
-	public void showMessage(String msg) {
-		textArea.append(msg);
-		textArea.setCaretPosition(textArea.getDocument().getLength());
+	public JLabel getLblSolverName() {
+		return lblSolverName;
 	}
 
-	public void updateSolverText(AlgorithmInfo solverInfo) {
-		String text = solverInfo.getDescription();
-		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
-			String metric = model().getMetric().toString();
-			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
-			text += " (" + metric + ")";
-		}
-		lblSolverName.setText(text);
-	}
-
-	public void updateGeneratorText(AlgorithmInfo generatorInfo) {
-		lblGeneratorName.setText(generatorInfo.getDescription());
+	public JLabel getLblGeneratorName() {
+		return lblGeneratorName;
 	}
 
 	public JButton getBtnCreateMaze() {

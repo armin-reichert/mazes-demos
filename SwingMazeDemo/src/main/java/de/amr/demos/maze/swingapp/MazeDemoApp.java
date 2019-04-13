@@ -83,9 +83,10 @@ public class MazeDemoApp {
 		wndDisplayArea.setContentPane(canvas);
 
 		// create control window
-		wndControl = new ControlWindow();
+		wndControl = new ControlWindow(model);
 		wndControl.setAlwaysOnTop(true);
 		wndControl.minimize();
+		wndControl.setBusy(false);
 
 		// initialize generator and path finder
 		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
@@ -98,24 +99,22 @@ public class MazeDemoApp {
 	}
 
 	public Optional<AlgorithmInfo> currentGenerator() {
-		return wndControl.generatorMenu.getSelectedAlgorithm();
+		return wndControl.getSelectedGenerator();
 	}
 
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		canvas.clear();
-		wndControl.generatorMenu.selectAlgorithm(generatorInfo);
-		wndControl.controlPanel.updateGeneratorText(generatorInfo);
+		wndControl.selectGenerator(generatorInfo);
 	}
 
 	public Optional<AlgorithmInfo> currentSolver() {
-		return wndControl.solverMenu.getSelectedAlgorithm();
+		return wndControl.getSelectedSolver();
 	}
 
 	public void changeSolver(AlgorithmInfo solverInfo) {
-		wndControl.solverMenu.selectAlgorithm(solverInfo);
-		wndControl.controlPanel.updateSolverText(solverInfo);
+		wndControl.selectSolver(solverInfo);
 	}
 
 	private void createCanvas() {
@@ -143,12 +142,11 @@ public class MazeDemoApp {
 	}
 
 	public void showMessage(String msg) {
-		wndControl.controlPanel.showMessage(msg + "\n");
+		wndControl.showMessage(msg + "\n");
 	}
 
 	public void setBusy(boolean busy) {
-		wndControl.setVisible(!busy || !model.isHidingControlsWhenRunning());
-		wndControl.setEnabled(!busy);
+		wndControl.setBusy(busy);
 	}
 
 	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
