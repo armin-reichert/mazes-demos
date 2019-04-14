@@ -46,18 +46,17 @@ public class MazeDemoApp {
 		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
-	private final Dimension initialGridWindowSize;
+	private final Dimension initialSize;
 	private final MazeDemoModel model;
 	private ControlViewController controlViewController;
 	private GridViewController gridViewController;
 	private Thread bgThread;
 
 	public MazeDemoApp() {
-		initialGridWindowSize = getDisplaySize();
+		initialSize = getDisplaySize();
 		model = new MazeDemoModel();
-		model.setGridWidth(getInitialGridWindowSize().width / model.getGridCellSize());
-		model.setGridHeight(getInitialGridWindowSize().height / model.getGridCellSize());
-		model.createGrid(false, TraversalState.UNVISITED);
+		model.createGrid(initialSize.width / model.getGridCellSize(),
+				initialSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 	}
 
 	private void createAndShowUI() {
@@ -75,8 +74,8 @@ public class MazeDemoApp {
 		controlViewController.showWindow();
 	}
 
-	public Dimension getInitialGridWindowSize() {
-		return initialGridWindowSize != null ? initialGridWindowSize : getDisplaySize();
+	public Dimension getInitialSize() {
+		return initialSize;
 	}
 
 	private Dimension getDisplaySize() {
@@ -99,7 +98,8 @@ public class MazeDemoApp {
 
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
 		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
+				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.clear();
 		controlViewController.selectGenerator(generatorInfo);
 	}
@@ -107,8 +107,10 @@ public class MazeDemoApp {
 	public void reset() {
 		controlViewController.setBusy(true);
 		gridViewController.stopListening();
+		int numCols = getGridViewController().getWindow().getWidth() / model.getGridCellSize();
+		int numRows = getGridViewController().getWindow().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
-		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.replaceView();
 		gridViewController.startListening();
 		controlViewController.setBusy(false);
@@ -116,12 +118,6 @@ public class MazeDemoApp {
 
 	public void resizeGrid(int cellSize) {
 		model.setGridCellSize(cellSize);
-		int w = getGridViewController().getWindow() != null ? getGridViewController().getWindow().getWidth()
-				: getInitialGridWindowSize().width;
-		int h = getGridViewController().getWindow() != null ? getGridViewController().getWindow().getHeight()
-				: getInitialGridWindowSize().height;
-		model.setGridWidth(w / cellSize);
-		model.setGridHeight(h / cellSize);
 		reset();
 	}
 

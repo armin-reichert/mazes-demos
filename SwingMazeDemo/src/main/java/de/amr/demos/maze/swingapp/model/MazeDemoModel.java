@@ -154,8 +154,6 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
-	private int gridWidth;
-	private int gridHeight;
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private int[] gridCellSizes;
 	private int gridCellSize;
@@ -254,30 +252,14 @@ public class MazeDemoModel {
 		this.hidingControlsWhenRunning = hidingControlsWhenRunning;
 	}
 
-	public int getGridWidth() {
-		return gridWidth;
-	}
-
-	public void setGridWidth(int gridWidth) {
-		this.gridWidth = gridWidth;
-	}
-
-	public int getGridHeight() {
-		return gridHeight;
-	}
-
-	public void setGridHeight(int gridHeight) {
-		this.gridHeight = gridHeight;
-	}
-
 	public ObservableGridGraph<TraversalState, Integer> getGrid() {
 		return grid;
 	}
 
-	public void createGrid(boolean full, TraversalState defaultState) {
+	public void createGrid(int numCols, int numRows, boolean full, TraversalState defaultState) {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
-		grid = full ? fullObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0)
-				: emptyObservableGrid(gridWidth, gridHeight, Top4.get(), defaultState, 0);
+		grid = full ? fullObservableGrid(numCols, numRows, Top4.get(), defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, Top4.get(), defaultState, 0);
 		changeHandler.firePropertyChange("grid", oldGrid, grid);
 	}
 

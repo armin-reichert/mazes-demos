@@ -97,7 +97,7 @@ public class GridViewController implements PropertyChangeListener {
 	private int computePassageWidth(int u, int v) {
 		int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
 		if (model.isPassageWidthFluent()) {
-			float factor = (float) model.getGrid().col(u) / model.getGridWidth();
+			float factor = (float) model.getGrid().col(u) / model.getGrid().numCols();
 			passageWidth = Math.round(factor * passageWidth);
 		}
 		passageWidth = max(1, passageWidth);

@@ -25,7 +25,9 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-						app().getModel().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+						app().getModel().createGrid(app().getModel().getGrid().numCols(),
+								app().getModel().getGrid().numRows(), full,
+								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 						app().getGridViewController().clear();
 						createMaze(generatorInfo, app().getModel().getGenerationStart());
 						if (app().getModel().isFloodFillAfterGeneration()) {
