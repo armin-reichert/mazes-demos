@@ -7,8 +7,6 @@ import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -75,8 +73,7 @@ public class ControlViewController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
-			int cellSize = model.getGridCellSizes()[combo.getSelectedIndex()];
-			app().resizeGrid(cellSize);
+			app().resizeGrid(combo.getSelectedIndex());
 		}
 	};
 
@@ -135,7 +132,7 @@ public class ControlViewController {
 					cellSize);
 		}).toArray(String[]::new);
 		view.getComboGridResolution().setModel(new DefaultComboBoxModel<>(entries));
-		view.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex().orElse(-1));
+		view.getComboGridResolution().setSelectedIndex(model.getGridCellSizeIndex());
 		view.getComboGridResolution().setAction(actionChangeGridResolution);
 
 		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
@@ -299,10 +296,5 @@ public class ControlViewController {
 
 	private void updateGeneratorText(AlgorithmInfo generatorInfo) {
 		view.getLblGeneratorName().setText(generatorInfo.getDescription());
-	}
-
-	private OptionalInt getSelectedGridResolutionIndex() {
-		return IntStream.range(0, model.getGridCellSizes().length)
-				.filter(index -> model.getGridCellSizes()[index] == model.getGridCellSize()).findFirst();
 	}
 }

@@ -17,7 +17,7 @@ import de.amr.demos.maze.swingapp.view.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
-import de.amr.maze.alg.traversal.IterativeDFS;
+import de.amr.maze.alg.Armin;
 
 /**
  * This application visualizes different maze generation algorithms and path finders.
@@ -68,7 +68,7 @@ public class MazeDemoApp {
 		controlViewController.collapseWindow();
 		controlViewController.setBusy(false);
 
-		model.findGenerator(IterativeDFS.class).ifPresent(this::changeGenerator);
+		model.findGenerator(Armin.class).ifPresent(this::changeGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
 
 		gridViewController.showWindow();
@@ -118,8 +118,8 @@ public class MazeDemoApp {
 		controlViewController.setBusy(false);
 	}
 
-	public void resizeGrid(int cellSize) {
-		model.setGridCellSize(cellSize);
+	public void resizeGrid(int index) {
+		model.setGridCellSizeIndex(index);
 		reset();
 	}
 

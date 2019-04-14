@@ -156,7 +156,7 @@ public class MazeDemoModel {
 
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private int[] gridCellSizes;
-	private int gridCellSize;
+	private int gridCellSizeIndex;
 	private int passageWidthPercentage;
 	private boolean passageWidthFluent;
 	private boolean generationAnimated;
@@ -172,7 +172,7 @@ public class MazeDemoModel {
 
 	public MazeDemoModel() {
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
-		setGridCellSize(32);
+		setGridCellSizeIndex(3);
 		setPassageWidthPercentage(100);
 		setDelay(0);
 		setGenerationStart(CENTER);
@@ -209,11 +209,20 @@ public class MazeDemoModel {
 	}
 
 	public int getGridCellSize() {
-		return gridCellSize;
+		return gridCellSizes[gridCellSizeIndex];
+	}
+	
+	public int getGridCellSizeIndex() {
+		return gridCellSizeIndex;
 	}
 
-	public void setGridCellSize(int gridCellSize) {
-		this.gridCellSize = gridCellSize;
+	public void setGridCellSizeIndex(int gridCellSizeIndex) {
+		if (0 <= gridCellSizeIndex && gridCellSizeIndex < gridCellSizes.length) {
+			this.gridCellSizeIndex = gridCellSizeIndex;
+		}
+		else {
+			throw new IndexOutOfBoundsException();
+		}
 	}
 
 	public int getPassageWidthPercentage() {
