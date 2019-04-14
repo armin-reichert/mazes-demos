@@ -10,6 +10,7 @@ import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.view.GridView;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
@@ -43,8 +44,8 @@ public class SolveMaze extends AbstractAction {
 			app().startBackgroundThread(
 
 					() -> {
-						app().getGridViewController().drawGrid(); // possibly overwrite older search
-						runSolverAnimation(solver);
+						app().getGridViewController().drawGrid(); // overwrite older search
+						solve(solver);
 					},
 
 					interruption -> {
@@ -60,63 +61,59 @@ public class SolveMaze extends AbstractAction {
 		});
 	}
 
-	private void runSolverAnimation(AlgorithmInfo info) {
+	private void solve(AlgorithmInfo info) {
 
 		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
-			runSolverAnimation(new BreadthFirstSearch(app().getModel().getGrid()), info);
+			solve(new BreadthFirstSearch(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			runSolverAnimation(new BidiBreadthFirstSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new BidiBreadthFirstSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == DijkstraSearch.class) {
-			runSolverAnimation(new DijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new DijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			runSolverAnimation(new BidiDijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new BidiDijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			runSolverAnimation(
-					new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			solve(new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
-			runSolverAnimation(new AStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric()), info);
+			solve(new AStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
-			runSolverAnimation(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()),
-					info);
+			solve(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
-			runSolverAnimation(new DepthFirstSearch(app().getModel().getGrid()), info);
+			solve(new DepthFirstSearch(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch2.class) {
-			runSolverAnimation(new DepthFirstSearch2(app().getModel().getGrid()), info);
+			solve(new DepthFirstSearch2(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == IDDFS.class) {
-			runSolverAnimation(new IDDFS(app().getModel().getGrid()), info);
+			solve(new IDDFS(app().getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			runSolverAnimation(
-					new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			solve(new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
+					info);
 		}
 	}
 
-	private void runSolverAnimation(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
+	private void solve(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
+		GridView gridView = app().getGridViewController().getView();
 		int source = app().getModel().getGrid().cell(app().getModel().getPathFinderSource());
 		int target = app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(SolverTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(SolverTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridViewController().getGridView())
-					.delay(() -> app().getModel().getDelay())
-					.pathColor(app().getGridViewController().getGridView().getPathColor())
-					.distanceVisible(app().getModel().isDistancesVisible()).build();
+			BFSAnimation anim = BFSAnimation.builder().canvas(gridView).delay(() -> app().getModel().getDelay())
+					.pathColor(gridView.getPathColor()).distanceVisible(app().getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(SolverTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridViewController().getGridView())
-					.delay(() -> app().getModel().getDelay())
-					.pathColor(app().getGridViewController().getGridView().getPathColor()).build();
+			DFSAnimation anim = DFSAnimation.builder().canvas(gridView).delay(() -> app().getModel().getDelay())
+					.pathColor(gridView.getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		app().showMessage(informed

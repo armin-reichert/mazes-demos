@@ -28,7 +28,7 @@ public class SaveImage extends AbstractAction {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(app().getGridViewController().getGridView().getDrawingBuffer(), "png", pngFile);
+				ImageIO.write(app().getGridViewController().getView().getDrawingBuffer(), "png", pngFile);
 				app().showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
 				app().showMessage("Image could not be saved: " + x.getMessage());

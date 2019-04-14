@@ -38,7 +38,7 @@ public class ControlView extends JPanel {
 	private JLabel lblGenerator;
 	private JLabel lblSolver;
 	private JScrollPane scrollPane;
-	private JPanel content;
+	private JPanel collapsibleArea;
 	private JButton btnShowHideDetails;
 
 	public ControlView() {
@@ -46,40 +46,40 @@ public class ControlView extends JPanel {
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
 
-		content = new JPanel();
-		add(content, BorderLayout.CENTER);
-		content.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][]"));
+		collapsibleArea = new JPanel();
+		add(collapsibleArea, BorderLayout.CENTER);
+		collapsibleArea.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][]"));
 
 		lblGenerator = new JLabel("Generator");
-		content.add(lblGenerator, "cell 0 0,growx");
+		collapsibleArea.add(lblGenerator, "cell 0 0,growx");
 
 		lblGeneratorName = new JLabel("Generator Algorithm");
 		lblGeneratorName.setBorder(new EmptyBorder(5, 0, 5, 0));
 		lblGeneratorName.setForeground(Color.BLUE);
 		lblGeneratorName.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		lblGeneratorName.setHorizontalAlignment(SwingConstants.LEFT);
-		content.add(lblGeneratorName, "flowy,cell 2 0,alignx left");
+		collapsibleArea.add(lblGeneratorName, "flowy,cell 2 0,alignx left");
 
 		lblSolver = new JLabel("Solver");
-		content.add(lblSolver, "flowx,cell 0 1,growx");
+		collapsibleArea.add(lblSolver, "flowx,cell 0 1,growx");
 
 		lblSolverName = new JLabel("Solver Algorithm");
-		content.add(lblSolverName, "cell 2 1");
+		collapsibleArea.add(lblSolverName, "cell 2 1");
 		lblSolverName.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSolverName.setForeground(Color.BLUE);
 		lblSolverName.setFont(new Font("Arial Black", Font.PLAIN, 14));
 		lblSolverName.setBorder(new EmptyBorder(5, 0, 5, 0));
 
 		JLabel lblGridResolution = new JLabel("Grid Resolution");
-		content.add(lblGridResolution, "cell 0 2,growx");
+		collapsibleArea.add(lblGridResolution, "cell 0 2,growx");
 
 		comboGridResolution = new JComboBox<>();
 		comboGridResolution.setMaximumRowCount(16);
 		lblGridResolution.setLabelFor(comboGridResolution);
-		content.add(comboGridResolution, "cell 2 2,growx");
+		collapsibleArea.add(comboGridResolution, "cell 2 2,growx");
 
 		lblPassageWidth = new JLabel("Passage Width (%)");
-		content.add(lblPassageWidth, "cell 0 3,growx,aligny top");
+		collapsibleArea.add(lblPassageWidth, "cell 0 3,growx,aligny top");
 
 		sliderPassageWidth = new JSlider();
 		lblPassageWidth.setLabelFor(sliderPassageWidth);
@@ -88,10 +88,10 @@ public class ControlView extends JPanel {
 		sliderPassageWidth.setPaintLabels(true);
 		sliderPassageWidth.setToolTipText("Passage Width (%)");
 		sliderPassageWidth.setPaintTicks(true);
-		content.add(sliderPassageWidth, "cell 2 3,growx");
+		collapsibleArea.add(sliderPassageWidth, "cell 2 3,growx");
 
 		scrollPane = new JScrollPane();
-		content.add(scrollPane, "cell 0 5 3 1,grow");
+		collapsibleArea.add(scrollPane, "cell 0 5 3 1,grow");
 
 		textArea = new JTextArea();
 		textArea.setEditable(false);
@@ -100,35 +100,39 @@ public class ControlView extends JPanel {
 		textArea.setLineWrap(true);
 		textArea.setRows(100);
 
-		JPanel buttons = new JPanel();
-		add(buttons, BorderLayout.NORTH);
-		buttons.setLayout(new MigLayout("", "[][][][][grow][right]", "[28px][]"));
+		JPanel fixedArea = new JPanel();
+		add(fixedArea, BorderLayout.NORTH);
+		fixedArea.setLayout(new MigLayout("", "[][][][][grow][right]", "[28px][]"));
 
 		btnCreateMaze = new JButton("Create");
-		buttons.add(btnCreateMaze, "flowy,cell 0 0,alignx left,aligny top");
+		fixedArea.add(btnCreateMaze, "flowy,cell 0 0,alignx left,aligny top");
 
 		btnSolve = new JButton("Solve");
-		buttons.add(btnSolve, "cell 1 0,alignx left,aligny top");
+		fixedArea.add(btnSolve, "cell 1 0,alignx left,aligny top");
 
 		btnCreateAllMazes = new JButton("All Mazes");
-		buttons.add(btnCreateAllMazes, "cell 2 0,alignx left,aligny top");
+		fixedArea.add(btnCreateAllMazes, "cell 2 0,alignx left,aligny top");
 
 		btnStop = new JButton("Stop");
-		buttons.add(btnStop, "cell 3 0,alignx left,aligny top");
+		fixedArea.add(btnStop, "cell 3 0,alignx left,aligny top");
 
 		btnShowHideDetails = new JButton("Show/Hide Details");
 		btnShowHideDetails.setIcon(null);
-		buttons.add(btnShowHideDetails, "cell 5 0,aligny top");
+		fixedArea.add(btnShowHideDetails, "cell 5 0,aligny top");
 
 		sliderDelay = new JSlider();
 		sliderDelay.setPaintLabels(true);
 		sliderDelay.setPaintTicks(true);
-		buttons.add(sliderDelay, "flowx,cell 0 1 6 1,growx");
+		fixedArea.add(sliderDelay, "flowx,cell 0 1 6 1,growx");
 		sliderDelay.setToolTipText("Delay [milliseconds]");
 		sliderDelay.setValue(0);
 		sliderDelay.setMaximum(100);
 		sliderDelay.setMinorTickSpacing(10);
 		sliderDelay.setMajorTickSpacing(50);
+	}
+
+	public JPanel getCollapsibleArea() {
+		return collapsibleArea;
 	}
 
 	public JLabel getLblSolverName() {
@@ -168,12 +172,8 @@ public class ControlView extends JPanel {
 		return btnStop;
 	}
 
-	public JButton getBtnFindPath() {
+	public JButton getBtnSolve() {
 		return btnSolve;
-	}
-
-	public JPanel getContent() {
-		return content;
 	}
 
 	public JButton getBtnShowHideDetails() {

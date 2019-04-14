@@ -27,9 +27,10 @@ import de.amr.util.StopWatch;
  */
 public class GridViewController implements PropertyChangeListener {
 
-	private MazeDemoModel model;
+	private final MazeDemoModel model;
+
 	private JFrame window;
-	private GridView gridView;
+	private GridView view;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
 
 	private final Action actionShowControls = new AbstractAction("Show Controls") {
@@ -40,41 +41,57 @@ public class GridViewController implements PropertyChangeListener {
 		}
 	};
 
-	public GridViewController() {
+	public GridViewController(MazeDemoModel model) {
+		this.model = model;
+		createView();
+		createWindow();
+		window.setContentPane(view);
+		startListening();
+	}
+	
+	public void stopListening() {
+		model.changeHandler.removePropertyChangeListener(this);
+	}
+
+	public void startListening() {
+		model.changeHandler.addPropertyChangeListener(this);
+	}
+	
+	public void replaceView() {
+		createView();
+		window.setContentPane(view);
+		window.validate();
+		view.clear();
+		view.drawGrid();
+	}
+
+	private void createView() {
+		GridView oldView = view;
+		
+		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
+		view.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
+		view.getActionMap().put("showSettings", actionShowControls);
+
+		if (oldView != null) {
+			view.setGridBackgroundColor(oldView.getGridBackgroundColor());
+			view.setCompletedCellColor(oldView.getCompletedCellColor());
+			view.setVisitedCellColor(oldView.getVisitedCellColor());
+			view.setUnvisitedCellColor(oldView.getUnvisitedCellColor());
+			view.setPathColor(oldView.getPathColor());
+			view.setStyle(oldView.getStyle());
+			model.getGrid().removeGraphObserver(animation);
+		}
+
+		animation = new GridCanvasAnimation<>(view);
+		animation.fnDelay = model::getDelay;
+		model.getGrid().addGraphObserver(animation);
+	}
+
+	public void createWindow() {
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
 		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		window.setUndecorated(true);
-	}
-
-	public GridViewController(MazeDemoModel model) {
-		this();
-		this.model = model;
-		createGridView(model);
-	}
-
-	private void createGridView(MazeDemoModel model) {
-		GridView oldGridView = gridView;
-		gridView = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
-		if (oldGridView != null) {
-			gridView.setGridBackgroundColor(oldGridView.getGridBackgroundColor());
-			gridView.setCompletedCellColor(oldGridView.getCompletedCellColor());
-			gridView.setVisitedCellColor(oldGridView.getVisitedCellColor());
-			gridView.setUnvisitedCellColor(oldGridView.getUnvisitedCellColor());
-			gridView.setPathColor(oldGridView.getPathColor());
-			gridView.setStyle(oldGridView.getStyle());
-		}
-		gridView.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
-		gridView.getActionMap().put("showSettings", actionShowControls);
-		window.setContentPane(gridView);
-		gridView.clear();
-		gridView.drawGrid();
-
-		model.changeHandler.addPropertyChangeListener(this);
-
-		animation = new GridCanvasAnimation<>(gridView);
-		animation.fnDelay = model::getDelay;
-		model.getGrid().addGraphObserver(animation);
 	}
 
 	private int computePassageWidth(int u, int v) {
@@ -86,11 +103,6 @@ public class GridViewController implements PropertyChangeListener {
 		passageWidth = max(1, passageWidth);
 		passageWidth = min(model.getGridCellSize() - 1, passageWidth);
 		return passageWidth;
-	}
-
-	public void replaceGridView(MazeDemoModel model) {
-		createGridView(model);
-		window.validate();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -105,9 +117,10 @@ public class GridViewController implements PropertyChangeListener {
 						.getNewValue();
 				oldGrid.removeGraphObserver(animation);
 				newGrid.addGraphObserver(animation);
-				gridView.setGrid(newGrid, false);
+				getView().setGrid(newGrid, false);
 				clear();
 				drawGrid();
+				window.validate();
 			}
 			break;
 		case "passageWidthPercentage":
@@ -120,22 +133,22 @@ public class GridViewController implements PropertyChangeListener {
 		window.setVisible(true);
 	}
 
-	public GridView getGridView() {
-		return gridView;
+	public GridView getView() {
+		return view;
 	}
 
 	public void clear() {
-		gridView.clear();
+		view.clear();
 	}
 
 	public void drawGrid() {
 		StopWatch watch = new StopWatch();
-		watch.measure(gridView::drawGrid);
-		System.out.println(String.format("%s, drawing time: %.0f ms", gridView.getGrid(), watch.getMillis()));
+		watch.measure(view::drawGrid);
+		System.out.println(String.format("%s, drawing time: %.0f ms", view.getGrid(), watch.getMillis()));
 	}
 
 	public void floodFill(int startCell, boolean distanceVisible) {
-		BFSAnimation.builder().canvas(gridView).distanceVisible(distanceVisible).build().floodFill(startCell);
+		BFSAnimation.builder().canvas(view).distanceVisible(distanceVisible).build().floodFill(startCell);
 	}
 
 	public void enableGridAnimation(boolean enabled) {

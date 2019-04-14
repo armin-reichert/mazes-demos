@@ -97,10 +97,11 @@ public class MazeDemoApp {
 
 	public void reset() {
 		controlViewController.setBusy(true);
+		gridViewController.stopListening();
 		boolean full = model.getGrid().isFull();
-		model.changeHandler.removePropertyChangeListener(gridViewController);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.replaceGridView(model);
+		gridViewController.replaceView();
+		gridViewController.startListening();
 		controlViewController.setBusy(false);
 	}
 

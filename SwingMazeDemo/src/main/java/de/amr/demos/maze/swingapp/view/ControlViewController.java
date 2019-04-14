@@ -43,16 +43,19 @@ public class ControlViewController {
 	private static final String ICON_ZOOM_OUT = "/zoom_out.png";
 	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
-	private MazeDemoModel model;
-
-	private JFrame window;
+	private final MazeDemoModel model;
 	private ControlView view;
+	private JFrame window;
 	private GeneratorMenu generatorMenu;
 	private JMenu canvasMenu;
 	private SolverMenu solverMenu;
 	private OptionMenu optionMenu;
 
-	private final Action actionCollapseWindow = new AbstractAction("Hide Details", loadIcon(ICON_ZOOM_OUT)) {
+	private Icon icon(String path) {
+		return new ImageIcon(getClass().getResource(path));
+	}
+
+	private final Action actionCollapseWindow = new AbstractAction("Hide Details", icon(ICON_ZOOM_OUT)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -60,7 +63,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionExpandWindow = new AbstractAction("Show Details", loadIcon(ICON_ZOOM_IN)) {
+	private final Action actionExpandWindow = new AbstractAction("Show Details", icon(ICON_ZOOM_IN)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -117,18 +120,14 @@ public class ControlViewController {
 	private final Action actionFloodFill = new FloodFill();
 	private final Action actionSaveImage = new SaveImage();
 
-	public ControlViewController() {
-		window = new JFrame();
-		window.setTitle("Maze Demo App - Control View");
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setAlwaysOnTop(true);
-		view = new ControlView();
-		window.setContentPane(view);
+	public ControlViewController(MazeDemoModel model) {
+		this.model = model;
+		createView();
+		createWindow();
 	}
 
-	public ControlViewController(MazeDemoModel model) {
-		this();
-		this.model = model;
+	private void createView() {
+		view = new ControlView();
 
 		view.getComboGridResolution().setModel(createGridResolutionModel());
 		view.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex().orElse(-1));
@@ -154,8 +153,16 @@ public class ControlViewController {
 
 		view.getBtnCreateMaze().setAction(actionCreateSingleMaze);
 		view.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
-		view.getBtnFindPath().setAction(actionSolveMaze);
+		view.getBtnSolve().setAction(actionSolveMaze);
 		view.getBtnStop().setAction(actionStopBackgroundThread);
+	}
+
+	private void createWindow() {
+		window = new JFrame();
+		window.setTitle("Maze Demo App - Control View");
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setAlwaysOnTop(true);
+		window.setContentPane(view);
 
 		// Menus
 		JMenuBar menuBar = new JMenuBar();
@@ -195,14 +202,14 @@ public class ControlViewController {
 	}
 
 	public void collapseWindow() {
-		view.getContent().setVisible(false);
+		view.getCollapsibleArea().setVisible(false);
 		view.getBtnShowHideDetails().setAction(actionExpandWindow);
 		window.pack();
 		window.setSize(window.getWidth(), COLLAPSED_WINDOW_HEIGHT);
 	}
 
 	public void expandWindow() {
-		view.getContent().setVisible(true);
+		view.getCollapsibleArea().setVisible(true);
 		view.getBtnShowHideDetails().setAction(actionCollapseWindow);
 		window.pack();
 	}
@@ -272,9 +279,5 @@ public class ControlViewController {
 	private OptionalInt getSelectedGridResolutionIndex() {
 		return IntStream.range(0, model.getGridCellSizes().length)
 				.filter(index -> model.getGridCellSizes()[index] == model.getGridCellSize()).findFirst();
-	}
-
-	private Icon loadIcon(String resourceName) {
-		return new ImageIcon(getClass().getResource(resourceName));
 	}
 }
