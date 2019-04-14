@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.view.ControlViewController;
 import de.amr.graph.grid.api.GridPosition;
 
 /**
@@ -21,7 +22,8 @@ import de.amr.graph.grid.api.GridPosition;
  */
 public class OptionMenu extends JMenu {
 
-	public OptionMenu(MazeDemoModel model) {
+	public OptionMenu(ControlViewController controller) {
+		final MazeDemoModel model = controller.getModel();
 		setText("Options");
 		addPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart);
 		addPositionMenu("Solution Start", model::setPathFinderStart, model::getPathFinderSource);
@@ -31,20 +33,27 @@ public class OptionMenu extends JMenu {
 		addCheckBox("Flood-fill after generation", model::setFloodFillAfterGeneration,
 				model::isFloodFillAfterGeneration);
 		addCheckBox("Show distances", model::setDistancesVisible, model::isDistancesVisible);
-		// addCheckBox("Pearls style", checked -> {
-		// model.setStyle(checked ? Style.PEARLS : Style.WALL_PASSAGES);
-		// canvas().updateRenderer();
-		// }, () -> model.getStyle() == Style.PEARLS);
 		addCheckBox("Fluent Passage Width", model::setPassageWidthFluent, model::isPassageWidthFluent);
 		addSeparator();
-		addCheckBox("Hide this dialog when running", model::setHidingControlsWhenRunning,
-				model::isHidingControlsWhenRunning);
+		addCheckBox("Hide this dialog when running", controller::setHidingWindowWhenBusy,
+				controller::isHidingWindowWhenBusy);
 	}
 
-	private void addCheckBox(String title, Consumer<Boolean> onChecked, BooleanSupplier selection) {
+	public void updateState() {
+		for (int i = 0; i < getItemCount(); ++i) {
+			if (getItem(i) instanceof JCheckBoxMenuItem) {
+				JCheckBoxMenuItem cb = (JCheckBoxMenuItem) getItem(i);
+				BooleanSupplier fnSelection = (BooleanSupplier) cb.getClientProperty("selection");
+				cb.setSelected(fnSelection.getAsBoolean());
+			}
+		}
+	}
+
+	private void addCheckBox(String title, Consumer<Boolean> onChecked, BooleanSupplier fnSelection) {
 		JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem(title);
+		checkBox.putClientProperty("selection", fnSelection);
 		checkBox.addActionListener(evt -> onChecked.accept(checkBox.isSelected()));
-		checkBox.setSelected(selection.getAsBoolean());
+		checkBox.setSelected(fnSelection.getAsBoolean());
 		add(checkBox);
 	}
 

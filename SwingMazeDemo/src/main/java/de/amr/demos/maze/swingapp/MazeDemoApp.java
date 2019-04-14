@@ -64,6 +64,7 @@ public class MazeDemoApp {
 		gridViewController = new GridViewController(model);
 
 		controlViewController = new ControlViewController(model);
+		controlViewController.setHidingWindowWhenBusy(false);
 		controlViewController.collapseWindow();
 		controlViewController.setBusy(false);
 

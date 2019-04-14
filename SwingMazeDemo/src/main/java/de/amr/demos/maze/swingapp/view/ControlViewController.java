@@ -52,6 +52,7 @@ public class ControlViewController {
 	private JMenu canvasMenu;
 	private SolverMenu solverMenu;
 	private OptionMenu optionMenu;
+	private boolean hidingWindowWhenBusy;
 
 	private Icon icon(String path) {
 		return new ImageIcon(getClass().getResource(path));
@@ -186,8 +187,17 @@ public class ControlViewController {
 		canvasMenu.add(actionSaveImage);
 		menuBar.add(canvasMenu);
 
-		optionMenu = new OptionMenu(model);
+		optionMenu = new OptionMenu(this);
 		menuBar.add(optionMenu);
+	}
+
+	public boolean isHidingWindowWhenBusy() {
+		return hidingWindowWhenBusy;
+	}
+
+	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
+		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
+		optionMenu.updateState();
 	}
 
 	public MazeDemoModel getModel() {
@@ -217,25 +227,31 @@ public class ControlViewController {
 	}
 
 	public void setBusy(boolean busy) {
-		window.setVisible(!busy || !model.isHidingControlsWhenRunning());
-		boolean enabled = !busy;
-		generatorMenu.setEnabled(enabled);
-		solverMenu.setEnabled(enabled);
-		canvasMenu.setEnabled(enabled);
-		optionMenu.setEnabled(enabled);
-		actionChangeGridResolution.setEnabled(enabled);
-		actionCreateSingleMaze.setEnabled(enabled);
-		actionCreateAllMazes.setEnabled(enabled);
-		actionSolveMaze.setEnabled(enabled);
-		view.getSliderPassageWidth().setEnabled(enabled);
-		view.getBtnStop().setEnabled(busy);
-
 		if (busy) {
+			if (hidingWindowWhenBusy) {
+				window.setVisible(false);
+			}
+			setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+					actionSolveMaze);
 			setWaitCursor(view);
-			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(),view.getSliderDelay());
-		} else {
+			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
+		}
+		else {
+			window.setVisible(true);
+			setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+					actionSolveMaze);
 			setNormalCursor(view);
 		}
+	}
+
+	private void setEnabled(boolean b, Component... components) {
+		Arrays.stream(components).forEach(comp -> comp.setEnabled(b));
+	}
+
+	private void setEnabled(boolean b, Action... actions) {
+		Arrays.stream(actions).forEach(action -> action.setEnabled(b));
 	}
 
 	private void setWaitCursor(Component... components) {

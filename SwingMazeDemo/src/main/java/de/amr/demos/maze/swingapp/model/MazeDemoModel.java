@@ -160,7 +160,6 @@ public class MazeDemoModel {
 	private int passageWidthPercentage;
 	private boolean passageWidthFluent;
 	private boolean generationAnimated;
-	private boolean hidingControlsWhenRunning;
 	private int delay;
 	private GridPosition generationStart;
 	private boolean floodFillAfterGeneration;
@@ -183,7 +182,6 @@ public class MazeDemoModel {
 		setGenerationAnimated(true);
 		setFloodFillAfterGeneration(false);
 		setDistancesVisible(false);
-		setHidingControlsWhenRunning(false);
 	}
 
 	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
@@ -242,14 +240,6 @@ public class MazeDemoModel {
 
 	public void setGenerationAnimated(boolean generationAnimated) {
 		this.generationAnimated = generationAnimated;
-	}
-
-	public boolean isHidingControlsWhenRunning() {
-		return hidingControlsWhenRunning;
-	}
-
-	public void setHidingControlsWhenRunning(boolean hidingControlsWhenRunning) {
-		this.hidingControlsWhenRunning = hidingControlsWhenRunning;
 	}
 
 	public ObservableGridGraph<TraversalState, Integer> getGrid() {
