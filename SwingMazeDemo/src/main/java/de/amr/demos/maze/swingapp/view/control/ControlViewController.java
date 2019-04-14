@@ -12,7 +12,6 @@ import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -129,7 +128,13 @@ public class ControlViewController {
 	private void createView() {
 		view = new ControlView();
 
-		view.getComboGridResolution().setModel(createGridResolutionModel());
+		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
+			int numCols = app().getInitialSize().width / cellSize;
+			int numRows = app().getInitialSize().height / cellSize;
+			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
+					cellSize);
+		}).toArray(String[]::new);
+		view.getComboGridResolution().setModel(new DefaultComboBoxModel<>(entries));
 		view.getComboGridResolution().setSelectedIndex(getSelectedGridResolutionIndex().orElse(-1));
 		view.getComboGridResolution().setAction(actionChangeGridResolution);
 
@@ -294,16 +299,6 @@ public class ControlViewController {
 
 	private void updateGeneratorText(AlgorithmInfo generatorInfo) {
 		view.getLblGeneratorName().setText(generatorInfo.getDescription());
-	}
-
-	private ComboBoxModel<String> createGridResolutionModel() {
-		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
-		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = app().getInitialSize().width / cellSize;
-			int numRows = app().getInitialSize().height / cellSize;
-			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
-		}).toArray(String[]::new);
-		return new DefaultComboBoxModel<>(entries);
 	}
 
 	private OptionalInt getSelectedGridResolutionIndex() {
