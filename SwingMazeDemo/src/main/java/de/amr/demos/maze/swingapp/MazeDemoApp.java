@@ -55,11 +55,12 @@ public class MazeDemoApp {
 	public MazeDemoApp() {
 		initialSize = getDisplaySize();
 		model = new MazeDemoModel();
-		model.createGrid(initialSize.width / model.getGridCellSize(),
-				initialSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 	}
 
 	private void createAndShowUI() {
+		model.createGrid(initialSize.width / model.getGridCellSize(),
+				initialSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
+
 		gridViewController = new GridViewController(model);
 
 		controlViewController = new ControlViewController(model);

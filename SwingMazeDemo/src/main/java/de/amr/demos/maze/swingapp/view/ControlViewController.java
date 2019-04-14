@@ -2,6 +2,8 @@ package de.amr.demos.maze.swingapp.view;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Optional;
@@ -227,6 +229,21 @@ public class ControlViewController {
 		actionSolveMaze.setEnabled(enabled);
 		view.getSliderPassageWidth().setEnabled(enabled);
 		view.getBtnStop().setEnabled(busy);
+
+		if (busy) {
+			setWaitCursor(view);
+			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(),view.getSliderDelay());
+		} else {
+			setNormalCursor(view);
+		}
+	}
+
+	private void setWaitCursor(Component... components) {
+		Arrays.stream(components).forEach(comp -> comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)));
+	}
+
+	private void setNormalCursor(Component... components) {
+		Arrays.stream(components).forEach(comp -> comp.setCursor(Cursor.getDefaultCursor()));
 	}
 
 	public void showMessage(String msg) {
