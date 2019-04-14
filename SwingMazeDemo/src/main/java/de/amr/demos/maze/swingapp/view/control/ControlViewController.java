@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view;
+package de.amr.demos.maze.swingapp.view.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
@@ -29,9 +29,6 @@ import de.amr.demos.maze.swingapp.action.SolveMaze;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
-import de.amr.demos.maze.swingapp.view.menu.OptionMenu;
-import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
 import de.amr.graph.core.api.TraversalState;
 
 /**

@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.menu;
+package de.amr.demos.maze.swingapp.view.control;
 
 import java.awt.event.ItemEvent;
 import java.util.ResourceBundle;
@@ -12,7 +12,6 @@ import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.view.ControlViewController;
 import de.amr.graph.grid.api.GridPosition;
 
 /**

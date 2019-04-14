@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view;
+package de.amr.demos.maze.swingapp.view.grid;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
