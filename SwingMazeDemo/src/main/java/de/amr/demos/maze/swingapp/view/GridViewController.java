@@ -48,7 +48,7 @@ public class GridViewController implements PropertyChangeListener {
 		window.setContentPane(view);
 		startListening();
 	}
-	
+
 	public void stopListening() {
 		model.changeHandler.removePropertyChangeListener(this);
 	}
@@ -56,7 +56,7 @@ public class GridViewController implements PropertyChangeListener {
 	public void startListening() {
 		model.changeHandler.addPropertyChangeListener(this);
 	}
-	
+
 	public void replaceView() {
 		createView();
 		window.setContentPane(view);
@@ -67,7 +67,7 @@ public class GridViewController implements PropertyChangeListener {
 
 	private void createView() {
 		GridView oldView = view;
-		
+
 		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
 		view.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
 		view.getActionMap().put("showSettings", actionShowControls);
@@ -135,6 +135,10 @@ public class GridViewController implements PropertyChangeListener {
 
 	public GridView getView() {
 		return view;
+	}
+
+	public JFrame getWindow() {
+		return window;
 	}
 
 	public void clear() {

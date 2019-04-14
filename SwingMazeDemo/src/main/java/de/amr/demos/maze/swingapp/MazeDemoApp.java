@@ -1,5 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
+import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.EventQueue;
 import java.awt.GraphicsEnvironment;
@@ -45,15 +46,17 @@ public class MazeDemoApp {
 		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
+	private final Dimension initialGridWindowSize;
 	private final MazeDemoModel model;
 	private ControlViewController controlViewController;
 	private GridViewController gridViewController;
 	private Thread bgThread;
 
 	public MazeDemoApp() {
+		initialGridWindowSize = getDisplaySize();
 		model = new MazeDemoModel();
-		model.setGridWidth(getDisplayMode().getWidth() / model.getGridCellSize());
-		model.setGridHeight(getDisplayMode().getHeight() / model.getGridCellSize());
+		model.setGridWidth(getInitialGridWindowSize().width / model.getGridCellSize());
+		model.setGridHeight(getInitialGridWindowSize().height / model.getGridCellSize());
 		model.createGrid(false, TraversalState.UNVISITED);
 	}
 
@@ -72,8 +75,14 @@ public class MazeDemoApp {
 		controlViewController.showWindow();
 	}
 
-	public DisplayMode getDisplayMode() {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+	public Dimension getInitialGridWindowSize() {
+		return initialGridWindowSize != null ? initialGridWindowSize : getDisplaySize();
+	}
+
+	private Dimension getDisplaySize() {
+		DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
+		return new Dimension(displayMode.getWidth(), displayMode.getHeight());
 	}
 
 	public MazeDemoModel getModel() {
@@ -107,8 +116,12 @@ public class MazeDemoApp {
 
 	public void resizeGrid(int cellSize) {
 		model.setGridCellSize(cellSize);
-		model.setGridWidth(getDisplayMode().getWidth() / cellSize);
-		model.setGridHeight(getDisplayMode().getHeight() / cellSize);
+		int w = getGridViewController().getWindow() != null ? getGridViewController().getWindow().getWidth()
+				: getInitialGridWindowSize().width;
+		int h = getGridViewController().getWindow() != null ? getGridViewController().getWindow().getHeight()
+				: getInitialGridWindowSize().height;
+		model.setGridWidth(w / cellSize);
+		model.setGridHeight(h / cellSize);
 		reset();
 	}
 

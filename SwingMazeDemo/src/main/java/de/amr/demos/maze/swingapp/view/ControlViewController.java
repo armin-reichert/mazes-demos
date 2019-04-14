@@ -193,7 +193,7 @@ public class ControlViewController {
 	}
 
 	public void placeWindow() {
-		window.setLocation((app().getDisplayMode().getWidth() - window.getWidth()) / 2, 42);
+		window.setLocation((app().getInitialGridWindowSize().width - window.getWidth()) / 2, 42);
 	}
 
 	public void showWindow() {
@@ -269,8 +269,8 @@ public class ControlViewController {
 	private ComboBoxModel<String> createGridResolutionModel() {
 		String tmpl = "%d cells (%d cols x %d rows, cell size %d)";
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = app().getDisplayMode().getWidth() / cellSize;
-			int numRows = app().getDisplayMode().getHeight() / cellSize;
+			int numCols = app().getInitialGridWindowSize().width / cellSize;
+			int numRows = app().getInitialGridWindowSize().height / cellSize;
 			return String.format(tmpl, numCols * numRows, numCols, numRows, cellSize);
 		}).toArray(String[]::new);
 		return new DefaultComboBoxModel<>(entries);

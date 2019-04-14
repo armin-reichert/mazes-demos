@@ -52,8 +52,8 @@ public class GridView extends GridCanvas {
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		int dx = (app().getDisplayMode().getWidth() - getPreferredSize().width) / 2;
-		int dy = (app().getDisplayMode().getHeight() - getPreferredSize().height) / 2;
+		int dx = (app().getInitialGridWindowSize().width - getPreferredSize().width) / 2;
+		int dy = (app().getInitialGridWindowSize().height - getPreferredSize().height) / 2;
 		g.translate(dx, dy);
 		super.paintComponent(g);
 		g.translate(-dx, -dy);
