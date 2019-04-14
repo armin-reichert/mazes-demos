@@ -1,12 +1,12 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.MazeDemoApp;
 import de.amr.util.StopWatch;
 
 /**
@@ -20,8 +20,9 @@ public class FloodFill extends AbstractAction {
 		super("Flood-fill");
 	}
 
-	private void runFloodFill() {
-		MazeDemoApp.app().getGridViewController().floodFill(app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
+	private void floodFill() {
+		app().getGridViewController().floodFill(
+				app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
 				app().getModel().isDistancesVisible());
 	}
 
@@ -32,8 +33,8 @@ public class FloodFill extends AbstractAction {
 				() -> {
 					app().getGridViewController().drawGrid();
 					StopWatch watch = new StopWatch();
-					watch.measure(this::runFloodFill);
-					app().showMessage(String.format("Flood-fill: %.2f seconds.", watch.getSeconds()));
+					watch.measure(this::floodFill);
+					app().showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
 				},
 
 				interruption -> {
