@@ -1,8 +1,8 @@
 package de.amr.demos.maze.swingapp.view.menu;
 
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.MST;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Traversal;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.UST;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
 
 import java.util.function.Predicate;
 

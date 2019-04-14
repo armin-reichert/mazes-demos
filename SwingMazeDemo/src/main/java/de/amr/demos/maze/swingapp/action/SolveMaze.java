@@ -9,7 +9,7 @@ import java.util.function.ToDoubleBiFunction;
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
-import de.amr.demos.maze.swingapp.model.PathFinderTag;
+import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
@@ -55,6 +55,7 @@ public class SolveMaze extends AbstractAction {
 					failure -> {
 						failure.printStackTrace(System.err);
 						app().showMessage("Solving failed: " + failure.getMessage());
+						app().reset();
 					});
 		});
 	}
@@ -102,9 +103,9 @@ public class SolveMaze extends AbstractAction {
 	private void runSolverAnimation(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
 		int source = app().getModel().getGrid().cell(app().getModel().getPathFinderSource());
 		int target = app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
-		boolean informed = solverInfo.isTagged(PathFinderTag.INFORMED);
+		boolean informed = solverInfo.isTagged(SolverTag.INFORMED);
 		StopWatch watch = new StopWatch();
-		if (solverInfo.isTagged(PathFinderTag.BFS)) {
+		if (solverInfo.isTagged(SolverTag.BFS)) {
 			BFSAnimation anim = BFSAnimation.builder().canvas(app().getGridViewController().getGridView())
 					.delay(() -> app().getModel().getDelay())
 					.pathColor(app().getGridViewController().getGridView().getPathColor())
@@ -112,7 +113,7 @@ public class SolveMaze extends AbstractAction {
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
-		else if (solverInfo.isTagged(PathFinderTag.DFS)) {
+		else if (solverInfo.isTagged(SolverTag.DFS)) {
 			DFSAnimation anim = DFSAnimation.builder().canvas(app().getGridViewController().getGridView())
 					.delay(() -> app().getModel().getDelay())
 					.pathColor(app().getGridViewController().getGridView().getPathColor()).build();

@@ -26,7 +26,7 @@ import de.amr.demos.maze.swingapp.action.SaveImage;
 import de.amr.demos.maze.swingapp.action.SolveMaze;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.model.PathFinderTag;
+import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.view.menu.GeneratorMenu;
 import de.amr.demos.maze.swingapp.view.menu.OptionMenu;
 import de.amr.demos.maze.swingapp.view.menu.SolverMenu;
@@ -247,7 +247,7 @@ public class ControlViewController {
 
 	private void updateSolverText(AlgorithmInfo solverInfo) {
 		String text = solverInfo.getDescription();
-		if (solverInfo.isTagged(PathFinderTag.INFORMED)) {
+		if (solverInfo.isTagged(SolverTag.INFORMED)) {
 			String metric = model.getMetric().toString();
 			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
 			text += " (" + metric + ")";

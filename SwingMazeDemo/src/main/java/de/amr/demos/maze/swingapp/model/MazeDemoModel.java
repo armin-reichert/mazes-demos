@@ -1,14 +1,14 @@
 package de.amr.demos.maze.swingapp.model;
 
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.FullGridRequired;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.MST;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.SmallGrid;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Traversal;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.UST;
-import static de.amr.demos.maze.swingapp.model.PathFinderTag.BFS;
-import static de.amr.demos.maze.swingapp.model.PathFinderTag.DFS;
-import static de.amr.demos.maze.swingapp.model.PathFinderTag.INFORMED;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.FullGridRequired;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.SmallGrid;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
+import static de.amr.demos.maze.swingapp.model.SolverTag.BFS;
+import static de.amr.demos.maze.swingapp.model.SolverTag.DFS;
+import static de.amr.demos.maze.swingapp.model.SolverTag.INFORMED;
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
 import static de.amr.graph.grid.api.GridPosition.CENTER;
 import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;

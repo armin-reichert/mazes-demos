@@ -4,7 +4,7 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
 import java.awt.event.ActionEvent;
 
-import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
+import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.graph.core.api.TraversalState;
 
 /**
@@ -24,7 +24,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 			app().startBackgroundThread(
 
 					() -> {
-						boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 						app().getModel().createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 						app().getGridViewController().clear();
 						createMaze(generatorInfo, app().getModel().getGenerationStart());

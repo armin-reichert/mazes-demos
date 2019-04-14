@@ -1,7 +1,7 @@
 package de.amr.demos.maze.swingapp.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-import static de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag.Slow;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
 
 import java.awt.event.ActionEvent;
 import java.util.List;

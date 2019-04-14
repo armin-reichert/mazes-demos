@@ -9,8 +9,8 @@ import javax.swing.UIManager;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.model.MazeGenerationAlgorithmTag;
 import de.amr.demos.maze.swingapp.view.ControlViewController;
 import de.amr.demos.maze.swingapp.view.GridViewController;
 import de.amr.graph.core.api.TraversalState;
@@ -89,7 +89,7 @@ public class MazeDemoApp {
 	}
 
 	public void changeGenerator(AlgorithmInfo generatorInfo) {
-		boolean full = generatorInfo.isTagged(MazeGenerationAlgorithmTag.FullGridRequired);
+		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 		model.createGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.clear();
 		controlViewController.selectGenerator(generatorInfo);
