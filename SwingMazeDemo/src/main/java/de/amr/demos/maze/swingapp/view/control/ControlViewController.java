@@ -73,7 +73,7 @@ public class ControlViewController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
-			app().resizeGrid(combo.getSelectedIndex());
+			app().changeSelectedGridCellSize(combo.getSelectedIndex());
 		}
 	};
 
