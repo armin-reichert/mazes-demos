@@ -133,7 +133,7 @@ public class MazeDemoApp {
 			controlViewController.setBusy(true);
 			code.run();
 			controlViewController.setBusy(false);
-		});
+		}, "MazeDemoWorker");
 		bgThread.setUncaughtExceptionHandler((thread, e) -> {
 			if (e.getClass() == AnimationInterruptedException.class) {
 				onInterruption.accept((AnimationInterruptedException) e);
