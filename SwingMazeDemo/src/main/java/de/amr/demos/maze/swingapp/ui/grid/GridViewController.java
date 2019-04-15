@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -37,7 +37,7 @@ public class GridViewController implements PropertyChangeListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().getControlViewController().showWindow();
+			theApp.getControlViewController().showWindow();
 		}
 	};
 

@@ -7,11 +7,16 @@ import java.awt.GraphicsEnvironment;
 import java.util.function.Consumer;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.ui.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
@@ -24,40 +29,47 @@ import de.amr.maze.alg.Armin;
  * <p>
  * The application provides an undecorated full-screen preview area where the maze generation and
  * path finding algorithms are displayed as animations. Using a control window one can change the
- * maze generation algorithm and the path finder algorithm. The size/resolution of the grid can also
- * be changed interactively.
+ * maze generation path finder algorithm. the size/resolution of the grid, the rendering style and
+ * other settings.
  * 
  * @author Armin Reichert
  */
 public class MazeDemoApp {
 
-	private static final MazeDemoApp theApp = new MazeDemoApp();
+	public static final MazeDemoApp theApp = new MazeDemoApp();
 
-	public static MazeDemoApp app() {
-		return theApp;
-	}
-
-	public static void main(String... args) {
-		try {
-			UIManager.setLookAndFeel(NimbusLookAndFeel.class.getName());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args) {
+		JCommander.newBuilder().addObject(theApp).build().parse(args);
 		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
 	private final Dimension initialSize;
+
 	private final MazeDemoModel model;
+
 	private ControlViewController controlViewController;
+
 	private GridViewController gridViewController;
+
 	private Thread bgThread;
 
-	public MazeDemoApp() {
+	@Parameter(names = { "-theme" }, description = "Theme", converter = ThemeConverter.class)
+	private String theme;
+
+	private MazeDemoApp() {
 		initialSize = getDisplaySize();
 		model = new MazeDemoModel();
+		theme = NimbusLookAndFeel.class.getName();
 	}
 
 	private void createAndShowUI() {
+		try {
+			UIManager.setLookAndFeel(theme);
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+
 		model.createGrid(initialSize.width / model.getGridCellSize(),
 				initialSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 

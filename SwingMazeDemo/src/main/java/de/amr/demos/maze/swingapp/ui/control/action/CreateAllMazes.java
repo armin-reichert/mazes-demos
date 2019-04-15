@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
 
 import java.awt.event.ActionEvent;
@@ -23,30 +23,30 @@ public class CreateAllMazes extends CreateMazeAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().startBackgroundThread(
+		theApp.startBackgroundThread(
 
 				this::createAllMazes,
 
 				interruption -> {
-					app().showMessage("Animation interrupted");
-					app().reset();
+					theApp.showMessage("Animation interrupted");
+					theApp.reset();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
-					app().showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
-					app().reset();
+					theApp.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
+					theApp.reset();
 				});
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> fastGenerators = app().getModel().generators().filter(alg -> !alg.isTagged(Slow))
+		List<AlgorithmInfo> fastGenerators = theApp.getModel().generators().filter(alg -> !alg.isTagged(Slow))
 				.collect(Collectors.toList());
 		for (AlgorithmInfo generatorInfo : fastGenerators) {
-			app().changeGenerator(generatorInfo);
+			theApp.changeGenerator(generatorInfo);
 			try {
-				createMaze(generatorInfo, app().getModel().getGenerationStart());
-				if (app().getModel().isFloodFillAfterGeneration()) {
+				createMaze(generatorInfo, theApp.getModel().getGenerationStart());
+				if (theApp.getModel().isFloodFillAfterGeneration()) {
 					pause(1);
 					floodFill();
 				}
@@ -57,6 +57,6 @@ public class CreateAllMazes extends CreateMazeAction {
 			}
 			pause(2);
 		}
-		app().showMessage("Done.");
+		theApp.showMessage("Done.");
 	}
 }

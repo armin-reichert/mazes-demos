@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -76,7 +76,7 @@ public class ControlViewController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
-			app().changeSelectedGridCellSize(combo.getSelectedIndex());
+			theApp.changeSelectedGridCellSize(combo.getSelectedIndex());
 			combo.requestFocusInWindow();
 		}
 	};
@@ -101,7 +101,7 @@ public class ControlViewController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().stopBackgroundThread();
+			theApp.stopBackgroundThread();
 		}
 	};
 
@@ -109,8 +109,8 @@ public class ControlViewController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().getGridViewController().clearView();
-			app().getGridViewController().drawGrid();
+			theApp.getGridViewController().clearView();
+			theApp.getGridViewController().drawGrid();
 		}
 	};
 
@@ -130,8 +130,8 @@ public class ControlViewController {
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = app().getInitialSize().width / cellSize;
-			int numRows = app().getInitialSize().height / cellSize;
+			int numCols = theApp.getInitialSize().width / cellSize;
+			int numRows = theApp.getInitialSize().height / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -208,7 +208,7 @@ public class ControlViewController {
 	}
 
 	public void placeWindow() {
-		window.setLocation((app().getInitialSize().width - window.getWidth()) / 2, 42);
+		window.setLocation((theApp.getInitialSize().width - window.getWidth()) / 2, 42);
 	}
 
 	public void showWindow() {

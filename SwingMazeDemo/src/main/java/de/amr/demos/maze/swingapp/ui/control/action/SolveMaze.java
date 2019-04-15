@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
@@ -40,23 +40,23 @@ public class SolveMaze extends AbstractAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().getControlViewController().getSelectedSolver().ifPresent(solver -> {
-			app().startBackgroundThread(
+		theApp.getControlViewController().getSelectedSolver().ifPresent(solver -> {
+			theApp.startBackgroundThread(
 
 					() -> {
-						app().getGridViewController().drawGrid(); // overwrite older search
+						theApp.getGridViewController().drawGrid(); // overwrite older search
 						solve(solver);
 					},
 
 					interruption -> {
-						app().showMessage("Animation interrupted");
-						app().reset();
+						theApp.showMessage("Animation interrupted");
+						theApp.reset();
 					},
 
 					failure -> {
 						failure.printStackTrace(System.err);
-						app().showMessage("Solving failed: " + failure.getMessage());
-						app().reset();
+						theApp.showMessage("Solving failed: " + failure.getMessage());
+						theApp.reset();
 					});
 		});
 	}
@@ -64,76 +64,76 @@ public class SolveMaze extends AbstractAction {
 	private void solve(AlgorithmInfo info) {
 
 		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
-			solve(new BreadthFirstSearch(app().getModel().getGrid()), info);
+			solve(new BreadthFirstSearch(theApp.getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			solve(new BidiBreadthFirstSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new BidiBreadthFirstSearch(theApp.getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == DijkstraSearch.class) {
-			solve(new DijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new DijkstraSearch(theApp.getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			solve(new BidiDijkstraSearch(app().getModel().getGrid(), (u, v) -> 1), info);
+			solve(new BidiDijkstraSearch(theApp.getModel().getGrid(), (u, v) -> 1), info);
 		}
 		else if (info.getAlgorithmClass() == BestFirstSearch.class) {
-			solve(new BestFirstSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
+			solve(new BestFirstSearch(theApp.getModel().getGrid(), v -> metric().applyAsDouble(v, target())), info);
 		}
 		else if (info.getAlgorithmClass() == AStarSearch.class) {
-			solve(new AStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric()), info);
+			solve(new AStarSearch(theApp.getModel().getGrid(), (u, v) -> 1, metric()), info);
 		}
 		else if (info.getAlgorithmClass() == BidiAStarSearch.class) {
-			solve(new BidiAStarSearch(app().getModel().getGrid(), (u, v) -> 1, metric(), metric()), info);
+			solve(new BidiAStarSearch(theApp.getModel().getGrid(), (u, v) -> 1, metric(), metric()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch.class) {
-			solve(new DepthFirstSearch(app().getModel().getGrid()), info);
+			solve(new DepthFirstSearch(theApp.getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == DepthFirstSearch2.class) {
-			solve(new DepthFirstSearch2(app().getModel().getGrid()), info);
+			solve(new DepthFirstSearch2(theApp.getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == IDDFS.class) {
-			solve(new IDDFS(app().getModel().getGrid()), info);
+			solve(new IDDFS(theApp.getModel().getGrid()), info);
 		}
 		else if (info.getAlgorithmClass() == HillClimbingSearch.class) {
-			solve(new HillClimbingSearch(app().getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
+			solve(new HillClimbingSearch(theApp.getModel().getGrid(), v -> metric().applyAsDouble(v, target())),
 					info);
 		}
 	}
 
 	private void solve(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
-		GridView gridView = app().getGridViewController().getView();
-		int source = app().getModel().getGrid().cell(app().getModel().getPathFinderSource());
-		int target = app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
+		GridView gridView = theApp.getGridViewController().getView();
+		int source = theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderSource());
+		int target = theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderTarget());
 		boolean informed = solverInfo.isTagged(SolverTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(SolverTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(gridView).delay(() -> app().getModel().getDelay())
-					.pathColor(gridView.getPathColor()).distanceVisible(app().getModel().isDistancesVisible()).build();
+			BFSAnimation anim = BFSAnimation.builder().canvas(gridView).delay(() -> theApp.getModel().getDelay())
+					.pathColor(gridView.getPathColor()).distanceVisible(theApp.getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(SolverTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(gridView).delay(() -> app().getModel().getDelay())
+			DFSAnimation anim = DFSAnimation.builder().canvas(gridView).delay(() -> theApp.getModel().getDelay())
 					.pathColor(gridView.getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
-		app().showMessage(informed
-				? format("%s (%s): %.2f seconds.", solverInfo.getDescription(), app().getModel().getMetric(),
+		theApp.showMessage(informed
+				? format("%s (%s): %.2f seconds.", solverInfo.getDescription(), theApp.getModel().getMetric(),
 						watch.getSeconds())
 				: format("%s: %.2f seconds.", solverInfo.getDescription(), watch.getSeconds()));
 	}
 
 	private int target() {
-		return app().getModel().getGrid().cell(app().getModel().getPathFinderTarget());
+		return theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderTarget());
 	}
 
 	private ToDoubleBiFunction<Integer, Integer> metric() {
-		switch (app().getModel().getMetric()) {
+		switch (theApp.getModel().getMetric()) {
 		case CHEBYSHEV:
-			return app().getModel().getGrid()::chebyshev;
+			return theApp.getModel().getGrid()::chebyshev;
 		case EUCLIDEAN:
-			return app().getModel().getGrid()::euclidean;
+			return theApp.getModel().getGrid()::euclidean;
 		case MANHATTAN:
-			return app().getModel().getGrid()::manhattan;
+			return theApp.getModel().getGrid()::manhattan;
 		}
 		throw new IllegalStateException();
 	}

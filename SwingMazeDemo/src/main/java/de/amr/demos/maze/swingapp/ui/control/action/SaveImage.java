@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -28,10 +28,10 @@ public class SaveImage extends AbstractAction {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(app().getGridViewController().getView().getDrawingBuffer(), "png", pngFile);
-				app().showMessage("Image saved as " + pngFile);
+				ImageIO.write(theApp.getGridViewController().getView().getDrawingBuffer(), "png", pngFile);
+				theApp.showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
-				app().showMessage("Image could not be saved: " + x.getMessage());
+				theApp.showMessage("Image could not be saved: " + x.getMessage());
 			}
 		}
 	}

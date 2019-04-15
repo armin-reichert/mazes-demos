@@ -42,6 +42,11 @@
 			<artifactId>graph-viz</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
+		</dependency>
 	</dependencies>
 	<parent>
 		<groupId>de.amr.demos.graph</groupId>

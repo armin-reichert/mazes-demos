@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 
 import java.awt.event.ActionEvent;
 
@@ -20,30 +20,30 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().getControlViewController().getSelectedGenerator().ifPresent(generatorInfo -> {
-			app().startBackgroundThread(
+		theApp.getControlViewController().getSelectedGenerator().ifPresent(generatorInfo -> {
+			theApp.startBackgroundThread(
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-						app().getModel().createGrid(app().getModel().getGrid().numCols(),
-								app().getModel().getGrid().numRows(), full,
+						theApp.getModel().createGrid(theApp.getModel().getGrid().numCols(),
+								theApp.getModel().getGrid().numRows(), full,
 								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-						app().getGridViewController().clearView();
-						createMaze(generatorInfo, app().getModel().getGenerationStart());
-						if (app().getModel().isFloodFillAfterGeneration()) {
+						theApp.getGridViewController().clearView();
+						createMaze(generatorInfo, theApp.getModel().getGenerationStart());
+						if (theApp.getModel().isFloodFillAfterGeneration()) {
 							pause(1);
 							floodFill();
 						}
 					},
 
 					interruption -> {
-						app().showMessage("Animation interrupted");
-						app().reset();
+						theApp.showMessage("Animation interrupted");
+						theApp.reset();
 					},
 
 					failure -> {
-						app().showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
-						app().reset();
+						theApp.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
+						theApp.reset();
 					});
 		});
 	}

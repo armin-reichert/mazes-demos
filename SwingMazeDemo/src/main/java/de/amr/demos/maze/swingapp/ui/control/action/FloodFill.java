@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
@@ -21,24 +21,24 @@ public class FloodFill extends AbstractAction {
 	}
 
 	private void floodFill() {
-		app().getGridViewController().floodFill(
-				app().getModel().getGrid().cell(app().getModel().getPathFinderSource()),
-				app().getModel().isDistancesVisible());
+		theApp.getGridViewController().floodFill(
+				theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderSource()),
+				theApp.getModel().isDistancesVisible());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		app().startBackgroundThread(
+		theApp.startBackgroundThread(
 
 				() -> {
-					app().getGridViewController().drawGrid();
+					theApp.getGridViewController().drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::floodFill);
-					app().showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
+					theApp.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
 				},
 
 				interruption -> {
-					app().showMessage("Flood-fill interrupted");
+					theApp.showMessage("Flood-fill interrupted");
 				},
 
 				failure -> {

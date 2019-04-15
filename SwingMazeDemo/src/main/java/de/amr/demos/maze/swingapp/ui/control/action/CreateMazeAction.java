@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
+import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.String.format;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,37 +25,37 @@ public abstract class CreateMazeAction extends AbstractAction {
 	}
 
 	protected void floodFill() {
-		app().getGridViewController()
-				.floodFill(app().getModel().getGrid().cell(app().getModel().getGenerationStart()), false);
+		theApp.getGridViewController()
+				.floodFill(theApp.getModel().getGrid().cell(theApp.getModel().getGenerationStart()), false);
 	}
 
 	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {
 		MazeGenerator generator = null;
 		try {
 			generator = (MazeGenerator) generatorInfo.getAlgorithmClass().getConstructor(GridGraph2D.class)
-					.newInstance(app().getModel().getGrid());
+					.newInstance(theApp.getModel().getGrid());
 		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
-		int startCell = app().getModel().getGrid().cell(startPosition);
-		int x = app().getModel().getGrid().col(startCell), y = app().getModel().getGrid().row(startCell);
-		app().showMessage(
-				format("\n%s (%d cells)", generatorInfo.getDescription(), app().getModel().getGrid().numVertices()));
-		if (app().getModel().isGenerationAnimated()) {
+		int startCell = theApp.getModel().getGrid().cell(startPosition);
+		int x = theApp.getModel().getGrid().col(startCell), y = theApp.getModel().getGrid().row(startCell);
+		theApp.showMessage(
+				format("\n%s (%d cells)", generatorInfo.getDescription(), theApp.getModel().getGrid().numVertices()));
+		if (theApp.getModel().isGenerationAnimated()) {
 			generator.createMaze(x, y);
 		}
 		else {
-			app().getGridViewController().enableGridAnimation(false);
-			app().getGridViewController().clearView();
+			theApp.getGridViewController().enableGridAnimation(false);
+			theApp.getGridViewController().clearView();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generator.createMaze(x, y);
 			watch.stop();
-			app().showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
-			watch.measure(() -> app().getGridViewController().drawGrid());
-			app().showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			app().getGridViewController().enableGridAnimation(true);
+			theApp.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
+			watch.measure(() -> theApp.getGridViewController().drawGrid());
+			theApp.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
+			theApp.getGridViewController().enableGridAnimation(true);
 		}
 	}
 }
