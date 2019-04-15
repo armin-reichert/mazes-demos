@@ -46,7 +46,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		else {
 			app().getGridViewController().enableGridAnimation(false);
-			app().getGridViewController().clear();
+			app().getGridViewController().clearView();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generator.createMaze(x, y);

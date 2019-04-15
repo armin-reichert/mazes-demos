@@ -105,7 +105,7 @@ public class ControlViewController {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			app().getGridViewController().clear();
+			app().getGridViewController().clearView();
 			app().getGridViewController().drawGrid();
 		}
 	};

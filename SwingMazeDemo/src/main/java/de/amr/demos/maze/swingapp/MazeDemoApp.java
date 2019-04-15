@@ -65,7 +65,7 @@ public class MazeDemoApp {
 
 		controlViewController = new ControlViewController(model);
 		controlViewController.setHidingWindowWhenBusy(false);
-		controlViewController.collapseWindow();
+		controlViewController.expandWindow();
 		controlViewController.setBusy(false);
 
 		model.findGenerator(Armin.class).ifPresent(this::changeGenerator);
@@ -102,19 +102,19 @@ public class MazeDemoApp {
 		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
 				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.clear();
+		gridViewController.clearView();
 		controlViewController.selectGenerator(generatorInfo);
 	}
 
 	public void reset() {
 		controlViewController.setBusy(true);
-		gridViewController.stopListening();
+		gridViewController.stopModelChangeListening();
 		int numCols = getGridViewController().getWindow().getWidth() / model.getGridCellSize();
 		int numRows = getGridViewController().getWindow().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
 		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridViewController.replaceView();
-		gridViewController.startListening();
+		gridViewController.startModelChangeListening();
 		controlViewController.setBusy(false);
 	}
 
