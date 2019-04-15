@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.grid;
+package de.amr.demos.maze.swingapp.ui.grid;
 
 import java.awt.Color;
 import java.awt.Graphics;

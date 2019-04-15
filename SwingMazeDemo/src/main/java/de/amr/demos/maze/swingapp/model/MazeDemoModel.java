@@ -211,7 +211,7 @@ public class MazeDemoModel {
 	public int getGridCellSize() {
 		return gridCellSizes[gridCellSizeIndex];
 	}
-	
+
 	public int getGridCellSizeIndex() {
 		return gridCellSizeIndex;
 	}

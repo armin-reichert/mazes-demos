@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.action;
+package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.String.format;
@@ -25,7 +25,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 	}
 
 	protected void floodFill() {
-		app().getGridViewController().floodFill(app().getModel().getGrid().cell(app().getModel().getGenerationStart()), false);
+		app().getGridViewController()
+				.floodFill(app().getModel().getGrid().cell(app().getModel().getGenerationStart()), false);
 	}
 
 	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {

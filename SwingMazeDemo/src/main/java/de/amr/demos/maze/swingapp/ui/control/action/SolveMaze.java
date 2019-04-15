@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.action;
+package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.String.format;
@@ -10,7 +10,7 @@ import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.view.grid.GridView;
+import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;

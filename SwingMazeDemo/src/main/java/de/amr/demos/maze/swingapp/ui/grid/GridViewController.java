@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.grid;
+package de.amr.demos.maze.swingapp.ui.grid;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.Math.max;

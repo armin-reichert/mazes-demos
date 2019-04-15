@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.control;
+package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 
@@ -18,14 +18,17 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import de.amr.demos.maze.swingapp.action.CreateAllMazes;
-import de.amr.demos.maze.swingapp.action.CreateSingleMaze;
-import de.amr.demos.maze.swingapp.action.FloodFill;
-import de.amr.demos.maze.swingapp.action.SaveImage;
-import de.amr.demos.maze.swingapp.action.SolveMaze;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
+import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
+import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
+import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
+import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
+import de.amr.demos.maze.swingapp.ui.control.menu.GeneratorMenu;
+import de.amr.demos.maze.swingapp.ui.control.menu.OptionMenu;
+import de.amr.demos.maze.swingapp.ui.control.menu.SolverMenu;
 import de.amr.graph.core.api.TraversalState;
 
 /**

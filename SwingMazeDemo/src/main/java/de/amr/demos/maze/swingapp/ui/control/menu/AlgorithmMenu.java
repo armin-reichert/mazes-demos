@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.control;
+package de.amr.demos.maze.swingapp.ui.control.menu;
 
 import java.util.Collections;
 import java.util.Optional;

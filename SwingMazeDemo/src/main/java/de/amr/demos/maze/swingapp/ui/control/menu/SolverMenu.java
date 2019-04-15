@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.control;
+package de.amr.demos.maze.swingapp.ui.control.menu;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -8,6 +8,7 @@ import javax.swing.JRadioButtonMenuItem;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 
 /**
  * Menu for selecting the path finder algorithm.

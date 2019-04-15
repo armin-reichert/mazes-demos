@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.control;
+package de.amr.demos.maze.swingapp.ui.control;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

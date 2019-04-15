@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.action;
+package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
 import static java.lang.String.format;

@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.view.control;
+package de.amr.demos.maze.swingapp.ui.control.menu;
 
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
@@ -10,6 +10,7 @@ import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 
 /**
  * Menu for selecting the maze generation algorithm.
