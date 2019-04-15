@@ -74,6 +74,7 @@ public class ControlViewController {
 		public void actionPerformed(ActionEvent e) {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
 			app().changeSelectedGridCellSize(combo.getSelectedIndex());
+			combo.requestFocusInWindow();
 		}
 	};
 
