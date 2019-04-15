@@ -34,8 +34,8 @@ public class GridView extends GridCanvas {
 	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize,
 			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
 		super(grid, cellSize);
-		this.fnPassageWidth = fnPassageWidth;
 		initProperties();
+		this.fnPassageWidth = fnPassageWidth;
 		reset(grid, cellSize);
 	}
 
