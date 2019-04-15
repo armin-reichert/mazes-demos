@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.view.grid;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.app;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.function.BiFunction;
@@ -30,6 +28,18 @@ public class GridView extends GridCanvas {
 	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
 
 	public GridView() {
+		initProperties();
+	}
+
+	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize,
+			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
+		super(grid, cellSize);
+		this.fnPassageWidth = fnPassageWidth;
+		initProperties();
+		reset(grid, cellSize);
+	}
+
+	private void initProperties() {
 		gridBackgroundColor = Color.BLACK;
 		unvisitedCellColor = Color.BLACK;
 		visitedCellColor = Color.BLUE;
@@ -39,24 +49,27 @@ public class GridView extends GridCanvas {
 		fnPassageWidth = (u, v) -> 1;
 	}
 
-	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize,
-			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
-		this();
-		this.fnPassageWidth = fnPassageWidth;
+	public void reset(GridGraph<TraversalState, Integer> grid, int cellSize) {
 		resize(grid, cellSize);
 		replaceRenderer(createRenderer(cellSize));
 		clear();
+		drawGrid();
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
-		int dx = (app().getInitialSize().width - getPreferredSize().width) / 2;
-		int dy = (app().getInitialSize().height - getPreferredSize().height) / 2;
-		g.translate(dx, dy);
-		super.paintComponent(g);
-		g.translate(-dx, -dy);
+		if (getParent() != null) {
+			int dx = (getParent().getWidth() - getWidth()) / 2;
+			int dy = (getParent().getHeight() - getHeight()) / 2;
+			g.translate(dx, dy);
+			super.paintComponent(g);
+			g.translate(-dx, -dy);
+		}
+		else {
+			super.paintComponent(g);
+		}
 	}
 
 	public Color getGridBackgroundColor() {

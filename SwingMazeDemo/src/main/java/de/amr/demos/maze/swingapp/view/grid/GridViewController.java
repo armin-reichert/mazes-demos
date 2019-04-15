@@ -71,12 +71,9 @@ public class GridViewController implements PropertyChangeListener {
 		model.getGrid().addGraphObserver(animation);
 	}
 
-	public void replaceView() {
-		createView();
-		window.setContentPane(view);
+	public void resetView() {
+		view.reset(model.getGrid(), model.getGridCellSize());
 		window.validate();
-		view.clear();
-		view.drawGrid();
 	}
 
 	public void createWindow() {

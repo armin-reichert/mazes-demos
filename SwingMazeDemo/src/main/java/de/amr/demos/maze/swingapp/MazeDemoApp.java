@@ -113,7 +113,7 @@ public class MazeDemoApp {
 		int numRows = getGridViewController().getWindow().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
 		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.replaceView();
+		gridViewController.resetView();
 		gridViewController.startModelChangeListening();
 		controlViewController.setBusy(false);
 	}
