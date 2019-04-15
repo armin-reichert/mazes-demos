@@ -43,8 +43,6 @@ public class MazeDemoApp {
 		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
-	private final Dimension initialSize;
-
 	private final MazeDemoModel model;
 
 	private ControlViewController controlViewController;
@@ -57,7 +55,6 @@ public class MazeDemoApp {
 	private String theme;
 
 	private MazeDemoApp() {
-		initialSize = getDisplaySize();
 		model = new MazeDemoModel();
 		theme = NimbusLookAndFeel.class.getName();
 	}
@@ -70,10 +67,7 @@ public class MazeDemoApp {
 			e.printStackTrace();
 		}
 
-		model.createGrid(initialSize.width / model.getGridCellSize(),
-				initialSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
-
-		gridViewController = new GridViewController(model);
+		gridViewController = new GridViewController(model, getDisplaySize());
 
 		controlViewController = new ControlViewController(model);
 		controlViewController.setHidingWindowWhenBusy(false);
@@ -84,15 +78,11 @@ public class MazeDemoApp {
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
 
 		gridViewController.showWindow();
-		controlViewController.placeWindow();
+		controlViewController.placeWindowRelativeTo(gridViewController.getWindow());
 		controlViewController.showWindow();
 	}
 
-	public Dimension getInitialSize() {
-		return initialSize;
-	}
-
-	private Dimension getDisplaySize() {
+	public Dimension getDisplaySize() {
 		DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 				.getDisplayMode();
 		return new Dimension(displayMode.getWidth(), displayMode.getHeight());

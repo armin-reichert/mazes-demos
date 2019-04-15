@@ -4,6 +4,7 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -41,10 +42,12 @@ public class GridViewController implements PropertyChangeListener {
 		}
 	};
 
-	public GridViewController(MazeDemoModel model) {
+	public GridViewController(MazeDemoModel model, Dimension windowSize) {
 		this.model = model;
+		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
+				false, TraversalState.UNVISITED);
 		createView();
-		createWindow();
+		createWindow(windowSize);
 		window.setContentPane(view);
 		startModelChangeListening();
 	}
@@ -76,11 +79,14 @@ public class GridViewController implements PropertyChangeListener {
 		window.validate();
 	}
 
-	public void createWindow() {
+	public void createWindow(Dimension size) {
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
-		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		window.setUndecorated(true);
+		window.setSize(size);
+		if (size.equals(theApp.getDisplaySize())) {
+			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			window.setUndecorated(true);
+		}
 	}
 
 	public void stopModelChangeListening() {

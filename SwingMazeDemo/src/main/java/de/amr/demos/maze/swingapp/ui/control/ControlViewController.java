@@ -4,6 +4,8 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Optional;
@@ -130,8 +132,9 @@ public class ControlViewController {
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = theApp.getInitialSize().width / cellSize;
-			int numRows = theApp.getInitialSize().height / cellSize;
+			Dimension windowSize = theApp.getGridViewController().getWindow().getSize();
+			int numCols = windowSize.width / cellSize;
+			int numRows = windowSize.height / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -207,8 +210,8 @@ public class ControlViewController {
 		return model;
 	}
 
-	public void placeWindow() {
-		window.setLocation((theApp.getInitialSize().width - window.getWidth()) / 2, 42);
+	public void placeWindowRelativeTo(Window parentWindow) {
+		window.setLocation((parentWindow.getWidth() - window.getWidth()) / 2, 42);
 	}
 
 	public void showWindow() {
