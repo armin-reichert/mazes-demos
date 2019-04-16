@@ -2,10 +2,10 @@ package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
-import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildCanvasMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildGeneratorMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildOptionMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildSolverMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildOptionMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildSolverMenu;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -282,20 +282,20 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public Optional<AlgorithmInfo> getSelectedGenerator() {
-		return ControlViewMenus.getSelectedAlgorithm(generatorMenu);
+		return ControlWindowMenus.getSelectedAlgorithm(generatorMenu);
 	}
 
 	public void selectGenerator(AlgorithmInfo generatorInfo) {
-		ControlViewMenus.selectAlgorithm(generatorMenu, generatorInfo);
+		ControlWindowMenus.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
 	}
 
 	public Optional<AlgorithmInfo> getSelectedSolver() {
-		return ControlViewMenus.getSelectedAlgorithm(solverMenu);
+		return ControlWindowMenus.getSelectedAlgorithm(solverMenu);
 	}
 
 	public void selectSolver(AlgorithmInfo solverInfo) {
-		ControlViewMenus.selectAlgorithm(solverMenu, solverInfo);
+		ControlWindowMenus.selectAlgorithm(solverMenu, solverInfo);
 		updateSolverText(solverInfo);
 	}
 

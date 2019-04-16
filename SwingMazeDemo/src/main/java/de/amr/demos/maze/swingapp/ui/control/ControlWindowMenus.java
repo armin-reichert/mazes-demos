@@ -31,7 +31,7 @@ import de.amr.graph.grid.api.GridPosition;
  * 
  * @author Armin Reichert
  */
-public class ControlViewMenus {
+public class ControlWindowMenus {
 
 	public static Optional<AlgorithmInfo> getSelectedAlgorithm(JMenu radioButtonMenu) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
@@ -54,16 +54,21 @@ public class ControlViewMenus {
 		return MenuBuilder.newBuilder()
 			.title("Generators")
 			.property("radio", radio)
-			.menu(buildGeneratorMenu(controller, radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)))
-			.menu(buildGeneratorMenu(controller, radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)))
-			.menu(buildGeneratorMenu(controller, radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)))
-			.menu(buildGeneratorMenu(controller, radio, "Others", 
-					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST))))
+			.items(generatorSubmenus(controller, radio))
 		.build();
 		//@formatter:on
 	}
 
-	private static JMenu buildGeneratorMenu(ControlViewController controller, ButtonGroup radio, String title,
+	private static Stream<JMenuItem> generatorSubmenus(ControlViewController controller, ButtonGroup radio) {
+		return Stream.of(
+				generatorMenu(controller, radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)),
+				generatorMenu(controller, radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)),
+				generatorMenu(controller, radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)),
+				generatorMenu(controller, radio, "Others", algorithm -> !(algorithm.isTagged(Traversal)
+						|| algorithm.isTagged(MST) || algorithm.isTagged(UST))));
+	}
+
+	private static JMenu generatorMenu(ControlViewController controller, ButtonGroup radio, String title,
 			Predicate<AlgorithmInfo> selection) {
 		JMenu menu = new JMenu(title);
 		controller.getModel().generators().filter(selection).forEach(generator -> {
