@@ -2,7 +2,7 @@ package de.amr.demos.maze.swingapp.ui.common;
 
 import java.awt.event.ItemEvent;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
@@ -20,12 +21,30 @@ public class MenuBuilder {
 		return new MenuBuilder();
 	}
 
-	public static void updateState(JMenu menu) {
+	@SuppressWarnings("unchecked")
+	private static <T> Optional<T> getProperty(JComponent comp, String key) {
+		T value = (T) comp.getClientProperty(key);
+		return Optional.ofNullable(value);
+	}
+
+	public static void updateMenuSelection(JMenu menu) {
 		for (int i = 0; i < menu.getItemCount(); ++i) {
-			if (menu.getItem(i) instanceof JCheckBoxMenuItem) {
-				JCheckBoxMenuItem cb = (JCheckBoxMenuItem) menu.getItem(i);
-				BooleanSupplier fnSelection = (BooleanSupplier) cb.getClientProperty("selection");
-				cb.setSelected(fnSelection.getAsBoolean());
+			JMenuItem item = menu.getItem(i);
+			if (item instanceof JCheckBoxMenuItem) {
+				JCheckBoxMenuItem checkBox = (JCheckBoxMenuItem) item;
+				Optional<Supplier<Boolean>> selection = getProperty(checkBox, "selection");
+				if (selection.isPresent()) {
+					checkBox.setSelected(selection.get().get());
+				}
+			}
+			else if (item instanceof JRadioButtonMenuItem) {
+				JRadioButtonMenuItem radioButton = (JRadioButtonMenuItem) item;
+				Optional<Supplier<Boolean>> selection = getProperty(radioButton, "selection");
+				Optional<?> selectionValue = getProperty(radioButton, "selectionValue");
+				if (selection.isPresent() && selectionValue.isPresent()
+						&& selection.get().get().equals(selectionValue.get())) {
+					radioButton.setSelected(true);
+				}
 			}
 		}
 	}
@@ -64,7 +83,7 @@ public class MenuBuilder {
 	public class CheckBoxBuilder {
 
 		private Consumer<Boolean> onChecked;
-		private BooleanSupplier selection;
+		private Supplier<Boolean> selection;
 		private String text;
 
 		public CheckBoxBuilder onChecked(Consumer<Boolean> onChecked) {
@@ -72,7 +91,7 @@ public class MenuBuilder {
 			return this;
 		}
 
-		public CheckBoxBuilder selection(BooleanSupplier selection) {
+		public CheckBoxBuilder selection(Supplier<Boolean> selection) {
 			this.selection = selection;
 			return this;
 		}
@@ -125,6 +144,10 @@ public class MenuBuilder {
 				Objects.requireNonNull(selectionValue);
 
 				JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
+				radioButton.putClientProperty("radio", radio);
+				radioButton.putClientProperty("selectionValue", selectionValue);
+				radioButton.putClientProperty("selection", selection);
+				radioButton.putClientProperty("onSelect", onSelect);
 				if (text != null) {
 					radioButton.setText(text);
 				}

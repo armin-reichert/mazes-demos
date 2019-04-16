@@ -27,11 +27,11 @@ import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
 import de.amr.graph.grid.api.GridPosition;
 
 /**
- * Builds menus of control window.
+ * The menus of the control window.
  * 
  * @author Armin Reichert
  */
-public class ControlMenuBuilder {
+public class ControlViewMenus {
 
 	public static Optional<AlgorithmInfo> getSelectedAlgorithm(JMenu radioButtonMenu) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");

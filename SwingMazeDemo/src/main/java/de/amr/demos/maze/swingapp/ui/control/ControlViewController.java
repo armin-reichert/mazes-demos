@@ -1,6 +1,11 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
+import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
+import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildCanvasMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildGeneratorMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildOptionMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlViewMenus.buildSolverMenu;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -175,23 +180,18 @@ public class ControlViewController implements PropertyChangeListener {
 		window.setAlwaysOnTop(true);
 		window.setContentPane(view);
 
-		// Menus
-		generatorMenu = ControlMenuBuilder.buildGeneratorMenu(this);
-		solverMenu = ControlMenuBuilder.buildSolverMenu(this);
-		canvasMenu = ControlMenuBuilder.buildCanvasMenu(this);
-		optionMenu = ControlMenuBuilder.buildOptionMenu(this);
-
-		JMenuBar menuBar = new JMenuBar();
-		window.setJMenuBar(menuBar);
-		menuBar.add(generatorMenu);
-		menuBar.add(solverMenu);
-		menuBar.add(canvasMenu);
-		menuBar.add(optionMenu);
+		// build menus
+		window.setJMenuBar(new JMenuBar());
+		window.getJMenuBar().add(generatorMenu = buildGeneratorMenu(this));
+		window.getJMenuBar().add(solverMenu = buildSolverMenu(this));
+		window.getJMenuBar().add(canvasMenu = buildCanvasMenu(this));
+		window.getJMenuBar().add(optionMenu = buildOptionMenu(this));
 
 		// initialize menu selection
-		MenuBuilder.updateState(generatorMenu);
-		MenuBuilder.updateState(solverMenu);
-		MenuBuilder.updateState(optionMenu);
+		updateMenuSelection(generatorMenu);
+		updateMenuSelection(solverMenu);
+		updateMenuSelection(canvasMenu);
+		updateMenuSelection(optionMenu);
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class ControlViewController implements PropertyChangeListener {
 
 	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
 		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
-		MenuBuilder.updateState(optionMenu);
+		MenuBuilder.updateMenuSelection(optionMenu);
 	}
 
 	public MazeDemoModel getModel() {
@@ -282,20 +282,20 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public Optional<AlgorithmInfo> getSelectedGenerator() {
-		return ControlMenuBuilder.getSelectedAlgorithm(generatorMenu);
+		return ControlViewMenus.getSelectedAlgorithm(generatorMenu);
 	}
 
 	public void selectGenerator(AlgorithmInfo generatorInfo) {
-		ControlMenuBuilder.selectAlgorithm(generatorMenu, generatorInfo);
+		ControlViewMenus.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
 	}
 
 	public Optional<AlgorithmInfo> getSelectedSolver() {
-		return ControlMenuBuilder.getSelectedAlgorithm(solverMenu);
+		return ControlViewMenus.getSelectedAlgorithm(solverMenu);
 	}
 
 	public void selectSolver(AlgorithmInfo solverInfo) {
-		ControlMenuBuilder.selectAlgorithm(solverMenu, solverInfo);
+		ControlViewMenus.selectAlgorithm(solverMenu, solverInfo);
 		updateSolverText(solverInfo);
 	}
 
