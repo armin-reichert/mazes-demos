@@ -24,8 +24,8 @@ import javax.swing.JRadioButtonMenuItem;
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
-import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
 import de.amr.graph.grid.api.GridPosition;
 
 /**
@@ -49,7 +49,7 @@ public class ControlMenuBuilder {
 	}
 
 	// Generator menu
-	
+
 	public static JMenu buildGeneratorMenu(ControlViewController controller) {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
@@ -78,7 +78,7 @@ public class ControlMenuBuilder {
 		});
 		return menu;
 	}
-	
+
 	// Solver menu
 
 	public static JMenu buildSolverMenu(ControlViewController controller) {
@@ -129,21 +129,24 @@ public class ControlMenuBuilder {
 		}
 		return menu;
 	}
-	
+
 	// Canvas menu
 
 	public static JMenu buildCanvasMenu(ControlViewController controller) {
-		JMenu canvasMenu = new JMenu("Canvas");
-		canvasMenu.add(controller.actionClearCanvas);
-		canvasMenu.add(controller.actionFloodFill);
-		canvasMenu.addSeparator();
-		canvasMenu.add(controller.actionCreateEmptyGrid);
-		canvasMenu.add(controller.actionCreateFullGrid);
-		canvasMenu.addSeparator();
-		canvasMenu.add(controller.actionSaveImage);
-		return canvasMenu;
+		//@formatter:off
+		return MenuBuilder.newBuilder()
+				.title("Canvas")
+				.button().action(controller.actionClearCanvas).build()
+				.button().action(controller.actionFloodFill).build()
+				.separator()
+				.button().action(controller.actionCreateEmptyGrid).build()
+				.button().action(controller.actionCreateFullGrid).build()
+				.separator()
+				.button().action(controller.actionSaveImage).build()
+		.build();		
+		//@formatter:on
 	}
-	
+
 	// Option menu
 
 	public static JMenu buildOptionMenu(ControlViewController controller) {
