@@ -170,6 +170,10 @@ public class MenuBuilder {
 		menu = new JMenu();
 	}
 
+	public JMenu build() {
+		return menu;
+	}
+
 	public MenuBuilder property(String key, Object value) {
 		menu.putClientProperty(key, value);
 		return this;
@@ -198,6 +202,7 @@ public class MenuBuilder {
 	}
 
 	public MenuBuilder menu(JMenu subMenu) {
+		Objects.requireNonNull(subMenu);
 		menu.add(subMenu);
 		return this;
 	}
@@ -212,9 +217,5 @@ public class MenuBuilder {
 
 	public <T> RadioButtonGroupBuilder<T> radioButtonGroup(Class<T> selectionType) {
 		return new RadioButtonGroupBuilder<>(selectionType);
-	}
-
-	public JMenu build() {
-		return menu;
 	}
 }

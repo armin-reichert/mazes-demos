@@ -4,9 +4,7 @@ import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -41,26 +39,26 @@ public class ControlMenuBuilder {
 				.map(button -> (AlgorithmInfo) button.getClientProperty("algorithm")).findFirst();
 	}
 
-	public static void selectAlgorithm(JMenu radioButtonMenu, AlgorithmInfo algorithmInfo) {
+	public static void selectAlgorithm(JMenu radioButtonMenu, AlgorithmInfo algorithm) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
 		Collections.list(radio.getElements()).stream()
-				.filter(button -> algorithmInfo.equals(button.getClientProperty("algorithm"))).findFirst()
+				.filter(button -> algorithm.equals(button.getClientProperty("algorithm"))).findFirst()
 				.ifPresent(button -> button.setSelected(true));
 	}
 
-	// Generator menu
+	// Maze generator menu
 
 	public static JMenu buildGeneratorMenu(ControlViewController controller) {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
-				.title("Generators")
-				.property("radio", radio)
-				.menu(buildGeneratorMenu(controller, radio, "Graph Traversal", alg -> alg.isTagged(Traversal)))
-				.menu(buildGeneratorMenu(controller, radio, "Minimum Spanning Tree", alg -> alg.isTagged(MST)))
-				.menu(buildGeneratorMenu(controller, radio, "Uniform Spanning Tree", alg -> alg.isTagged(UST)))
-				.menu(buildGeneratorMenu(controller, radio, "Others", 
-						alg -> !(alg.isTagged(Traversal) || alg.isTagged(MST) || alg.isTagged(UST))))
+			.title("Generators")
+			.property("radio", radio)
+			.menu(buildGeneratorMenu(controller, radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)))
+			.menu(buildGeneratorMenu(controller, radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)))
+			.menu(buildGeneratorMenu(controller, radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)))
+			.menu(buildGeneratorMenu(controller, radio, "Others", 
+					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST))))
 		.build();
 		//@formatter:on
 	}
@@ -69,12 +67,12 @@ public class ControlMenuBuilder {
 			Predicate<AlgorithmInfo> selection) {
 		JMenu menu = new JMenu(title);
 		controller.getModel().generators().filter(selection).forEach(generator -> {
-			JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-			item.addActionListener(e -> controller.selectGenerator(generator));
-			item.setText(generator.getDescription());
-			item.putClientProperty("algorithm", generator);
-			radio.add(item);
-			menu.add(item);
+			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
+			radioButton.addActionListener(e -> controller.selectGenerator(generator));
+			radioButton.setText(generator.getDescription());
+			radioButton.putClientProperty("algorithm", generator);
+			radio.add(radioButton);
+			menu.add(radioButton);
 		});
 		return menu;
 	}
@@ -99,21 +97,14 @@ public class ControlMenuBuilder {
 
 	private static Stream<JMenuItem> solverItems(ControlViewController controller, ButtonGroup radio,
 			Predicate<AlgorithmInfo> selection) {
-		List<JMenuItem> items = new ArrayList<>();
-		controller.getModel().solvers().filter(selection).forEach(solver -> {
-			items.add(buildSolverRadioButton(controller, radio, solver));
+		return controller.getModel().solvers().filter(selection).map(solver -> {
+			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
+			radioButton.addActionListener(event -> controller.selectSolver(solver));
+			radioButton.setText(solver.getDescription());
+			radioButton.putClientProperty("algorithm", solver);
+			radio.add(radioButton);
+			return radioButton;
 		});
-		return items.stream();
-	}
-
-	private static JRadioButtonMenuItem buildSolverRadioButton(ControlViewController controller,
-			ButtonGroup radio, AlgorithmInfo solver) {
-		JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
-		radioButton.addActionListener(event -> controller.selectSolver(solver));
-		radioButton.setText(solver.getDescription());
-		radioButton.putClientProperty("algorithm", solver);
-		radio.add(radioButton);
-		return radioButton;
 	}
 
 	private static JMenu buildMetricsMenu(ControlViewController controller) {
@@ -135,14 +126,14 @@ public class ControlMenuBuilder {
 	public static JMenu buildCanvasMenu(ControlViewController controller) {
 		//@formatter:off
 		return MenuBuilder.newBuilder()
-				.title("Canvas")
-				.button().action(controller.actionClearCanvas).build()
-				.button().action(controller.actionFloodFill).build()
-				.separator()
-				.button().action(controller.actionCreateEmptyGrid).build()
-				.button().action(controller.actionCreateFullGrid).build()
-				.separator()
-				.button().action(controller.actionSaveImage).build()
+			.title("Canvas")
+			.button().action(controller.actionClearCanvas).build()
+			.button().action(controller.actionFloodFill).build()
+			.separator()
+			.button().action(controller.actionCreateEmptyGrid).build()
+			.button().action(controller.actionCreateFullGrid).build()
+			.separator()
+			.button().action(controller.actionSaveImage).build()
 		.build();		
 		//@formatter:on
 	}
@@ -153,37 +144,37 @@ public class ControlMenuBuilder {
 		final MazeDemoModel model = controller.getModel();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
-				.title("Options")
-				.menu(buildPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart))
-				.menu(buildPositionMenu("Solution Start", model::setPathFinderStart, model::getPathFinderSource))
-				.menu(buildPositionMenu("Solution Target", model::setPathFinderTarget, model::getPathFinderTarget))
-				.separator()
-				.checkBox()
-					.text("Animate Generation")
-				  .onChecked(model::setGenerationAnimated)
-				  .selection(model::isGenerationAnimated)
-				  .build()
-				.checkBox()
-					.text("Flood-fill after generation")
-				  .onChecked(model::setFloodFillAfterGeneration)
-				  .selection(model::isFloodFillAfterGeneration)
-				  .build()
-				.checkBox()
-					.text("Show distances")
-				  .onChecked(model::setDistancesVisible)
-				  .selection(model::isDistancesVisible)
-				  .build()
-				.checkBox()
-					.text("Fluent Passage Width")
-					.onChecked(model::setPassageWidthFluent)
-					.selection(model::isPassageWidthFluent)
-					.build()
-				.separator()	
-				.checkBox()
-					.text("Hide this dialog when running")
-					.onChecked(controller::setHidingWindowWhenBusy)
-					.selection(controller::isHidingWindowWhenBusy)
-					.build()
+			.title("Options")
+			.menu(buildPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart))
+			.menu(buildPositionMenu("Solution Start", model::setPathFinderStart, model::getPathFinderSource))
+			.menu(buildPositionMenu("Solution Target", model::setPathFinderTarget, model::getPathFinderTarget))
+			.separator()
+			.checkBox()
+				.text("Animate Generation")
+			  .onChecked(model::setGenerationAnimated)
+			  .selection(model::isGenerationAnimated)
+			  .build()
+			.checkBox()
+				.text("Flood-fill after generation")
+			  .onChecked(model::setFloodFillAfterGeneration)
+			  .selection(model::isFloodFillAfterGeneration)
+			  .build()
+			.checkBox()
+				.text("Show distances")
+			  .onChecked(model::setDistancesVisible)
+			  .selection(model::isDistancesVisible)
+			  .build()
+			.checkBox()
+				.text("Fluent Passage Width")
+				.onChecked(model::setPassageWidthFluent)
+				.selection(model::isPassageWidthFluent)
+				.build()
+			.separator()	
+			.checkBox()
+				.text("Hide this dialog when running")
+				.onChecked(controller::setHidingWindowWhenBusy)
+				.selection(controller::isHidingWindowWhenBusy)
+				.build()
 		.build();
 		//@formatter:on
 	}
@@ -194,31 +185,31 @@ public class ControlMenuBuilder {
 				.getString(position.name());
 		//@formatter:off
 		return MenuBuilder.newBuilder()
-				.title(title)
-				.radioButtonGroup(GridPosition.class)
-					.selection(selection)
-					.onSelect(onSelect)
-					.button()
-						.selectionValue(GridPosition.CENTER)
-						.text(translation.apply(GridPosition.CENTER))
-						.build()
-					.button()
-						.selectionValue(GridPosition.TOP_LEFT)
-						.text(translation.apply(GridPosition.TOP_LEFT))
-						.build()
-					.button()
-						.selectionValue(GridPosition.TOP_RIGHT)
-						.text(translation.apply(GridPosition.TOP_RIGHT))
-						.build()
-					.button()
-					  .selectionValue(GridPosition.BOTTOM_LEFT)
-					  .text(translation.apply(GridPosition.BOTTOM_LEFT))
-					  .build()
-					.button()
-						.selectionValue(GridPosition.BOTTOM_RIGHT)
-						.text(translation.apply(GridPosition.BOTTOM_RIGHT))
-						.build()
-				.build()
+			.title(title)
+			.radioButtonGroup(GridPosition.class)
+				.selection(selection)
+				.onSelect(onSelect)
+				.button()
+					.selectionValue(GridPosition.CENTER)
+					.text(translation.apply(GridPosition.CENTER))
+					.build()
+				.button()
+					.selectionValue(GridPosition.TOP_LEFT)
+					.text(translation.apply(GridPosition.TOP_LEFT))
+					.build()
+				.button()
+					.selectionValue(GridPosition.TOP_RIGHT)
+					.text(translation.apply(GridPosition.TOP_RIGHT))
+					.build()
+				.button()
+				  .selectionValue(GridPosition.BOTTOM_LEFT)
+				  .text(translation.apply(GridPosition.BOTTOM_LEFT))
+				  .build()
+				.button()
+					.selectionValue(GridPosition.BOTTOM_RIGHT)
+					.text(translation.apply(GridPosition.BOTTOM_RIGHT))
+					.build()
+			.build()
 		.build();
 		//@formatter:on
 	}
