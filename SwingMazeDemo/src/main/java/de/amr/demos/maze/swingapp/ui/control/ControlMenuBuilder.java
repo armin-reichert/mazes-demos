@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -187,42 +188,36 @@ public class ControlMenuBuilder {
 		//@formatter:on
 	}
 
-	private static JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelection,
+	private static JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelect,
 			Supplier<GridPosition> selection) {
-		ButtonGroup radio = new ButtonGroup();
-		ResourceBundle texts = ResourceBundle.getBundle("texts");
+		Function<GridPosition, String> translation = position -> ResourceBundle.getBundle("texts")
+				.getString(position.name());
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 				.title(title)
-				.radioButton(GridPosition.CENTER)
-					.radio(radio)
-					.text(texts.getString(GridPosition.CENTER.name()))
+				.radioButtonGroup(GridPosition.class)
 					.selection(selection)
-					.onSelect(onSelection)
-				.build()
-				.radioButton(GridPosition.TOP_LEFT)
-					.radio(radio)
-					.text(texts.getString(GridPosition.TOP_LEFT.name()))
-					.selection(selection)
-					.onSelect(onSelection)
-				.build()
-				.radioButton(GridPosition.TOP_RIGHT)
-					.radio(radio)
-					.text(texts.getString(GridPosition.TOP_RIGHT.name()))
-					.selection(selection)
-					.onSelect(onSelection)
-				.build()
-				.radioButton(GridPosition.BOTTOM_LEFT)
-					.radio(radio)
-					.text(texts.getString(GridPosition.BOTTOM_LEFT.name()))
-					.selection(selection)
-					.onSelect(onSelection)
-				.build()
-				.radioButton(GridPosition.BOTTOM_RIGHT)
-					.radio(radio)
-					.text(texts.getString(GridPosition.BOTTOM_RIGHT.name()))
-					.selection(selection)
-					.onSelect(onSelection)
+					.onSelect(onSelect)
+					.button()
+						.selectionValue(GridPosition.CENTER)
+						.text(translation.apply(GridPosition.CENTER))
+						.build()
+					.button()
+						.selectionValue(GridPosition.TOP_LEFT)
+						.text(translation.apply(GridPosition.TOP_LEFT))
+						.build()
+					.button()
+						.selectionValue(GridPosition.TOP_RIGHT)
+						.text(translation.apply(GridPosition.TOP_RIGHT))
+						.build()
+					.button()
+					  .selectionValue(GridPosition.BOTTOM_LEFT)
+					  .text(translation.apply(GridPosition.BOTTOM_LEFT))
+					  .build()
+					.button()
+						.selectionValue(GridPosition.BOTTOM_RIGHT)
+						.text(translation.apply(GridPosition.BOTTOM_RIGHT))
+						.build()
 				.build()
 		.build();
 		//@formatter:on

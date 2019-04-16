@@ -32,6 +32,8 @@ public class MenuBuilder {
 
 	private JMenu menu;
 
+	// Menu button builder
+
 	public class ButtonBuilder {
 
 		private Action action;
@@ -56,6 +58,8 @@ public class MenuBuilder {
 			return MenuBuilder.this;
 		}
 	}
+
+	// CheckBox builder
 
 	public class CheckBoxBuilder {
 
@@ -94,62 +98,73 @@ public class MenuBuilder {
 		}
 	}
 
-	public class RadioButtonBuilder<T> {
+	// Radio button group builder
 
-		private ButtonGroup radio;
-		private T selectionValue;
-		private Consumer<T> onSelect;
+	public class RadioButtonGroupBuilder<T> {
+
 		private Supplier<T> selection;
-		private String text;
+		private Consumer<T> onSelect;
+		private ButtonGroup radio;
 
-		public RadioButtonBuilder(T selectionValue) {
-			this.selectionValue = selectionValue;
-		}
-		
-		public RadioButtonBuilder<T> selection(Supplier<T> selection) {
-			this.selection = selection;
-			return this;
-		}
+		public class RadioButtonBuilder {
 
-		public RadioButtonBuilder<T> radio(ButtonGroup radio) {
-			this.radio = radio;
-			return this;
-		}
+			private T selectionValue;
+			private String text;
 
-		public RadioButtonBuilder<T> onSelect(Consumer<T> onSelect) {
-			this.onSelect = onSelect;
-			return this;
-		}
+			public RadioButtonBuilder selectionValue(T selectionValue) {
+				this.selectionValue = selectionValue;
+				return this;
+			}
 
-		public RadioButtonBuilder<T> text(String text) {
-			this.text = text;
-			return this;
-		}
+			public RadioButtonBuilder text(String text) {
+				this.text = text;
+				return this;
+			}
 
-		public MenuBuilder build() {
-			Objects.requireNonNull(selectionValue);
-			Objects.requireNonNull(onSelect);
-			Objects.requireNonNull(radio);
-			
-			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
-			if (onSelect != null) {
+			public RadioButtonGroupBuilder<T> build() {
+				Objects.requireNonNull(selectionValue);
+
+				JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
+				if (text != null) {
+					radioButton.setText(text);
+				}
 				radioButton.addItemListener(e -> {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
 						onSelect.accept(selectionValue);
 					}
 				});
-			}
-			if (selection != null) {
 				radioButton.setSelected(selection.get().equals(selectionValue));
+				radio.add(radioButton);
+				menu.add(radioButton);
+				return RadioButtonGroupBuilder.this;
 			}
-			if (text != null) {
-				radioButton.setText(text);
-			}
-			radio.add(radioButton);
-			menu.add(radioButton);
+		}
+
+		public RadioButtonGroupBuilder(Class<T> selectionType) {
+			radio = new ButtonGroup();
+		}
+
+		public RadioButtonGroupBuilder<T> selection(Supplier<T> selection) {
+			this.selection = selection;
+			return this;
+		}
+
+		public RadioButtonGroupBuilder<T> onSelect(Consumer<T> onSelect) {
+			this.onSelect = onSelect;
+			return this;
+		}
+
+		public RadioButtonBuilder button() {
+			return new RadioButtonBuilder();
+		}
+
+		public MenuBuilder build() {
 			return MenuBuilder.this;
 		}
+
 	}
+
+	// Menu builder
 
 	private MenuBuilder() {
 		menu = new JMenu();
@@ -195,8 +210,8 @@ public class MenuBuilder {
 		return new CheckBoxBuilder();
 	}
 
-	public <T> RadioButtonBuilder<T> radioButton(T selectionValue) {
-		return new RadioButtonBuilder<T>(selectionValue);
+	public <T> RadioButtonGroupBuilder<T> radioButtonGroup(Class<T> selectionType) {
+		return new RadioButtonGroupBuilder<>(selectionType);
 	}
 
 	public JMenu build() {
