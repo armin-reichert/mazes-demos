@@ -4,7 +4,6 @@ import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
 
-import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,14 +34,14 @@ import de.amr.graph.grid.api.GridPosition;
  */
 public class ControlMenuBuilder {
 
-	public static Optional<AlgorithmInfo> getSelectedAlgorithm(JMenu menu) {
-		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
+	public static Optional<AlgorithmInfo> getSelectedAlgorithm(JMenu radioButtonMenu) {
+		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
 		return Collections.list(radio.getElements()).stream().filter(AbstractButton::isSelected)
 				.map(button -> (AlgorithmInfo) button.getClientProperty("algorithm")).findFirst();
 	}
 
-	public static void selectAlgorithm(JMenu menu, AlgorithmInfo algorithmInfo) {
-		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
+	public static void selectAlgorithm(JMenu radioButtonMenu, AlgorithmInfo algorithmInfo) {
+		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
 		Collections.list(radio.getElements()).stream()
 				.filter(button -> algorithmInfo.equals(button.getClientProperty("algorithm"))).findFirst()
 				.ifPresent(button -> button.setSelected(true));
@@ -66,13 +65,13 @@ public class ControlMenuBuilder {
 	}
 
 	private static JMenu buildGeneratorMenu(ControlViewController controller, ButtonGroup radio, String title,
-			Predicate<AlgorithmInfo> includeInMenu) {
+			Predicate<AlgorithmInfo> selection) {
 		JMenu menu = new JMenu(title);
-		controller.getModel().generators().filter(includeInMenu).forEach(generatorInfo -> {
+		controller.getModel().generators().filter(selection).forEach(generator -> {
 			JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-			item.addActionListener(e -> controller.selectGenerator(generatorInfo));
-			item.setText(generatorInfo.getDescription());
-			item.putClientProperty("algorithm", generatorInfo);
+			item.addActionListener(e -> controller.selectGenerator(generator));
+			item.setText(generator.getDescription());
+			item.putClientProperty("algorithm", generator);
 			radio.add(item);
 			menu.add(item);
 		});
@@ -108,12 +107,12 @@ public class ControlMenuBuilder {
 
 	private static JRadioButtonMenuItem buildSolverRadioButton(ControlViewController controller,
 			ButtonGroup radio, AlgorithmInfo solver) {
-		JRadioButtonMenuItem item = new JRadioButtonMenuItem();
-		item.addActionListener(event -> controller.selectSolver(solver));
-		item.setText(solver.getDescription());
-		item.putClientProperty("algorithm", solver);
-		radio.add(item);
-		return item;
+		JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
+		radioButton.addActionListener(event -> controller.selectSolver(solver));
+		radioButton.setText(solver.getDescription());
+		radioButton.putClientProperty("algorithm", solver);
+		radio.add(radioButton);
+		return radioButton;
 	}
 
 	private static JMenu buildMetricsMenu(ControlViewController controller) {
@@ -121,11 +120,11 @@ public class ControlMenuBuilder {
 		ButtonGroup radio = new ButtonGroup();
 		for (Metric metric : Metric.values()) {
 			String text = metric.name().substring(0, 1) + metric.name().substring(1).toLowerCase();
-			JRadioButtonMenuItem rb = new JRadioButtonMenuItem(text);
-			rb.addActionListener(e -> controller.getModel().setMetric(metric));
-			radio.add(rb);
-			menu.add(rb);
-			rb.setSelected(metric == controller.getModel().getMetric());
+			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem(text);
+			radioButton.addActionListener(e -> controller.getModel().setMetric(metric));
+			radioButton.setSelected(metric == controller.getModel().getMetric());
+			radio.add(radioButton);
+			menu.add(radioButton);
 		}
 		return menu;
 	}
@@ -190,21 +189,42 @@ public class ControlMenuBuilder {
 
 	private static JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelection,
 			Supplier<GridPosition> selection) {
-		JMenu menu = new JMenu(title);
-		ButtonGroup group = new ButtonGroup();
+		ButtonGroup radio = new ButtonGroup();
 		ResourceBundle texts = ResourceBundle.getBundle("texts");
-		for (GridPosition pos : GridPosition.values()) {
-			JRadioButtonMenuItem radio = new JRadioButtonMenuItem();
-			radio.setText(texts.getString(pos.name()));
-			radio.setSelected(pos == selection.get());
-			radio.addItemListener(e -> {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					onSelection.accept(pos);
-				}
-			});
-			menu.add(radio);
-			group.add(radio);
-		}
-		return menu;
+		//@formatter:off
+		return MenuBuilder.newBuilder()
+				.title(title)
+				.radioButton(GridPosition.CENTER)
+					.radio(radio)
+					.text(texts.getString(GridPosition.CENTER.name()))
+					.selection(selection)
+					.onSelect(onSelection)
+				.build()
+				.radioButton(GridPosition.TOP_LEFT)
+					.radio(radio)
+					.text(texts.getString(GridPosition.TOP_LEFT.name()))
+					.selection(selection)
+					.onSelect(onSelection)
+				.build()
+				.radioButton(GridPosition.TOP_RIGHT)
+					.radio(radio)
+					.text(texts.getString(GridPosition.TOP_RIGHT.name()))
+					.selection(selection)
+					.onSelect(onSelection)
+				.build()
+				.radioButton(GridPosition.BOTTOM_LEFT)
+					.radio(radio)
+					.text(texts.getString(GridPosition.BOTTOM_LEFT.name()))
+					.selection(selection)
+					.onSelect(onSelection)
+				.build()
+				.radioButton(GridPosition.BOTTOM_RIGHT)
+					.radio(radio)
+					.text(texts.getString(GridPosition.BOTTOM_RIGHT.name()))
+					.selection(selection)
+					.onSelect(onSelection)
+				.build()
+		.build();
+		//@formatter:on
 	}
 }
