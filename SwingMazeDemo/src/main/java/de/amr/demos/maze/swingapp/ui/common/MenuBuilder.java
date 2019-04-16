@@ -1,6 +1,7 @@
 package de.amr.demos.maze.swingapp.ui.common;
 
 import java.awt.event.ItemEvent;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -82,12 +83,12 @@ public class MenuBuilder {
 
 	public class CheckBoxBuilder {
 
-		private Consumer<Boolean> onChecked;
+		private Consumer<Boolean> onSelect;
 		private Supplier<Boolean> selection;
 		private String text;
 
-		public CheckBoxBuilder onChecked(Consumer<Boolean> onChecked) {
-			this.onChecked = onChecked;
+		public CheckBoxBuilder onSelect(Consumer<Boolean> onSelect) {
+			this.onSelect = onSelect;
 			return this;
 		}
 
@@ -103,8 +104,8 @@ public class MenuBuilder {
 
 		public MenuBuilder build() {
 			JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem();
-			if (onChecked != null) {
-				checkBox.addActionListener(actionEvent -> onChecked.accept(checkBox.isSelected()));
+			if (onSelect != null) {
+				checkBox.addActionListener(ignore -> onSelect.accept(checkBox.isSelected()));
 			}
 			if (selection != null) {
 				checkBox.putClientProperty("selection", selection);
@@ -147,7 +148,6 @@ public class MenuBuilder {
 				radioButton.putClientProperty("radio", radio);
 				radioButton.putClientProperty("selectionValue", selectionValue);
 				radioButton.putClientProperty("selection", selection);
-				radioButton.putClientProperty("onSelect", onSelect);
 				if (text != null) {
 					radioButton.setText(text);
 				}
@@ -184,7 +184,6 @@ public class MenuBuilder {
 		public MenuBuilder build() {
 			return MenuBuilder.this;
 		}
-
 	}
 
 	// Menu builder
@@ -207,8 +206,13 @@ public class MenuBuilder {
 		return this;
 	}
 
-	public MenuBuilder separator() {
-		menu.addSeparator();
+	public ButtonBuilder button() {
+		return new ButtonBuilder();
+	}
+	
+	public MenuBuilder action(Action action) {
+		JMenuItem item = new JMenuItem(action);
+		menu.add(item);
 		return this;
 	}
 
@@ -219,26 +223,31 @@ public class MenuBuilder {
 		return this;
 	}
 
-	public MenuBuilder items(Stream<JMenuItem> items) {
-		items.forEach(menu::add);
-		return this;
-	}
-
-	public MenuBuilder menu(JMenu subMenu) {
-		Objects.requireNonNull(subMenu);
-		menu.add(subMenu);
-		return this;
-	}
-
-	public ButtonBuilder button() {
-		return new ButtonBuilder();
-	}
-
 	public CheckBoxBuilder checkBox() {
 		return new CheckBoxBuilder();
 	}
 
 	public <T> RadioButtonGroupBuilder<T> radioButtonGroup(Class<T> selectionType) {
 		return new RadioButtonGroupBuilder<>(selectionType);
+	}
+
+	public MenuBuilder separator() {
+		menu.addSeparator();
+		return this;
+	}
+
+	public MenuBuilder items(Stream<JMenuItem> items) {
+		items.forEach(menu::add);
+		return this;
+	}
+
+	public MenuBuilder items(JMenuItem... items) {
+		return items(Arrays.stream(items));
+	}
+	
+	public MenuBuilder menu(JMenu subMenu) {
+		Objects.requireNonNull(subMenu);
+		menu.add(subMenu);
+		return this;
 	}
 }

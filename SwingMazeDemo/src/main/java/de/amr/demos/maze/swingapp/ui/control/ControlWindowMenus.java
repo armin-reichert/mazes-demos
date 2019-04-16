@@ -54,18 +54,15 @@ public class ControlWindowMenus {
 		return MenuBuilder.newBuilder()
 			.title("Generators")
 			.property("radio", radio)
-			.items(generatorSubmenus(controller, radio))
-		.build();
-		//@formatter:on
-	}
-
-	private static Stream<JMenuItem> generatorSubmenus(ControlViewController controller, ButtonGroup radio) {
-		return Stream.of(
+			.items(
 				generatorMenu(controller, radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)),
 				generatorMenu(controller, radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)),
 				generatorMenu(controller, radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)),
-				generatorMenu(controller, radio, "Others", algorithm -> !(algorithm.isTagged(Traversal)
-						|| algorithm.isTagged(MST) || algorithm.isTagged(UST))));
+				generatorMenu(controller, radio, "Others", 
+					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST)))
+			)
+		.build();
+		//@formatter:on
 	}
 
 	private static JMenu generatorMenu(ControlViewController controller, ButtonGroup radio, String title,
@@ -135,13 +132,13 @@ public class ControlWindowMenus {
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 			.title("Canvas")
-			.button().action(controller.actionClearCanvas).build()
-			.button().action(controller.actionFloodFill).build()
+			.action(controller.actionClearCanvas)
+			.action(controller.actionFloodFill)
 			.separator()
-			.button().action(controller.actionCreateEmptyGrid).build()
-			.button().action(controller.actionCreateFullGrid).build()
+			.action(controller.actionCreateEmptyGrid)
+			.action(controller.actionCreateFullGrid)
 			.separator()
-			.button().action(controller.actionSaveImage).build()
+			.action(controller.actionSaveImage)
 		.build();		
 		//@formatter:on
 	}
@@ -159,28 +156,28 @@ public class ControlWindowMenus {
 			.separator()
 			.checkBox()
 				.text("Animate Generation")
-			  .onChecked(model::setGenerationAnimated)
+			  .onSelect(model::setGenerationAnimated)
 			  .selection(model::isGenerationAnimated)
 			  .build()
 			.checkBox()
 				.text("Flood-fill after generation")
-			  .onChecked(model::setFloodFillAfterGeneration)
+			  .onSelect(model::setFloodFillAfterGeneration)
 			  .selection(model::isFloodFillAfterGeneration)
 			  .build()
 			.checkBox()
 				.text("Show distances")
-			  .onChecked(model::setDistancesVisible)
+			  .onSelect(model::setDistancesVisible)
 			  .selection(model::isDistancesVisible)
 			  .build()
 			.checkBox()
 				.text("Fluent Passage Width")
-				.onChecked(model::setPassageWidthFluent)
+				.onSelect(model::setPassageWidthFluent)
 				.selection(model::isPassageWidthFluent)
 				.build()
 			.separator()	
 			.checkBox()
 				.text("Hide this dialog when running")
-				.onChecked(controller::setHidingWindowWhenBusy)
+				.onSelect(controller::setHidingWindowWhenBusy)
 				.selection(controller::isHidingWindowWhenBusy)
 				.build()
 		.build();
