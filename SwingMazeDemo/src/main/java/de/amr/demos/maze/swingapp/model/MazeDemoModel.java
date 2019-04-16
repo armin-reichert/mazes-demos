@@ -282,8 +282,10 @@ public class MazeDemoModel {
 		return metric;
 	}
 
-	public void setMetric(Metric metric) {
-		this.metric = metric;
+	public void setMetric(Metric newMetric) {
+		Metric oldMetric = this.metric;
+		this.metric = newMetric;
+		changeHandler.firePropertyChange("metric", oldMetric, newMetric);
 	}
 
 	public boolean isFloodFillAfterGeneration() {

@@ -7,6 +7,8 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -22,15 +24,14 @@ import javax.swing.JMenuBar;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
-import de.amr.demos.maze.swingapp.ui.control.menu.GeneratorMenu;
-import de.amr.demos.maze.swingapp.ui.control.menu.OptionMenu;
-import de.amr.demos.maze.swingapp.ui.control.menu.SolverMenu;
 import de.amr.graph.core.api.TraversalState;
 
 /**
@@ -38,7 +39,7 @@ import de.amr.graph.core.api.TraversalState;
  * 
  * @author Armin Reichert
  */
-public class ControlViewController {
+public class ControlViewController implements PropertyChangeListener {
 
 	private static final String ICON_ZOOM_IN = "/zoom_in.png";
 	private static final String ICON_ZOOM_OUT = "/zoom_out.png";
@@ -47,17 +48,17 @@ public class ControlViewController {
 	private final MazeDemoModel model;
 	private ControlView view;
 	private JFrame window;
-	private GeneratorMenu generatorMenu;
+	private JMenu generatorMenu;
 	private JMenu canvasMenu;
-	private SolverMenu solverMenu;
-	private OptionMenu optionMenu;
+	private JMenu solverMenu;
+	private JMenu optionMenu;
 	private boolean hidingWindowWhenBusy;
 
 	private Icon icon(String path) {
 		return new ImageIcon(getClass().getResource(path));
 	}
 
-	private final Action actionCollapseWindow = new AbstractAction("Hide Details", icon(ICON_ZOOM_OUT)) {
+	final Action actionCollapseWindow = new AbstractAction("Hide Details", icon(ICON_ZOOM_OUT)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -65,7 +66,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionExpandWindow = new AbstractAction("Show Details", icon(ICON_ZOOM_IN)) {
+	final Action actionExpandWindow = new AbstractAction("Show Details", icon(ICON_ZOOM_IN)) {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -73,7 +74,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionChangeGridResolution = new AbstractAction("Change Resolution") {
+	final Action actionChangeGridResolution = new AbstractAction("Change Resolution") {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -83,7 +84,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionCreateEmptyGrid = new AbstractAction("Create Empty Grid") {
+	final Action actionCreateEmptyGrid = new AbstractAction("Create Empty Grid") {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -91,7 +92,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionCreateFullGrid = new AbstractAction("Create Full Grid") {
+	final Action actionCreateFullGrid = new AbstractAction("Create Full Grid") {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -99,7 +100,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionStopBackgroundThread = new AbstractAction("Stop") {
+	final Action actionStopBackgroundThread = new AbstractAction("Stop") {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -107,7 +108,7 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionClearCanvas = new AbstractAction("Clear Canvas") {
+	final Action actionClearCanvas = new AbstractAction("Clear Canvas") {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -116,14 +117,15 @@ public class ControlViewController {
 		}
 	};
 
-	private final Action actionCreateSingleMaze = new CreateSingleMaze();
-	private final Action actionCreateAllMazes = new CreateAllMazes();
-	private final Action actionSolveMaze = new SolveMaze();
-	private final Action actionFloodFill = new FloodFill();
-	private final Action actionSaveImage = new SaveImage();
+	final Action actionCreateSingleMaze = new CreateSingleMaze();
+	final Action actionCreateAllMazes = new CreateAllMazes();
+	final Action actionSolveMaze = new SolveMaze();
+	final Action actionFloodFill = new FloodFill();
+	final Action actionSaveImage = new SaveImage();
 
 	public ControlViewController(MazeDemoModel model) {
 		this.model = model;
+		model.changeHandler.addPropertyChangeListener(this);
 		createView();
 		createWindow();
 	}
@@ -174,27 +176,33 @@ public class ControlViewController {
 		window.setContentPane(view);
 
 		// Menus
+		generatorMenu = ControlMenuBuilder.buildGeneratorMenu(this);
+		solverMenu = ControlMenuBuilder.buildSolverMenu(this);
+		canvasMenu = ControlMenuBuilder.buildCanvasMenu(this);
+		optionMenu = ControlMenuBuilder.buildOptionMenu(this);
+
 		JMenuBar menuBar = new JMenuBar();
 		window.setJMenuBar(menuBar);
-
-		generatorMenu = new GeneratorMenu(this);
 		menuBar.add(generatorMenu);
-
-		solverMenu = new SolverMenu(this);
 		menuBar.add(solverMenu);
-
-		canvasMenu = new JMenu("Canvas");
-		canvasMenu.add(actionClearCanvas);
-		canvasMenu.add(actionFloodFill);
-		canvasMenu.addSeparator();
-		canvasMenu.add(actionCreateEmptyGrid);
-		canvasMenu.add(actionCreateFullGrid);
-		canvasMenu.addSeparator();
-		canvasMenu.add(actionSaveImage);
 		menuBar.add(canvasMenu);
-
-		optionMenu = new OptionMenu(this);
 		menuBar.add(optionMenu);
+
+		// initialize menu selection
+		MenuBuilder.updateState(generatorMenu);
+		MenuBuilder.updateState(solverMenu);
+		MenuBuilder.updateState(optionMenu);
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent change) {
+		switch (change.getPropertyName()) {
+		case "metric":
+			onMetricChanged((Metric) change.getNewValue());
+			break;
+		default:
+			break;
+		}
 	}
 
 	public boolean isHidingWindowWhenBusy() {
@@ -203,7 +211,7 @@ public class ControlViewController {
 
 	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
 		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
-		optionMenu.updateState();
+		MenuBuilder.updateState(optionMenu);
 	}
 
 	public MazeDemoModel getModel() {
@@ -274,21 +282,25 @@ public class ControlViewController {
 	}
 
 	public Optional<AlgorithmInfo> getSelectedGenerator() {
-		return generatorMenu.getSelectedAlgorithm();
-	}
-
-	public void selectSolver(AlgorithmInfo solverInfo) {
-		solverMenu.selectAlgorithm(solverInfo);
-		updateSolverText(solverInfo);
-	}
-
-	public Optional<AlgorithmInfo> getSelectedSolver() {
-		return solverMenu.getSelectedAlgorithm();
+		return ControlMenuBuilder.getSelectedAlgorithm(generatorMenu);
 	}
 
 	public void selectGenerator(AlgorithmInfo generatorInfo) {
-		generatorMenu.selectAlgorithm(generatorInfo);
+		ControlMenuBuilder.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
+	}
+
+	public Optional<AlgorithmInfo> getSelectedSolver() {
+		return ControlMenuBuilder.getSelectedAlgorithm(solverMenu);
+	}
+
+	public void selectSolver(AlgorithmInfo solverInfo) {
+		ControlMenuBuilder.selectAlgorithm(solverMenu, solverInfo);
+		updateSolverText(solverInfo);
+	}
+
+	private void onMetricChanged(Metric metric) {
+		getSelectedSolver().ifPresent(this::updateSolverText);
 	}
 
 	private void updateSolverText(AlgorithmInfo solverInfo) {

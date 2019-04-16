@@ -1,4 +1,4 @@
-package de.amr.demos.maze.swingapp.ui;
+package de.amr.demos.maze.swingapp.ui.common;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
