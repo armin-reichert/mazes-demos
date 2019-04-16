@@ -108,17 +108,20 @@ public class ControlViewMenus {
 	}
 
 	private static JMenu buildMetricsMenu(ControlViewController controller) {
-		JMenu menu = new JMenu("Metric");
-		ButtonGroup radio = new ButtonGroup();
-		for (Metric metric : Metric.values()) {
-			String text = metric.name().substring(0, 1) + metric.name().substring(1).toLowerCase();
-			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem(text);
-			radioButton.addActionListener(e -> controller.getModel().setMetric(metric));
-			radioButton.setSelected(metric == controller.getModel().getMetric());
-			radio.add(radioButton);
-			menu.add(radioButton);
-		}
-		return menu;
+		Function<Metric, String> translation = metric -> metric.name().substring(0, 1)
+				+ metric.name().substring(1).toLowerCase();
+		//@formatter:off
+		return MenuBuilder.newBuilder()
+				.title("Metric")
+				.radioButtonGroup(Metric.class)
+					.onSelect(controller.getModel()::setMetric)
+					.selection(controller.getModel()::getMetric)
+					.button().selectionValue(Metric.EUCLIDEAN).text(translation.apply(Metric.EUCLIDEAN)).build()
+					.button().selectionValue(Metric.MANHATTAN).text(translation.apply(Metric.MANHATTAN)).build()
+					.button().selectionValue(Metric.CHEBYSHEV).text(translation.apply(Metric.CHEBYSHEV)).build()
+				.build()
+		.build();
+		//@formatter:on
 	}
 
 	// Canvas menu
