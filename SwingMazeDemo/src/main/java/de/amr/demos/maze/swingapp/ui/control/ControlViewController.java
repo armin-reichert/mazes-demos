@@ -126,7 +126,7 @@ public class ControlViewController implements PropertyChangeListener {
 	final Action actionCreateAllMazes = new CreateAllMazes();
 	final Action actionSolveMaze = new SolveMaze();
 	final Action actionFloodFill = new FloodFill();
-	final Action actionSaveImage = new SaveImage();
+	final Action actionSaveImage = new SaveImage(this);
 
 	public ControlViewController(MazeDemoModel model) {
 		this.model = model;
@@ -212,6 +212,10 @@ public class ControlViewController implements PropertyChangeListener {
 	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
 		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
 		MenuBuilder.updateMenuSelection(optionMenu);
+	}
+
+	public JFrame getWindow() {
+		return window;
 	}
 
 	public MazeDemoModel getModel() {

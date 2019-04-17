@@ -11,17 +11,22 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
+
 public class SaveImage extends AbstractAction {
 
-	public SaveImage() {
-		putValue(NAME, "Save Image...");
+	private ControlViewController controller;
+
+	public SaveImage(ControlViewController controller) {
+		super("Save Image...");
+		this.controller = controller;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Portable Network Graphics", "png"));
-		if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showSaveDialog(controller.getWindow()) == JFileChooser.APPROVE_OPTION) {
 			File pngFile = fileChooser.getSelectedFile();
 			String fileName = pngFile.getName();
 			if (!fileName.endsWith(".png")) {
