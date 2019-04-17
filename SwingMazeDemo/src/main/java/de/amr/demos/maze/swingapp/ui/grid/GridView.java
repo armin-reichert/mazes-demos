@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.function.BiFunction;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
@@ -47,6 +46,32 @@ public class GridView extends GridCanvas {
 		pathColor = Color.RED;
 		style = Style.WALL_PASSAGES;
 		fnPassageWidth = (u, v) -> 1;
+		setCentered(true);
+	}
+
+	private ConfigurableGridRenderer createRenderer(int cellSize) {
+		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
+				: new WallPassageGridRenderer();
+		r.fnGridBgColor = () -> getGridBackgroundColor();
+		r.fnCellSize = () -> cellSize;
+		r.fnPassageWidth = fnPassageWidth;
+		r.fnCellBgColor = cell -> {
+			TraversalState state = (TraversalState) getGrid().get(cell);
+			switch (state) {
+			case COMPLETED:
+				return getCompletedCellColor();
+			case UNVISITED:
+				return getUnvisitedCellColor();
+			case VISITED:
+				return getVisitedCellColor();
+			default:
+				return r.getGridBgColor();
+			}
+		};
+		r.fnPassageColor = (u, dir) -> {
+			return r.getCellBgColor(u);
+		};
+		return r;
 	}
 
 	public void reset(GridGraph<TraversalState, Integer> grid, int cellSize) {
@@ -54,22 +79,6 @@ public class GridView extends GridCanvas {
 		replaceRenderer(createRenderer(cellSize));
 		clear();
 		drawGrid();
-	}
-
-	@Override
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.BLACK);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		if (getParent() != null) {
-			int dx = (getParent().getWidth() - getWidth()) / 2;
-			int dy = (getParent().getHeight() - getHeight()) / 2;
-			g.translate(dx, dy);
-			super.paintComponent(g);
-			g.translate(-dx, -dy);
-		}
-		else {
-			super.paintComponent(g);
-		}
 	}
 
 	public Color getGridBackgroundColor() {
@@ -118,30 +127,5 @@ public class GridView extends GridCanvas {
 
 	public void setStyle(Style style) {
 		this.style = style;
-	}
-
-	private ConfigurableGridRenderer createRenderer(int cellSize) {
-		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
-				: new WallPassageGridRenderer();
-		r.fnGridBgColor = () -> getGridBackgroundColor();
-		r.fnCellSize = () -> cellSize;
-		r.fnPassageWidth = fnPassageWidth;
-		r.fnCellBgColor = cell -> {
-			TraversalState state = (TraversalState) getGrid().get(cell);
-			switch (state) {
-			case COMPLETED:
-				return getCompletedCellColor();
-			case UNVISITED:
-				return getUnvisitedCellColor();
-			case VISITED:
-				return getVisitedCellColor();
-			default:
-				return r.getGridBgColor();
-			}
-		};
-		r.fnPassageColor = (u, dir) -> {
-			return r.getCellBgColor(u);
-		};
-		return r;
 	}
 }
