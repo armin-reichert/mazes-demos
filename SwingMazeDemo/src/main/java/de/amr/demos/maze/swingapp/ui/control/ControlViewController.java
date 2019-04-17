@@ -2,26 +2,22 @@ package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.action;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.icon;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildOptionMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildSolverMenu;
 
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Optional;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -32,6 +28,7 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
+import de.amr.demos.maze.swingapp.ui.common.SwingGoodies;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
@@ -46,102 +43,72 @@ import de.amr.graph.core.api.TraversalState;
  */
 public class ControlViewController implements PropertyChangeListener {
 
-	private static final String ICON_ZOOM_IN = "/zoom_in.png";
-	private static final String ICON_ZOOM_OUT = "/zoom_out.png";
 	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
 	private final MazeDemoModel model;
-	private ControlView view;
-	private JFrame window;
-	private JMenu generatorMenu;
-	private JMenu canvasMenu;
-	private JMenu solverMenu;
-	private JMenu optionMenu;
+
+	private final JFrame window;
+	private final JMenu generatorMenu;
+	private final JMenu canvasMenu;
+	private final JMenu solverMenu;
+	private final JMenu optionMenu;
+	private final ControlView view;
+
 	private boolean hidingWindowWhenBusy;
 
-	private Icon icon(String path) {
-		return new ImageIcon(getClass().getResource(path));
-	}
+	// Actions
 
-	final Action actionCollapseWindow = new AbstractAction("Hide Details", icon(ICON_ZOOM_OUT)) {
+	final Action actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			collapseWindow();
-		}
-	};
+	final Action actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
 
-	final Action actionExpandWindow = new AbstractAction("Show Details", icon(ICON_ZOOM_IN)) {
+	final Action actionChangeGridResolution = action("Change Resolution", e -> {
+		JComboBox<?> combo = (JComboBox<?>) e.getSource();
+		theApp.changeSelectedGridCellSize(combo.getSelectedIndex());
+		combo.requestFocusInWindow();
+	});
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			expandWindow();
-		}
-	};
+	final Action actionCreateEmptyGrid = action("Create Empty Grid", e -> {
+		getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), false,
+				TraversalState.COMPLETED);
+	});
 
-	final Action actionChangeGridResolution = new AbstractAction("Change Resolution") {
+	final Action actionCreateFullGrid = action("Create Full Grid", e -> {
+		getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), true,
+				TraversalState.COMPLETED);
+	});
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			JComboBox<?> combo = (JComboBox<?>) e.getSource();
-			theApp.changeSelectedGridCellSize(combo.getSelectedIndex());
-			combo.requestFocusInWindow();
-		}
-	};
+	final Action actionStopBackgroundThread = action("Stop", e -> theApp.stopBackgroundThread());
 
-	final Action actionCreateEmptyGrid = new AbstractAction("Create Empty Grid") {
+	final Action actionClearCanvas = action("Clear Canvas", e -> {
+		theApp.getGridViewController().clearView();
+		theApp.getGridViewController().drawGrid();
+	});
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), false, TraversalState.COMPLETED);
-		}
-	};
+	final Action actionCreateSingleMaze = new CreateSingleMaze("New Maze");
 
-	final Action actionCreateFullGrid = new AbstractAction("Create Full Grid") {
+	final Action actionCreateAllMazes = new CreateAllMazes("All Mazes");
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), true, TraversalState.COMPLETED);
-		}
-	};
+	final Action actionSolveMaze = new SolveMaze("Solve");
 
-	final Action actionStopBackgroundThread = new AbstractAction("Stop") {
+	final Action actionFloodFill = new FloodFill("Flood-fill");
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			theApp.stopBackgroundThread();
-		}
-	};
+	final Action actionSaveImage = new SaveImage("Save Image...", this);
 
-	final Action actionClearCanvas = new AbstractAction("Clear Canvas") {
+	public ControlViewController(MazeDemoModel model, Dimension gridWindowSize) {
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			theApp.getGridViewController().clearView();
-			theApp.getGridViewController().drawGrid();
-		}
-	};
+		// connect controller with model
 
-	final Action actionCreateSingleMaze = new CreateSingleMaze();
-	final Action actionCreateAllMazes = new CreateAllMazes();
-	final Action actionSolveMaze = new SolveMaze();
-	final Action actionFloodFill = new FloodFill();
-	final Action actionSaveImage = new SaveImage(this);
-
-	public ControlViewController(MazeDemoModel model) {
 		this.model = model;
 		model.changeHandler.addPropertyChangeListener(this);
-		createView();
-		createWindow();
-	}
 
-	private void createView() {
+		// create UI
+
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			Dimension windowSize = theApp.getGridViewController().getWindow().getSize();
-			int numCols = windowSize.width / cellSize;
-			int numRows = windowSize.height / cellSize;
+			int numCols = gridWindowSize.width / cellSize;
+			int numRows = gridWindowSize.height / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -171,23 +138,19 @@ public class ControlViewController implements PropertyChangeListener {
 		view.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
 		view.getBtnSolve().setAction(actionSolveMaze);
 		view.getBtnStop().setAction(actionStopBackgroundThread);
-	}
 
-	private void createWindow() {
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Control View");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setAlwaysOnTop(true);
 		window.setContentPane(view);
 
-		// build menus
 		window.setJMenuBar(new JMenuBar());
 		window.getJMenuBar().add(generatorMenu = buildGeneratorMenu(this));
 		window.getJMenuBar().add(solverMenu = buildSolverMenu(this));
 		window.getJMenuBar().add(canvasMenu = buildCanvasMenu(this));
 		window.getJMenuBar().add(optionMenu = buildOptionMenu(this));
 
-		// initialize menu selection
 		updateMenuSelection(generatorMenu);
 		updateMenuSelection(solverMenu);
 		updateMenuSelection(canvasMenu);
@@ -249,35 +212,19 @@ public class ControlViewController implements PropertyChangeListener {
 			if (hidingWindowWhenBusy) {
 				window.setVisible(false);
 			}
-			setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
-			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+			SwingGoodies.setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			SwingGoodies.setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
-			setWaitCursor(view);
-			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
+			SwingGoodies.setWaitCursor(view);
+			SwingGoodies.setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
 		}
 		else {
 			window.setVisible(true);
-			setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
-			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+			SwingGoodies.setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			SwingGoodies.setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
-			setNormalCursor(view);
+			SwingGoodies.setNormalCursor(view);
 		}
-	}
-
-	private void setEnabled(boolean b, Component... components) {
-		Arrays.stream(components).forEach(comp -> comp.setEnabled(b));
-	}
-
-	private void setEnabled(boolean b, Action... actions) {
-		Arrays.stream(actions).forEach(action -> action.setEnabled(b));
-	}
-
-	private void setWaitCursor(Component... components) {
-		Arrays.stream(components).forEach(comp -> comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)));
-	}
-
-	private void setNormalCursor(Component... components) {
-		Arrays.stream(components).forEach(comp -> comp.setCursor(Cursor.getDefaultCursor()));
 	}
 
 	public void showMessage(String msg) {

@@ -16,8 +16,8 @@ import de.amr.util.StopWatch;
  */
 public class FloodFill extends AbstractAction {
 
-	public FloodFill() {
-		super("Flood-fill");
+	public FloodFill(String name) {
+		super(name);
 	}
 
 	private void floodFill() {

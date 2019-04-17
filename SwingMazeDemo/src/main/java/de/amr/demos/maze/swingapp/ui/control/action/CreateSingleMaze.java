@@ -14,8 +14,8 @@ import de.amr.graph.core.api.TraversalState;
  */
 public class CreateSingleMaze extends CreateMazeAction {
 
-	public CreateSingleMaze() {
-		putValue(NAME, "New Maze");
+	public CreateSingleMaze(String name) {
+		putValue(NAME, name);
 	}
 
 	@Override

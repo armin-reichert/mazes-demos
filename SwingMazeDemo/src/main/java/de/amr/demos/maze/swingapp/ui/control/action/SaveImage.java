@@ -17,8 +17,8 @@ public class SaveImage extends AbstractAction {
 
 	private ControlViewController controller;
 
-	public SaveImage(ControlViewController controller) {
-		super("Save Image...");
+	public SaveImage(String name, ControlViewController controller) {
+		super(name);
 		this.controller = controller;
 	}
 

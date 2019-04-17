@@ -17,8 +17,8 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
  */
 public class CreateAllMazes extends CreateMazeAction {
 
-	public CreateAllMazes() {
-		putValue(NAME, "All Mazes");
+	public CreateAllMazes(String name) {
+		putValue(NAME, name);
 	}
 
 	@Override

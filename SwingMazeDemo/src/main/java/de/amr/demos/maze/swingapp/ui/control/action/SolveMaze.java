@@ -34,8 +34,8 @@ import de.amr.util.StopWatch;
  */
 public class SolveMaze extends AbstractAction {
 
-	public SolveMaze() {
-		super("Solve");
+	public SolveMaze(String name) {
+		super(name);
 	}
 
 	@Override
