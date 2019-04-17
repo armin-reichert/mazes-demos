@@ -70,7 +70,7 @@ public class MazeDemoApp {
 		Dimension gridWindowSize = getDisplaySize();
 		gridViewController = new GridViewController(model, gridWindowSize);
 
-		controlViewController = new ControlViewController(model, gridWindowSize);
+		controlViewController = new ControlViewController(model, gridWindowSize, gridViewController);
 		controlViewController.setHidingWindowWhenBusy(false);
 		controlViewController.expandWindow();
 		controlViewController.setBusy(false);

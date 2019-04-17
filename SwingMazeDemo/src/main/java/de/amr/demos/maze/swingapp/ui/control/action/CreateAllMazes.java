@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
+import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 
 /**
@@ -17,8 +19,9 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
  */
 public class CreateAllMazes extends CreateMazeAction {
 
-	public CreateAllMazes(String name) {
-		putValue(NAME, name);
+	public CreateAllMazes(String name, GridViewController gridViewController,
+			ControlViewController controlViewController) {
+		super(name, gridViewController, controlViewController);
 	}
 
 	@Override
@@ -40,13 +43,13 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> fastGenerators = theApp.getModel().generators().filter(alg -> !alg.isTagged(Slow))
+		List<AlgorithmInfo> fastGenerators = model.generators().filter(alg -> !alg.isTagged(Slow))
 				.collect(Collectors.toList());
 		for (AlgorithmInfo generatorInfo : fastGenerators) {
 			theApp.changeGenerator(generatorInfo);
 			try {
-				createMaze(generatorInfo, theApp.getModel().getGenerationStart());
-				if (theApp.getModel().isFloodFillAfterGeneration()) {
+				createMaze(generatorInfo, model.getGenerationStart());
+				if (model.isFloodFillAfterGeneration()) {
 					pause(1);
 					floodFill();
 				}

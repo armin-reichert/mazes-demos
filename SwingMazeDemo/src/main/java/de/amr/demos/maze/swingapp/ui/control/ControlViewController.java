@@ -34,6 +34,7 @@ import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
+import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 
 /**
@@ -85,9 +86,9 @@ public class ControlViewController implements PropertyChangeListener {
 		theApp.getGridViewController().drawGrid();
 	});
 
-	final Action actionCreateSingleMaze = new CreateSingleMaze("New Maze");
+	final Action actionCreateSingleMaze;
 
-	final Action actionCreateAllMazes = new CreateAllMazes("All Mazes");
+	final Action actionCreateAllMazes;
 
 	final Action actionSolveMaze = new SolveMaze("Solve");
 
@@ -95,15 +96,18 @@ public class ControlViewController implements PropertyChangeListener {
 
 	final Action actionSaveImage = new SaveImage("Save Image...", this);
 
-	public ControlViewController(MazeDemoModel model, Dimension gridWindowSize) {
+	public ControlViewController(MazeDemoModel model, Dimension gridWindowSize,
+			GridViewController gridViewController) {
 
 		// connect controller with model
-
 		this.model = model;
 		model.changeHandler.addPropertyChangeListener(this);
 
-		// create UI
+		// These actions use both controllers
+		actionCreateAllMazes = new CreateAllMazes("All Mazes", gridViewController, this);
+		actionCreateSingleMaze = new CreateSingleMaze("New Maze", gridViewController, this);
 
+		// create UI
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {

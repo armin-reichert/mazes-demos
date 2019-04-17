@@ -122,6 +122,10 @@ public class GridViewController implements PropertyChangeListener {
 		}
 	}
 
+	public MazeDemoModel getModel() {
+		return model;
+	}
+
 	public GridView getView() {
 		return view;
 	}

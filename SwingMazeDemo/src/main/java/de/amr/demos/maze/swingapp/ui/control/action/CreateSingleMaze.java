@@ -5,6 +5,8 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import java.awt.event.ActionEvent;
 
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
+import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 
 /**
@@ -14,23 +16,23 @@ import de.amr.graph.core.api.TraversalState;
  */
 public class CreateSingleMaze extends CreateMazeAction {
 
-	public CreateSingleMaze(String name) {
-		putValue(NAME, name);
+	public CreateSingleMaze(String name, GridViewController gridViewController,
+			ControlViewController controlViewController) {
+		super(name, gridViewController, controlViewController);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		theApp.getControlViewController().getSelectedGenerator().ifPresent(generatorInfo -> {
+		controlViewController.getSelectedGenerator().ifPresent(generatorInfo -> {
 			theApp.startBackgroundThread(
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-						theApp.getModel().createGrid(theApp.getModel().getGrid().numCols(),
-								theApp.getModel().getGrid().numRows(), full,
+						model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
 								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-						theApp.getGridViewController().clearView();
-						createMaze(generatorInfo, theApp.getModel().getGenerationStart());
-						if (theApp.getModel().isFloodFillAfterGeneration()) {
+						gridViewController.clearView();
+						createMaze(generatorInfo, model.getGenerationStart());
+						if (model.isFloodFillAfterGeneration()) {
 							pause(1);
 							floodFill();
 						}
