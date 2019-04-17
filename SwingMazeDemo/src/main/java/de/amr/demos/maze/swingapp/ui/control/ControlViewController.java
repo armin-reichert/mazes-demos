@@ -4,6 +4,9 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
 import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.action;
 import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.icon;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setEnabled;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setNormalCursor;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setWaitCursor;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildOptionMenu;
@@ -27,8 +30,6 @@ import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
-import de.amr.demos.maze.swingapp.ui.common.SwingGoodies;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
@@ -178,7 +179,7 @@ public class ControlViewController implements PropertyChangeListener {
 
 	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
 		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
-		MenuBuilder.updateMenuSelection(optionMenu);
+		updateMenuSelection(optionMenu);
 	}
 
 	public JFrame getWindow() {
@@ -216,18 +217,18 @@ public class ControlViewController implements PropertyChangeListener {
 			if (hidingWindowWhenBusy) {
 				window.setVisible(false);
 			}
-			SwingGoodies.setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
-			SwingGoodies.setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+			setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
-			SwingGoodies.setWaitCursor(view);
-			SwingGoodies.setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
+			setWaitCursor(view);
+			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
 		}
 		else {
 			window.setVisible(true);
-			SwingGoodies.setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
-			SwingGoodies.setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
+			setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
-			SwingGoodies.setNormalCursor(view);
+			setNormalCursor(view);
 		}
 	}
 
