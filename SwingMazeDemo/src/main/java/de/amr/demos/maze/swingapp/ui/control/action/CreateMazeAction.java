@@ -46,7 +46,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			generator.createMaze(x, y);
 		}
 		else {
-			theApp.getGridViewController().enableGridAnimation(false);
+			theApp.getGridViewController().getAnimation().setEnabled(false);
 			theApp.getGridViewController().clearView();
 			StopWatch watch = new StopWatch();
 			watch.start();
@@ -55,7 +55,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			theApp.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> theApp.getGridViewController().drawGrid());
 			theApp.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			theApp.getGridViewController().enableGridAnimation(true);
+			theApp.getGridViewController().getAnimation().setEnabled(true);
 		}
 	}
 }

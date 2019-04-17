@@ -106,14 +106,15 @@ public class SolveMaze extends AbstractAction {
 		boolean informed = solverInfo.isTagged(SolverTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(SolverTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(gridView).delay(() -> theApp.getModel().getDelay())
-					.pathColor(gridView.getPathColor()).distanceVisible(theApp.getModel().isDistancesVisible()).build();
+			BFSAnimation anim = BFSAnimation.builder().canvas(gridView.getCanvas())
+					.delay(() -> theApp.getModel().getDelay()).pathColor(gridView.getPathColor())
+					.distanceVisible(theApp.getModel().isDistancesVisible()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 			anim.showPath(solver, source, target);
 		}
 		else if (solverInfo.isTagged(SolverTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(gridView).delay(() -> theApp.getModel().getDelay())
-					.pathColor(gridView.getPathColor()).build();
+			DFSAnimation anim = DFSAnimation.builder().canvas(gridView.getCanvas())
+					.delay(() -> theApp.getModel().getDelay()).pathColor(gridView.getPathColor()).build();
 			watch.measure(() -> anim.run(solver, source, target));
 		}
 		theApp.showMessage(informed

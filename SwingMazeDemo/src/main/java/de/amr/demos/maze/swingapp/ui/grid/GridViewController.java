@@ -46,47 +46,34 @@ public class GridViewController implements PropertyChangeListener {
 		this.model = model;
 		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
 				false, TraversalState.UNVISITED);
-		createView();
-		createWindow(windowSize);
-		window.setContentPane(view);
+		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
+		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
+		view.getCanvas().getActionMap().put("showSettings", actionShowControlWindow);
+		addAnimation(model.getGrid());
+		window = new JFrame();
+		window.setTitle("Maze Demo App - Display View");
+		window.setContentPane(view.getCanvas());
+		window.setSize(windowSize);
+		if (windowSize.equals(theApp.getDisplaySize())) {
+			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			window.setUndecorated(true);
+		}
 		startModelChangeListening();
 	}
 
-	private void createView() {
-		GridView oldView = view;
-
-		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
-		view.getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
-		view.getActionMap().put("showSettings", actionShowControlWindow);
-
-		if (oldView != null) {
-			view.setGridBackgroundColor(oldView.getGridBackgroundColor());
-			view.setCompletedCellColor(oldView.getCompletedCellColor());
-			view.setVisitedCellColor(oldView.getVisitedCellColor());
-			view.setUnvisitedCellColor(oldView.getUnvisitedCellColor());
-			view.setPathColor(oldView.getPathColor());
-			view.setStyle(oldView.getStyle());
-			model.getGrid().removeGraphObserver(animation);
-		}
-
-		animation = new GridCanvasAnimation<>(view);
+	private void addAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
+		animation = new GridCanvasAnimation<>(view.getCanvas());
 		animation.fnDelay = model::getDelay;
-		model.getGrid().addGraphObserver(animation);
+		grid.addGraphObserver(animation);
+	}
+
+	private void removeAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
+		grid.removeGraphObserver(animation);
 	}
 
 	public void resetView() {
 		view.reset(model.getGrid(), model.getGridCellSize());
 		window.validate();
-	}
-
-	public void createWindow(Dimension size) {
-		window = new JFrame();
-		window.setTitle("Maze Demo App - Display View");
-		window.setSize(size);
-		if (size.equals(theApp.getDisplaySize())) {
-			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			window.setUndecorated(true);
-		}
 	}
 
 	public void stopModelChangeListening() {
@@ -118,9 +105,9 @@ public class GridViewController implements PropertyChangeListener {
 						.getOldValue();
 				ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
 						.getNewValue();
-				oldGrid.removeGraphObserver(animation);
-				newGrid.addGraphObserver(animation);
-				getView().setGrid(newGrid, false);
+				removeAnimation(oldGrid);
+				getView().changeGridSize(newGrid, model.getGridCellSize());
+				addAnimation(newGrid);
 				clearView();
 				drawGrid();
 				window.validate();
@@ -129,6 +116,9 @@ public class GridViewController implements PropertyChangeListener {
 		case "passageWidthPercentage":
 			clearView();
 			drawGrid();
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -140,26 +130,26 @@ public class GridViewController implements PropertyChangeListener {
 		return window;
 	}
 
+	public GridCanvasAnimation<TraversalState, Integer> getAnimation() {
+		return animation;
+	}
+
 	public void showWindow() {
 		window.setVisible(true);
 	}
 
 	public void clearView() {
-		view.clear();
+		view.getCanvas().clear();
 	}
 
 	public void drawGrid() {
 		StopWatch watch = new StopWatch();
-		watch.measure(view::drawGrid);
-		System.out.println(String.format("%s, drawing time: %.0f ms", view.getGrid(), watch.getMillis()));
-	}
-
-	public void enableGridAnimation(boolean enabled) {
-		animation.setEnabled(enabled);
+		watch.measure(view.getCanvas()::drawGrid);
+		System.out.println(String.format("%s, drawing time: %.0f ms", model.getGrid(), watch.getMillis()));
 	}
 
 	public void floodFill(int startCell, boolean distanceVisible) {
-		BFSAnimation.builder().canvas(view).distanceVisible(distanceVisible).build().floodFill(startCell);
+		BFSAnimation.builder().canvas(view.getCanvas()).distanceVisible(distanceVisible).build()
+				.floodFill(startCell);
 	}
-
 }
