@@ -101,7 +101,7 @@ public class ControlViewController implements PropertyChangeListener {
 
 		// connect controller with model
 		this.model = model;
-		model.changeHandler.addPropertyChangeListener(this);
+		model.changePublisher.addPropertyChangeListener(this);
 
 		// These actions use both controllers
 		actionCreateAllMazes = new CreateAllMazes("All Mazes", gridViewController, this);

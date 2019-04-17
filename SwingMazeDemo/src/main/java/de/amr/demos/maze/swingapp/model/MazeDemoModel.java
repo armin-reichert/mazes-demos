@@ -168,7 +168,7 @@ public class MazeDemoModel {
 	private GridPosition pathFinderStart;
 	private GridPosition pathFinderTarget;
 
-	public final PropertyChangeSupport changeHandler = new PropertyChangeSupport(this);
+	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
 
 	public MazeDemoModel() {
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
@@ -232,7 +232,7 @@ public class MazeDemoModel {
 	public void setPassageWidthPercentage(int newWidthPercentage) {
 		int oldWidthPercentage = this.passageWidthPercentage;
 		this.passageWidthPercentage = newWidthPercentage;
-		changeHandler.firePropertyChange("passageWidthPercentage", oldWidthPercentage, newWidthPercentage);
+		changePublisher.firePropertyChange("passageWidthPercentage", oldWidthPercentage, newWidthPercentage);
 	}
 
 	public boolean isPassageWidthFluent() {
@@ -259,7 +259,7 @@ public class MazeDemoModel {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
 		grid = full ? fullObservableGrid(numCols, numRows, Top4.get(), defaultState, 0)
 				: emptyObservableGrid(numCols, numRows, Top4.get(), defaultState, 0);
-		changeHandler.firePropertyChange("grid", oldGrid, grid);
+		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public int getDelay() {
@@ -285,7 +285,7 @@ public class MazeDemoModel {
 	public void setMetric(Metric newMetric) {
 		Metric oldMetric = this.metric;
 		this.metric = newMetric;
-		changeHandler.firePropertyChange("metric", oldMetric, newMetric);
+		changePublisher.firePropertyChange("metric", oldMetric, newMetric);
 	}
 
 	public boolean isFloodFillAfterGeneration() {

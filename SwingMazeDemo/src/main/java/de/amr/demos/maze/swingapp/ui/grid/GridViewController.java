@@ -1,15 +1,14 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.action;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
@@ -30,26 +29,23 @@ public class GridViewController implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 
-	private JFrame window;
-	private GridView view;
+	private final JFrame window;
+	private final GridView view;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
 
-	private final Action actionShowControlWindow = new AbstractAction("Show Controls") {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			theApp.getControlViewController().showWindow();
-		}
-	};
+	private final Action actionShowControlWindow = action("Show Controls", e -> showWindow());
 
 	public GridViewController(MazeDemoModel model, Dimension windowSize) {
 		this.model = model;
 		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
 				false, TraversalState.UNVISITED);
+
 		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
-		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showSettings");
-		view.getCanvas().getActionMap().put("showSettings", actionShowControlWindow);
 		addAnimation(model.getGrid());
+
+		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showControlWindow");
+		view.getCanvas().getActionMap().put("showControlWindow", actionShowControlWindow);
+
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
 		window.setContentPane(view.getCanvas());
@@ -71,19 +67,6 @@ public class GridViewController implements PropertyChangeListener {
 		grid.removeGraphObserver(animation);
 	}
 
-	public void resetView() {
-		view.reset(model.getGrid(), model.getGridCellSize());
-		window.validate();
-	}
-
-	public void stopModelChangeListening() {
-		model.changeHandler.removePropertyChangeListener(this);
-	}
-
-	public void startModelChangeListening() {
-		model.changeHandler.addPropertyChangeListener(this);
-	}
-
 	private int computePassageWidth(int u, int v) {
 		int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
 		if (model.isPassageWidthFluent()) {
@@ -95,6 +78,19 @@ public class GridViewController implements PropertyChangeListener {
 		return passageWidth;
 	}
 
+	public void resetView() {
+		view.reset(model.getGrid(), model.getGridCellSize());
+		window.validate();
+	}
+
+	public void stopModelChangeListening() {
+		model.changePublisher.removePropertyChangeListener(this);
+	}
+
+	public void startModelChangeListening() {
+		model.changePublisher.addPropertyChangeListener(this);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
@@ -103,15 +99,15 @@ public class GridViewController implements PropertyChangeListener {
 			if (change.getOldValue() != null) {
 				ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) change
 						.getOldValue();
-				ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
-						.getNewValue();
 				removeAnimation(oldGrid);
-				getView().changeGridSize(newGrid, model.getGridCellSize());
-				addAnimation(newGrid);
-				clearView();
-				drawGrid();
-				window.validate();
 			}
+			ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
+					.getNewValue();
+			getView().changeGridSize(newGrid, model.getGridCellSize());
+			addAnimation(newGrid);
+			clearView();
+			drawGrid();
+			window.validate();
 			break;
 		case "passageWidthPercentage":
 			clearView();
