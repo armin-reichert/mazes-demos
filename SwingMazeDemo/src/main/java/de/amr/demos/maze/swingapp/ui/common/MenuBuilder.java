@@ -50,8 +50,6 @@ public class MenuBuilder {
 		}
 	}
 
-	private JMenu menu;
-
 	// Menu button builder
 
 	public class ButtonBuilder {
@@ -70,6 +68,7 @@ public class MenuBuilder {
 		}
 
 		public MenuBuilder build() {
+			Objects.requireNonNull(action);
 			JMenuItem item = new JMenuItem(action);
 			if (text != null) {
 				item.setText(text);
@@ -122,9 +121,9 @@ public class MenuBuilder {
 
 	public class RadioButtonGroupBuilder<T> {
 
+		private final ButtonGroup radio;
 		private Supplier<T> selection;
 		private Consumer<T> onSelect;
-		private ButtonGroup radio;
 
 		public class RadioButtonBuilder {
 
@@ -143,9 +142,8 @@ public class MenuBuilder {
 
 			public RadioButtonGroupBuilder<T> build() {
 				Objects.requireNonNull(selectionValue);
-
+				Objects.requireNonNull(selection);
 				JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
-				radioButton.putClientProperty("radio", radio);
 				radioButton.putClientProperty("selectionValue", selectionValue);
 				radioButton.putClientProperty("selection", selection);
 				if (text != null) {
@@ -188,6 +186,8 @@ public class MenuBuilder {
 
 	// Menu builder
 
+	private final JMenu menu;
+
 	private MenuBuilder() {
 		menu = new JMenu();
 	}
@@ -206,10 +206,6 @@ public class MenuBuilder {
 		return this;
 	}
 
-	public ButtonBuilder button() {
-		return new ButtonBuilder();
-	}
-	
 	public MenuBuilder action(Action action) {
 		JMenuItem item = new JMenuItem(action);
 		menu.add(item);
@@ -223,17 +219,21 @@ public class MenuBuilder {
 		return this;
 	}
 
+	public MenuBuilder separator() {
+		menu.addSeparator();
+		return this;
+	}
+
+	public ButtonBuilder button() {
+		return new ButtonBuilder();
+	}
+
 	public CheckBoxBuilder checkBox() {
 		return new CheckBoxBuilder();
 	}
 
 	public <T> RadioButtonGroupBuilder<T> radioButtonGroup(Class<T> selectionType) {
 		return new RadioButtonGroupBuilder<>(selectionType);
-	}
-
-	public MenuBuilder separator() {
-		menu.addSeparator();
-		return this;
 	}
 
 	public MenuBuilder items(Stream<JMenuItem> items) {
@@ -244,7 +244,7 @@ public class MenuBuilder {
 	public MenuBuilder items(JMenuItem... items) {
 		return items(Arrays.stream(items));
 	}
-	
+
 	public MenuBuilder menu(JMenu subMenu) {
 		Objects.requireNonNull(subMenu);
 		menu.add(subMenu);
