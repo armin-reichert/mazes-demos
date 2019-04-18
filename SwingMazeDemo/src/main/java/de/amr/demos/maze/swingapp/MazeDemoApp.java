@@ -38,7 +38,7 @@ public class MazeDemoApp {
 
 	public static void main(String[] args) {
 		JCommander.newBuilder().addObject(theApp).build().parse(args);
-		EventQueue.invokeLater(theApp::createAndShowUI);
+		EventQueue.invokeLater(() -> theApp.createAndShowUI(getDisplaySize()));
 	}
 
 	private final MazeDemoModel model;
@@ -57,7 +57,7 @@ public class MazeDemoApp {
 		theme = NimbusLookAndFeel.class.getName();
 	}
 
-	private void createAndShowUI() {
+	private void createAndShowUI(Dimension gridWindowSize) {
 		try {
 			UIManager.setLookAndFeel(theme);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -65,11 +65,10 @@ public class MazeDemoApp {
 			e.printStackTrace();
 		}
 
-		Dimension gridWindowSize = getDisplaySize();
 		gridViewController = new GridViewController(model, gridWindowSize);
 
 		controlViewController = new ControlViewController(model, gridWindowSize, gridViewController);
-		controlViewController.setHidingWindowWhenBusy(false);
+		controlViewController.setHiddenWhenBusy(false);
 		controlViewController.expandWindow();
 		controlViewController.setBusy(false);
 
@@ -106,7 +105,7 @@ public class MazeDemoApp {
 	}
 
 	public void showMessage(String msg) {
-		controlViewController.showMessage(msg + "\n");
+		controlViewController.showMessage(msg);
 	}
 
 	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,

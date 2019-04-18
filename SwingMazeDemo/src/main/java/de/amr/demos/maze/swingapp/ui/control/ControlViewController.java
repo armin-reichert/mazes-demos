@@ -40,7 +40,7 @@ import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 
 /**
- * View controller for control UI.
+ * Controller for the UI which controls the maze generation and solving..
  * 
  * @author Armin Reichert
  */
@@ -57,7 +57,7 @@ public class ControlViewController implements PropertyChangeListener {
 	private final JMenu optionMenu;
 	private final ControlView view;
 
-	private boolean hidingWindowWhenBusy;
+	private boolean hiddenWhenBusy;
 
 	// Actions
 
@@ -175,12 +175,12 @@ public class ControlViewController implements PropertyChangeListener {
 		}
 	}
 
-	public boolean isHidingWindowWhenBusy() {
-		return hidingWindowWhenBusy;
+	public boolean isHiddenWhenBusy() {
+		return hiddenWhenBusy;
 	}
 
-	public void setHidingWindowWhenBusy(boolean hidingWindowWhenBusy) {
-		this.hidingWindowWhenBusy = hidingWindowWhenBusy;
+	public void setHiddenWhenBusy(boolean b) {
+		this.hiddenWhenBusy = b;
 		updateMenuSelection(optionMenu);
 	}
 
@@ -216,7 +216,7 @@ public class ControlViewController implements PropertyChangeListener {
 
 	public void setBusy(boolean busy) {
 		if (busy) {
-			if (hidingWindowWhenBusy) {
+			if (hiddenWhenBusy) {
 				window.setVisible(false);
 			}
 			setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
@@ -235,7 +235,7 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public void showMessage(String msg) {
-		view.getTextArea().append(msg);
+		view.getTextArea().append(msg + "\n");
 		view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
 	}
 

@@ -177,8 +177,8 @@ public class ControlWindowMenus {
 			.separator()	
 			.checkBox()
 				.text("Hide this dialog when running")
-				.onSelect(controller::setHidingWindowWhenBusy)
-				.selection(controller::isHidingWindowWhenBusy)
+				.onSelect(controller::setHiddenWhenBusy)
+				.selection(controller::isHiddenWhenBusy)
 				.build()
 		.build();
 		//@formatter:on
