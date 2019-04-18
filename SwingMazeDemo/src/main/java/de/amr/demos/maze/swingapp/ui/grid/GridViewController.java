@@ -1,7 +1,7 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
-import static de.amr.swing.SwingGoodies.action;
-import static de.amr.swing.SwingGoodies.getDisplaySize;
+import static de.amr.swing.Swing.action;
+import static de.amr.swing.Swing.getDisplaySize;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
