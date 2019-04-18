@@ -1,7 +1,7 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.action;
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.getDisplaySize;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -50,7 +50,7 @@ public class GridViewController implements PropertyChangeListener {
 		window.setTitle("Maze Demo App - Display View");
 		window.setContentPane(view.getCanvas());
 		window.setSize(windowSize);
-		if (windowSize.equals(theApp.getDisplaySize())) {
+		if (windowSize.equals(getDisplaySize())) {
 			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			window.setUndecorated(true);
 		}

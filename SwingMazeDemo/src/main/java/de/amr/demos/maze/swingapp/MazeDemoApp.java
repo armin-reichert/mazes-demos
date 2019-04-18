@@ -1,9 +1,9 @@
 package de.amr.demos.maze.swingapp;
 
+import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.getDisplaySize;
+
 import java.awt.Dimension;
-import java.awt.DisplayMode;
 import java.awt.EventQueue;
-import java.awt.GraphicsEnvironment;
 import java.util.function.Consumer;
 
 import javax.swing.UIManager;
@@ -79,12 +79,6 @@ public class MazeDemoApp {
 		gridViewController.showWindow();
 		controlViewController.placeWindowRelativeTo(gridViewController.getWindow());
 		controlViewController.showWindow();
-	}
-
-	public Dimension getDisplaySize() {
-		DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDisplayMode();
-		return new Dimension(displayMode.getWidth(), displayMode.getHeight());
 	}
 
 	public MazeDemoModel getModel() {

@@ -2,6 +2,9 @@ package de.amr.demos.maze.swingapp.ui.common;
 
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -11,7 +14,16 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class SwingGoodies {
+public final class SwingGoodies {
+
+	private SwingGoodies() {
+	}
+
+	public static Dimension getDisplaySize() {
+		DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+				.getDisplayMode();
+		return new Dimension(displayMode.getWidth(), displayMode.getHeight());
+	}
 
 	public static Icon icon(String path) {
 		return new ImageIcon(SwingGoodies.class.getResource(path));
@@ -46,8 +58,4 @@ public class SwingGoodies {
 	public static void setNormalCursor(Component... components) {
 		Arrays.stream(components).forEach(comp -> comp.setCursor(Cursor.getDefaultCursor()));
 	}
-
-	private SwingGoodies() {
-	}
-
 }
