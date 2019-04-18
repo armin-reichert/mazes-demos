@@ -42,7 +42,7 @@ public class ControlView extends JPanel {
 	private JButton btnShowHideDetails;
 
 	public ControlView() {
-		setBackground(Color.WHITE);
+		setBackground(new Color(210, 180, 140));
 		setPreferredSize(new Dimension(520, 400));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
