@@ -135,7 +135,8 @@ public class SolveMaze extends AbstractAction {
 			return theApp.getModel().getGrid()::euclidean;
 		case MANHATTAN:
 			return theApp.getModel().getGrid()::manhattan;
+		default:
+			throw new IllegalStateException();
 		}
-		throw new IllegalStateException();
 	}
 }
