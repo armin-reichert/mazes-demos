@@ -42,11 +42,44 @@ public class ControlView extends JPanel {
 	private JButton btnShowHideDetails;
 
 	public ControlView() {
+		setBackground(Color.WHITE);
 		setPreferredSize(new Dimension(520, 400));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
 
+		JPanel fixedArea = new JPanel();
+		fixedArea.setOpaque(false);
+		add(fixedArea, BorderLayout.NORTH);
+		fixedArea.setLayout(new MigLayout("", "[][][][][grow][right]", "[28px][]"));
+
+		btnCreateMaze = new JButton("Create");
+		fixedArea.add(btnCreateMaze, "flowy,cell 0 0,alignx left,aligny top");
+
+		btnSolve = new JButton("Solve");
+		fixedArea.add(btnSolve, "cell 1 0,alignx left,aligny top");
+
+		btnCreateAllMazes = new JButton("All Mazes");
+		fixedArea.add(btnCreateAllMazes, "cell 2 0,alignx left,aligny top");
+
+		btnStop = new JButton("Stop");
+		fixedArea.add(btnStop, "cell 3 0,alignx left,aligny top");
+
+		btnShowHideDetails = new JButton("Show/Hide Details");
+		btnShowHideDetails.setIcon(null);
+		fixedArea.add(btnShowHideDetails, "cell 5 0,aligny top");
+
+		sliderDelay = new JSlider();
+		sliderDelay.setPaintLabels(true);
+		sliderDelay.setPaintTicks(true);
+		fixedArea.add(sliderDelay, "flowx,cell 0 1 6 1,growx");
+		sliderDelay.setToolTipText("Delay [milliseconds]");
+		sliderDelay.setValue(0);
+		sliderDelay.setMaximum(100);
+		sliderDelay.setMinorTickSpacing(10);
+		sliderDelay.setMajorTickSpacing(50);
+
 		collapsibleArea = new JPanel();
+		collapsibleArea.setOpaque(false);
 		add(collapsibleArea, BorderLayout.CENTER);
 		collapsibleArea.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][]"));
 
@@ -100,35 +133,6 @@ public class ControlView extends JPanel {
 		textArea.setLineWrap(true);
 		textArea.setRows(100);
 
-		JPanel fixedArea = new JPanel();
-		add(fixedArea, BorderLayout.NORTH);
-		fixedArea.setLayout(new MigLayout("", "[][][][][grow][right]", "[28px][]"));
-
-		btnCreateMaze = new JButton("Create");
-		fixedArea.add(btnCreateMaze, "flowy,cell 0 0,alignx left,aligny top");
-
-		btnSolve = new JButton("Solve");
-		fixedArea.add(btnSolve, "cell 1 0,alignx left,aligny top");
-
-		btnCreateAllMazes = new JButton("All Mazes");
-		fixedArea.add(btnCreateAllMazes, "cell 2 0,alignx left,aligny top");
-
-		btnStop = new JButton("Stop");
-		fixedArea.add(btnStop, "cell 3 0,alignx left,aligny top");
-
-		btnShowHideDetails = new JButton("Show/Hide Details");
-		btnShowHideDetails.setIcon(null);
-		fixedArea.add(btnShowHideDetails, "cell 5 0,aligny top");
-
-		sliderDelay = new JSlider();
-		sliderDelay.setPaintLabels(true);
-		sliderDelay.setPaintTicks(true);
-		fixedArea.add(sliderDelay, "flowx,cell 0 1 6 1,growx");
-		sliderDelay.setToolTipText("Delay [milliseconds]");
-		sliderDelay.setValue(0);
-		sliderDelay.setMaximum(100);
-		sliderDelay.setMinorTickSpacing(10);
-		sliderDelay.setMajorTickSpacing(50);
 	}
 
 	public JPanel getCollapsibleArea() {
