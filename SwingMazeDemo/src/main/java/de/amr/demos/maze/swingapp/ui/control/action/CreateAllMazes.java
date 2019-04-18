@@ -55,7 +55,10 @@ public class CreateAllMazes extends CreateMazeAction {
 				}
 			} catch (AnimationInterruptedException x) {
 				throw x;
-			} catch (StackOverflowError | Exception x) {
+			} catch (StackOverflowError x) {
+				theApp.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
+				theApp.reset();
+			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
 			pause(2);
