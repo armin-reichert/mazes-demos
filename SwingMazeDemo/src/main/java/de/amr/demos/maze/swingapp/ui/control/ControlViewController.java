@@ -2,15 +2,15 @@ package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.action;
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.icon;
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setEnabled;
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setNormalCursor;
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.setWaitCursor;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildOptionMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildSolverMenu;
+import static de.amr.swing.SwingGoodies.action;
+import static de.amr.swing.SwingGoodies.icon;
+import static de.amr.swing.SwingGoodies.setEnabled;
+import static de.amr.swing.SwingGoodies.setNormalCursor;
+import static de.amr.swing.SwingGoodies.setWaitCursor;
 
 import java.awt.Dimension;
 import java.awt.Window;

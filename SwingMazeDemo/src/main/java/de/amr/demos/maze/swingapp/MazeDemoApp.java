@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.demos.maze.swingapp.ui.common.SwingGoodies.getDisplaySize;
+import static de.amr.swing.SwingGoodies.getDisplaySize;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
