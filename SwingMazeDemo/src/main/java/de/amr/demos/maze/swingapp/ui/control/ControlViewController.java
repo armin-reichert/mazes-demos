@@ -27,6 +27,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
@@ -244,6 +245,9 @@ public class ControlViewController implements PropertyChangeListener {
 	public void selectGenerator(AlgorithmInfo generatorInfo) {
 		ControlWindowMenus.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
+		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
+		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
+				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 	}
 
 	public Optional<AlgorithmInfo> getSelectedSolver() {

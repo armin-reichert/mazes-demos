@@ -1,13 +1,11 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
@@ -43,12 +41,12 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		List<AlgorithmInfo> fastGenerators = model.generators().filter(alg -> !alg.isTagged(Slow))
-				.collect(Collectors.toList());
-		for (AlgorithmInfo generatorInfo : fastGenerators) {
-			theApp.changeGenerator(generatorInfo);
+		AlgorithmInfo[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow))
+				.toArray(AlgorithmInfo[]::new);
+		for (AlgorithmInfo generator : fastOnes) {
+			controlViewController.selectGenerator(generator);
 			try {
-				createMaze(generatorInfo, model.getGenerationStart());
+				createMaze(generator, model.getGenerationStart());
 				if (model.isFloodFillAfterGeneration()) {
 					pause(1);
 					floodFill();

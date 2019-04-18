@@ -13,8 +13,6 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
-import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
@@ -75,7 +73,7 @@ public class MazeDemoApp {
 		controlViewController.expandWindow();
 		controlViewController.setBusy(false);
 
-		model.findGenerator(Armin.class).ifPresent(this::changeGenerator);
+		model.findGenerator(Armin.class).ifPresent(controlViewController::selectGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
 
 		gridViewController.showWindow();
@@ -99,14 +97,6 @@ public class MazeDemoApp {
 
 	public GridViewController getGridViewController() {
 		return gridViewController;
-	}
-
-	public void changeGenerator(AlgorithmInfo generatorInfo) {
-		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
-				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.clearView();
-		controlViewController.selectGenerator(generatorInfo);
 	}
 
 	public void reset() {
