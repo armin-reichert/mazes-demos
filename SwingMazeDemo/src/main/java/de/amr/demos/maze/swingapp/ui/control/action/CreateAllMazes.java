@@ -4,7 +4,7 @@ import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 
 import java.awt.event.ActionEvent;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
@@ -41,9 +41,9 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		AlgorithmInfo[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow))
-				.toArray(AlgorithmInfo[]::new);
-		for (AlgorithmInfo generator : fastOnes) {
+		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow))
+				.toArray(Algorithm[]::new);
+		for (Algorithm generator : fastOnes) {
 			controlViewController.selectGenerator(generator);
 			try {
 				createMaze(generator, model.getGenerationStart());

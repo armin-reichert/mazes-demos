@@ -8,7 +8,7 @@ import java.util.function.ToDoubleBiFunction;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
@@ -61,7 +61,7 @@ public class SolveMaze extends AbstractAction {
 		});
 	}
 
-	private void solve(AlgorithmInfo info) {
+	private void solve(Algorithm info) {
 
 		if (info.getAlgorithmClass() == BreadthFirstSearch.class) {
 			solve(new BreadthFirstSearch(theApp.getModel().getGrid()), info);
@@ -99,10 +99,10 @@ public class SolveMaze extends AbstractAction {
 		}
 	}
 
-	private void solve(ObservableGraphSearch solver, AlgorithmInfo solverInfo) {
+	private void solve(ObservableGraphSearch solver, Algorithm solverInfo) {
 		GridView gridView = theApp.getGridViewController().getView();
-		int source = theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderSource());
-		int target = theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderTarget());
+		int source = theApp.getModel().getGrid().cell(theApp.getModel().getSolverSource());
+		int target = theApp.getModel().getGrid().cell(theApp.getModel().getSolverTarget());
 		boolean informed = solverInfo.isTagged(SolverTag.INFORMED);
 		StopWatch watch = new StopWatch();
 		if (solverInfo.isTagged(SolverTag.BFS)) {
@@ -124,7 +124,7 @@ public class SolveMaze extends AbstractAction {
 	}
 
 	private int target() {
-		return theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderTarget());
+		return theApp.getModel().getGrid().cell(theApp.getModel().getSolverTarget());
 	}
 
 	private ToDoubleBiFunction<Integer, Integer> metric() {

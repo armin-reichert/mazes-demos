@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
@@ -33,7 +33,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 	protected final ControlViewController controlViewController;
 	protected final MazeDemoModel model;
 
-	public CreateMazeAction(String name, GridViewController gridViewController, ControlViewController controlViewController) {
+	public CreateMazeAction(String name, GridViewController gridViewController,
+			ControlViewController controlViewController) {
 		super(name);
 		this.gridViewController = gridViewController;
 		this.controlViewController = controlViewController;
@@ -45,11 +46,11 @@ public abstract class CreateMazeAction extends AbstractAction {
 		gridViewController.floodFill(startCell, false);
 	}
 
-	protected void createMaze(AlgorithmInfo generatorInfo, GridPosition startPosition) {
+	protected void createMaze(Algorithm generator, GridPosition startPosition) {
 		ObservableGridGraph<TraversalState, Integer> grid = model.getGrid();
-		MazeGenerator generator = null;
+		MazeGenerator generatorInstance = null;
 		try {
-			generator = (MazeGenerator) generatorInfo.getAlgorithmClass().getConstructor(GridGraph2D.class)
+			generatorInstance = (MazeGenerator) generator.getAlgorithmClass().getConstructor(GridGraph2D.class)
 					.newInstance(model.getGrid());
 		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException | SecurityException e) {
@@ -57,16 +58,16 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
-		theApp.showMessage(format("\n%s (%d cells)", generatorInfo.getDescription(), grid.numVertices()));
+		theApp.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
 		if (model.isGenerationAnimated()) {
-			generator.createMaze(x, y);
+			generatorInstance.createMaze(x, y);
 		}
 		else {
 			gridViewController.getAnimation().setEnabled(false);
 			gridViewController.clearView();
 			StopWatch watch = new StopWatch();
 			watch.start();
-			generator.createMaze(x, y);
+			generatorInstance.createMaze(x, y);
 			watch.stop();
 			theApp.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> gridViewController.drawGrid());

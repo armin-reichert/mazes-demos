@@ -19,7 +19,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
@@ -33,13 +33,13 @@ import de.amr.graph.grid.api.GridPosition;
  */
 public class ControlWindowMenus {
 
-	public static Optional<AlgorithmInfo> getSelectedAlgorithm(JMenu radioButtonMenu) {
+	public static Optional<Algorithm> getSelectedAlgorithm(JMenu radioButtonMenu) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
 		return Collections.list(radio.getElements()).stream().filter(AbstractButton::isSelected)
-				.map(button -> (AlgorithmInfo) button.getClientProperty("algorithm")).findFirst();
+				.map(button -> (Algorithm) button.getClientProperty("algorithm")).findFirst();
 	}
 
-	public static void selectAlgorithm(JMenu radioButtonMenu, AlgorithmInfo algorithm) {
+	public static void selectAlgorithm(JMenu radioButtonMenu, Algorithm algorithm) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
 		Collections.list(radio.getElements()).stream()
 				.filter(button -> algorithm.equals(button.getClientProperty("algorithm"))).findFirst()
@@ -66,7 +66,7 @@ public class ControlWindowMenus {
 	}
 
 	private static JMenu generatorMenu(ControlViewController controller, ButtonGroup radio, String title,
-			Predicate<AlgorithmInfo> selection) {
+			Predicate<Algorithm> selection) {
 		JMenu menu = new JMenu(title);
 		controller.getModel().generators().filter(selection).forEach(generator -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
@@ -98,7 +98,7 @@ public class ControlWindowMenus {
 	}
 
 	private static Stream<JMenuItem> solverItems(ControlViewController controller, ButtonGroup radio,
-			Predicate<AlgorithmInfo> selection) {
+			Predicate<Algorithm> selection) {
 		return controller.getModel().solvers().filter(selection).map(solver -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
 			radioButton.addActionListener(event -> controller.selectSolver(solver));
@@ -151,8 +151,8 @@ public class ControlWindowMenus {
 		return MenuBuilder.newBuilder()
 			.title("Options")
 			.menu(buildPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart))
-			.menu(buildPositionMenu("Solution Start", model::setPathFinderStart, model::getPathFinderSource))
-			.menu(buildPositionMenu("Solution Target", model::setPathFinderTarget, model::getPathFinderTarget))
+			.menu(buildPositionMenu("Solution Start", model::setSolverSource, model::getSolverSource))
+			.menu(buildPositionMenu("Solution Target", model::setSolverTarget, model::getSolverTarget))
 			.separator()
 			.checkBox()
 				.text("Animate Generation")

@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
+import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.util.StopWatch;
 
 /**
@@ -16,14 +18,16 @@ import de.amr.util.StopWatch;
  */
 public class FloodFill extends AbstractAction {
 
-	public FloodFill(String name) {
+	private final GridViewController controller;
+
+	public FloodFill(String name, GridViewController controller) {
 		super(name);
+		this.controller = controller;
 	}
 
 	private void floodFill() {
-		theApp.getGridViewController().floodFill(
-				theApp.getModel().getGrid().cell(theApp.getModel().getPathFinderSource()),
-				theApp.getModel().isDistancesVisible());
+		MazeDemoModel model = controller.getModel();
+		controller.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
 	}
 
 	@Override
@@ -31,7 +35,7 @@ public class FloodFill extends AbstractAction {
 		theApp.startBackgroundThread(
 
 				() -> {
-					theApp.getGridViewController().drawGrid();
+					controller.drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::floodFill);
 					theApp.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));

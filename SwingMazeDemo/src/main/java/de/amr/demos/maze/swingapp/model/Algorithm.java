@@ -5,17 +5,17 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * Meta-data for an algorithm.
+ * Information about a maze generator or solver algorithm.
  * 
  * @author Armin Reichert
  */
-public class AlgorithmInfo {
+public class Algorithm {
 
 	private final Class<?> algorithmClass;
 	private final String description;
 	private final Tag[] tags;
 
-	public AlgorithmInfo(Class<?> algorithmClass, String description, Tag... tags) {
+	public Algorithm(Class<?> algorithmClass, String description, Tag... tags) {
 		Objects.requireNonNull(algorithmClass);
 		this.algorithmClass = algorithmClass;
 		this.description = description;

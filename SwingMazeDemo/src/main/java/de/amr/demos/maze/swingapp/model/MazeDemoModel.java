@@ -92,65 +92,65 @@ public class MazeDemoModel {
 		EUCLIDEAN, MANHATTAN, CHEBYSHEV
 	}
 
-	private static final AlgorithmInfo[] GENERATOR_ALGORITHMS = {
+	private static final Algorithm[] GENERATOR_ALGORITHMS = {
 		/*@formatter:off*/
-		new AlgorithmInfo(RecursiveDFS.class, "Random recursive DFS (small grids only!)", Traversal, SmallGrid),
-		new AlgorithmInfo(IterativeDFS.class, "Random non-recursive DFS", Traversal),
-		new AlgorithmInfo(RandomBFS.class, "Random BFS", Traversal),
-		new AlgorithmInfo(GrowingTreeAlwaysFirst.class, "Growing Tree (always select first)", Traversal),
-		new AlgorithmInfo(GrowingTreeAlwaysLast.class, "Growing Tree (always select last)", Traversal),
-		new AlgorithmInfo(GrowingTreeAlwaysRandom.class, "Growing Tree (always select random)", Traversal),
-		new AlgorithmInfo(GrowingTreeLastOrRandom.class, "Growing Tree (last or random)", Traversal),
-		new AlgorithmInfo(KruskalMST.class, "Kruskal MST", MST),
-		new AlgorithmInfo(PrimMST.class, "Prim MST", MST),
-		new AlgorithmInfo(BoruvkaMST.class, "Boruvka MST", MST),
-		new AlgorithmInfo(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow, FullGridRequired),
-		new AlgorithmInfo(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow, FullGridRequired),
-		new AlgorithmInfo(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow, FullGridRequired),
-		new AlgorithmInfo(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow, FullGridRequired),
-		new AlgorithmInfo(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow, FullGridRequired),
-		new AlgorithmInfo(AldousBroderUST.class, "Aldous-Broder UST (rather slow)", UST, Slow),
-		new AlgorithmInfo(AldousBroderWilsonUST.class, "Houston UST (rather slow)", UST, Slow),
-		new AlgorithmInfo(WilsonUSTRandomCell.class, "Wilson UST (random)", UST, Slow),
-		new AlgorithmInfo(WilsonUSTRowsTopDown.class, "Wilson UST (row-wise, top-to-bottom)", UST),
-		new AlgorithmInfo(WilsonUSTLeftToRightSweep.class, "Wilson UST (column-wise, left to right)", UST),
-		new AlgorithmInfo(WilsonUSTRightToLeftSweep.class, "Wilson UST (column-wise, right to left)", UST),
-		new AlgorithmInfo(WilsonUSTCollapsingWalls.class, "Wilson UST (column-wise, collapsing)", UST),
-		new AlgorithmInfo(WilsonUSTCollapsingRectangle.class, "Wilson UST (collapsing rectangle)", UST),
-		new AlgorithmInfo(WilsonUSTExpandingCircle.class, "Wilson UST (expanding circle)", UST),
-		new AlgorithmInfo(WilsonUSTCollapsingCircle.class, "Wilson UST (collapsing circle)", UST),
-		new AlgorithmInfo(WilsonUSTExpandingCircles.class, "Wilson UST (expanding circles)", UST),
-		new AlgorithmInfo(WilsonUSTExpandingSpiral.class, "Wilson UST (expanding spiral)", UST),
-		new AlgorithmInfo(WilsonUSTExpandingRectangle.class, "Wilson UST (expanding rectangle)", UST),
-		new AlgorithmInfo(WilsonUSTNestedRectangles.class, "Wilson UST (nested rectangles)", UST),
-		new AlgorithmInfo(WilsonUSTRecursiveCrosses.class, "Wilson UST (recursive crosses)", UST),
-		new AlgorithmInfo(WilsonUSTHilbertCurve.class, "Wilson UST (Hilbert curve)", UST),
-		new AlgorithmInfo(WilsonUSTMooreCurve.class, "Wilson UST (Moore curve)", UST),
-		new AlgorithmInfo(WilsonUSTPeanoCurve.class, "Wilson UST (Peano curve)", UST),
-		new AlgorithmInfo(BinaryTree.class, "Binary Tree (row-wise, top-to-bottom)"),
-		new AlgorithmInfo(BinaryTreeRandom.class, "Binary Tree (random)"), 
-		new AlgorithmInfo(Sidewinder.class, "Sidewinder"),
-		new AlgorithmInfo(Eller.class, "Eller's Algorithm"), 
-		new AlgorithmInfo(Armin.class, "Armin's Algorithm"), 
-		new AlgorithmInfo(HuntAndKill.class, "Hunt-And-Kill"),
-		new AlgorithmInfo(HuntAndKillRandom.class, "Hunt-And-Kill (random)"),
-		new AlgorithmInfo(RecursiveDivision.class, "Recursive Division", FullGridRequired),
+		new Algorithm(RecursiveDFS.class, "Random recursive DFS (small grids only!)", Traversal, SmallGrid),
+		new Algorithm(IterativeDFS.class, "Random non-recursive DFS", Traversal),
+		new Algorithm(RandomBFS.class, "Random BFS", Traversal),
+		new Algorithm(GrowingTreeAlwaysFirst.class, "Growing Tree (always select first)", Traversal),
+		new Algorithm(GrowingTreeAlwaysLast.class, "Growing Tree (always select last)", Traversal),
+		new Algorithm(GrowingTreeAlwaysRandom.class, "Growing Tree (always select random)", Traversal),
+		new Algorithm(GrowingTreeLastOrRandom.class, "Growing Tree (last or random)", Traversal),
+		new Algorithm(KruskalMST.class, "Kruskal MST", MST),
+		new Algorithm(PrimMST.class, "Prim MST", MST),
+		new Algorithm(BoruvkaMST.class, "Boruvka MST", MST),
+		new Algorithm(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(AldousBroderUST.class, "Aldous-Broder UST (rather slow)", UST, Slow),
+		new Algorithm(AldousBroderWilsonUST.class, "Houston UST (rather slow)", UST, Slow),
+		new Algorithm(WilsonUSTRandomCell.class, "Wilson UST (random)", UST, Slow),
+		new Algorithm(WilsonUSTRowsTopDown.class, "Wilson UST (row-wise, top-to-bottom)", UST),
+		new Algorithm(WilsonUSTLeftToRightSweep.class, "Wilson UST (column-wise, left to right)", UST),
+		new Algorithm(WilsonUSTRightToLeftSweep.class, "Wilson UST (column-wise, right to left)", UST),
+		new Algorithm(WilsonUSTCollapsingWalls.class, "Wilson UST (column-wise, collapsing)", UST),
+		new Algorithm(WilsonUSTCollapsingRectangle.class, "Wilson UST (collapsing rectangle)", UST),
+		new Algorithm(WilsonUSTExpandingCircle.class, "Wilson UST (expanding circle)", UST),
+		new Algorithm(WilsonUSTCollapsingCircle.class, "Wilson UST (collapsing circle)", UST),
+		new Algorithm(WilsonUSTExpandingCircles.class, "Wilson UST (expanding circles)", UST),
+		new Algorithm(WilsonUSTExpandingSpiral.class, "Wilson UST (expanding spiral)", UST),
+		new Algorithm(WilsonUSTExpandingRectangle.class, "Wilson UST (expanding rectangle)", UST),
+		new Algorithm(WilsonUSTNestedRectangles.class, "Wilson UST (nested rectangles)", UST),
+		new Algorithm(WilsonUSTRecursiveCrosses.class, "Wilson UST (recursive crosses)", UST),
+		new Algorithm(WilsonUSTHilbertCurve.class, "Wilson UST (Hilbert curve)", UST),
+		new Algorithm(WilsonUSTMooreCurve.class, "Wilson UST (Moore curve)", UST),
+		new Algorithm(WilsonUSTPeanoCurve.class, "Wilson UST (Peano curve)", UST),
+		new Algorithm(BinaryTree.class, "Binary Tree (row-wise, top-to-bottom)"),
+		new Algorithm(BinaryTreeRandom.class, "Binary Tree (random)"), 
+		new Algorithm(Sidewinder.class, "Sidewinder"),
+		new Algorithm(Eller.class, "Eller's Algorithm"), 
+		new Algorithm(Armin.class, "Armin's Algorithm"), 
+		new Algorithm(HuntAndKill.class, "Hunt-And-Kill"),
+		new Algorithm(HuntAndKillRandom.class, "Hunt-And-Kill (random)"),
+		new Algorithm(RecursiveDivision.class, "Recursive Division", FullGridRequired),
 		/*@formatter:on*/
 	};
 
-	private static final AlgorithmInfo[] PATHFINDER_ALGORITHMS = {
+	private static final Algorithm[] PATHFINDER_ALGORITHMS = {
 		/*@formatter:off*/
-		new AlgorithmInfo(BreadthFirstSearch.class, "Breadth-First Search", BFS),
-		new AlgorithmInfo(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", BFS),
-		new AlgorithmInfo(DepthFirstSearch.class, "Depth-First Search", DFS),
-		new AlgorithmInfo(DepthFirstSearch2.class, "Depth-First Search (variation)", DFS), 
-		new AlgorithmInfo(IDDFS.class, "Iterative-Deepening DFS (very slow!)", DFS),
-		new AlgorithmInfo(DijkstraSearch.class, "Uniform-Cost (Dijkstra) Search", BFS),
-		new AlgorithmInfo(BidiDijkstraSearch.class, "Bidirectional Dijkstra Search", BFS),
-		new AlgorithmInfo(HillClimbingSearch.class, "Hill-Climbing Search", DFS, INFORMED),
-		new AlgorithmInfo(BestFirstSearch.class, "Greedy Best-First Search", BFS, INFORMED),
-		new AlgorithmInfo(AStarSearch.class, "A* Search", BFS, INFORMED),
-		new AlgorithmInfo(BidiAStarSearch.class, "Bidirectional A* Search", BFS, INFORMED),
+		new Algorithm(BreadthFirstSearch.class, "Breadth-First Search", BFS),
+		new Algorithm(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", BFS),
+		new Algorithm(DepthFirstSearch.class, "Depth-First Search", DFS),
+		new Algorithm(DepthFirstSearch2.class, "Depth-First Search (variation)", DFS), 
+		new Algorithm(IDDFS.class, "Iterative-Deepening DFS (very slow!)", DFS),
+		new Algorithm(DijkstraSearch.class, "Uniform-Cost (Dijkstra) Search", BFS),
+		new Algorithm(BidiDijkstraSearch.class, "Bidirectional Dijkstra Search", BFS),
+		new Algorithm(HillClimbingSearch.class, "Hill-Climbing Search", DFS, INFORMED),
+		new Algorithm(BestFirstSearch.class, "Greedy Best-First Search", BFS, INFORMED),
+		new Algorithm(AStarSearch.class, "A* Search", BFS, INFORMED),
+		new Algorithm(BidiAStarSearch.class, "Bidirectional A* Search", BFS, INFORMED),
 		/*@formatter:on*/
 	};
 
@@ -165,8 +165,8 @@ public class MazeDemoModel {
 	private boolean floodFillAfterGeneration;
 	private boolean distancesVisible;
 	private Metric metric;
-	private GridPosition pathFinderStart;
-	private GridPosition pathFinderTarget;
+	private GridPosition solverSource;
+	private GridPosition solverTarget;
 
 	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
 
@@ -176,27 +176,27 @@ public class MazeDemoModel {
 		setPassageWidthPercentage(100);
 		setDelay(0);
 		setGenerationStart(CENTER);
-		setPathFinderStart(TOP_LEFT);
-		setPathFinderTarget(BOTTOM_RIGHT);
+		setSolverSource(TOP_LEFT);
+		setSolverTarget(BOTTOM_RIGHT);
 		setMetric(Metric.EUCLIDEAN);
 		setGenerationAnimated(true);
 		setFloodFillAfterGeneration(false);
 		setDistancesVisible(false);
 	}
 
-	public Optional<AlgorithmInfo> findGenerator(Class<?> clazz) {
+	public Optional<Algorithm> findGenerator(Class<?> clazz) {
 		return generators().filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
 	}
 
-	public Stream<AlgorithmInfo> generators() {
+	public Stream<Algorithm> generators() {
 		return Arrays.stream(GENERATOR_ALGORITHMS);
 	}
 
-	public Stream<AlgorithmInfo> solvers() {
+	public Stream<Algorithm> solvers() {
 		return Arrays.stream(PATHFINDER_ALGORITHMS);
 	}
 
-	public Optional<AlgorithmInfo> findSolver(Class<?> clazz) {
+	public Optional<Algorithm> findSolver(Class<?> clazz) {
 		return solvers().filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
 	}
 
@@ -304,19 +304,19 @@ public class MazeDemoModel {
 		this.distancesVisible = distancesVisible;
 	}
 
-	public GridPosition getPathFinderSource() {
-		return pathFinderStart;
+	public GridPosition getSolverSource() {
+		return solverSource;
 	}
 
-	public void setPathFinderStart(GridPosition pos) {
-		this.pathFinderStart = pos;
+	public void setSolverSource(GridPosition pos) {
+		this.solverSource = pos;
 	}
 
-	public GridPosition getPathFinderTarget() {
-		return pathFinderTarget;
+	public GridPosition getSolverTarget() {
+		return solverTarget;
 	}
 
-	public void setPathFinderTarget(GridPosition pos) {
-		this.pathFinderTarget = pos;
+	public void setSolverTarget(GridPosition pos) {
+		this.solverTarget = pos;
 	}
 }

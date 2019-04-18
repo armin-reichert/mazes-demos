@@ -26,7 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
-import de.amr.demos.maze.swingapp.model.AlgorithmInfo;
+import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
@@ -49,6 +49,7 @@ public class ControlViewController implements PropertyChangeListener {
 	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
 	private final MazeDemoModel model;
+	private boolean hiddenWhenBusy;
 
 	private final JFrame window;
 	private final JMenu generatorMenu;
@@ -57,47 +58,18 @@ public class ControlViewController implements PropertyChangeListener {
 	private final JMenu optionMenu;
 	private final ControlView view;
 
-	private boolean hiddenWhenBusy;
-
-	// Actions
-
-	final Action actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
-
-	final Action actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
-
-	final Action actionChangeGridResolution = action("Change Resolution", e -> {
-		JComboBox<?> combo = (JComboBox<?>) e.getSource();
-		getModel().setGridCellSizeIndex(combo.getSelectedIndex());
-		theApp.reset();
-		combo.requestFocusInWindow();
-	});
-
-	final Action actionCreateEmptyGrid = action("Create Empty Grid", e -> {
-		getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), false,
-				TraversalState.COMPLETED);
-	});
-
-	final Action actionCreateFullGrid = action("Create Full Grid", e -> {
-		getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), true,
-				TraversalState.COMPLETED);
-	});
-
-	final Action actionStopBackgroundThread = action("Stop", e -> theApp.stopBackgroundThread());
-
-	final Action actionClearCanvas = action("Clear Canvas", e -> {
-		theApp.getGridViewController().clearView();
-		theApp.getGridViewController().drawGrid();
-	});
-
+	final Action actionCollapseWindow;
+	final Action actionExpandWindow;
+	final Action actionChangeGridResolution;
+	final Action actionCreateEmptyGrid;
+	final Action actionCreateFullGrid;
+	final Action actionStopBackgroundThread;
+	final Action actionClearCanvas;
 	final Action actionCreateSingleMaze;
-
 	final Action actionCreateAllMazes;
-
-	final Action actionSolveMaze = new SolveMaze("Solve");
-
-	final Action actionFloodFill = new FloodFill("Flood-fill");
-
-	final Action actionSaveImage = new SaveImage("Save Image...", this);
+	final Action actionSolveMaze;
+	final Action actionFloodFill;
+	final Action actionSaveImage;
 
 	public ControlViewController(MazeDemoModel model, Dimension gridWindowSize,
 			GridViewController gridViewController) {
@@ -106,11 +78,35 @@ public class ControlViewController implements PropertyChangeListener {
 		this.model = model;
 		model.changePublisher.addPropertyChangeListener(this);
 
-		// These actions use both controllers
+		// create actions
+		actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
+		actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
+		actionChangeGridResolution = action("Change Resolution", e -> {
+			JComboBox<?> combo = (JComboBox<?>) e.getSource();
+			getModel().setGridCellSizeIndex(combo.getSelectedIndex());
+			theApp.reset();
+			combo.requestFocusInWindow();
+		});
+		actionCreateEmptyGrid = action("Create Empty Grid", e -> {
+			getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), false,
+					TraversalState.COMPLETED);
+		});
+		actionCreateFullGrid = action("Create Full Grid", e -> {
+			getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), true,
+					TraversalState.COMPLETED);
+		});
+		actionClearCanvas = action("Clear Canvas", e -> {
+			theApp.getGridViewController().clearView();
+			theApp.getGridViewController().drawGrid();
+		});
+		actionStopBackgroundThread = action("Stop", e -> theApp.stopBackgroundThread());
 		actionCreateAllMazes = new CreateAllMazes("All Mazes", gridViewController, this);
 		actionCreateSingleMaze = new CreateSingleMaze("New Maze", gridViewController, this);
+		actionSolveMaze = new SolveMaze("Solve");
+		actionFloodFill = new FloodFill("Flood-fill", gridViewController);
+		actionSaveImage = new SaveImage("Save Image...", this);
 
-		// create UI
+		// create and initialize UI
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
@@ -239,11 +235,11 @@ public class ControlViewController implements PropertyChangeListener {
 		view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
 	}
 
-	public Optional<AlgorithmInfo> getSelectedGenerator() {
+	public Optional<Algorithm> getSelectedGenerator() {
 		return ControlWindowMenus.getSelectedAlgorithm(generatorMenu);
 	}
 
-	public void selectGenerator(AlgorithmInfo generatorInfo) {
+	public void selectGenerator(Algorithm generatorInfo) {
 		ControlWindowMenus.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
 		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
@@ -251,11 +247,11 @@ public class ControlViewController implements PropertyChangeListener {
 				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 	}
 
-	public Optional<AlgorithmInfo> getSelectedSolver() {
+	public Optional<Algorithm> getSelectedSolver() {
 		return ControlWindowMenus.getSelectedAlgorithm(solverMenu);
 	}
 
-	public void selectSolver(AlgorithmInfo solverInfo) {
+	public void selectSolver(Algorithm solverInfo) {
 		ControlWindowMenus.selectAlgorithm(solverMenu, solverInfo);
 		updateSolverText(solverInfo);
 	}
@@ -264,7 +260,7 @@ public class ControlViewController implements PropertyChangeListener {
 		getSelectedSolver().ifPresent(this::updateSolverText);
 	}
 
-	private void updateSolverText(AlgorithmInfo solverInfo) {
+	private void updateSolverText(Algorithm solverInfo) {
 		String text = solverInfo.getDescription();
 		if (solverInfo.isTagged(SolverTag.INFORMED)) {
 			String metric = model.getMetric().toString();
@@ -274,7 +270,7 @@ public class ControlViewController implements PropertyChangeListener {
 		view.getLblSolverName().setText(text);
 	}
 
-	private void updateGeneratorText(AlgorithmInfo generatorInfo) {
+	private void updateGeneratorText(Algorithm generatorInfo) {
 		view.getLblGeneratorName().setText(generatorInfo.getDescription());
 	}
 }
