@@ -105,11 +105,6 @@ public class MazeDemoApp {
 		controlViewController.setBusy(false);
 	}
 
-	public void changeSelectedGridCellSize(int selectedIndex) {
-		model.setGridCellSizeIndex(selectedIndex);
-		reset();
-	}
-
 	public void showMessage(String msg) {
 		controlViewController.showMessage(msg + "\n");
 	}

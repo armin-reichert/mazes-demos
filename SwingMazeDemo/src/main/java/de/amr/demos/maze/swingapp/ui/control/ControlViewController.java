@@ -67,7 +67,8 @@ public class ControlViewController implements PropertyChangeListener {
 
 	final Action actionChangeGridResolution = action("Change Resolution", e -> {
 		JComboBox<?> combo = (JComboBox<?>) e.getSource();
-		theApp.changeSelectedGridCellSize(combo.getSelectedIndex());
+		getModel().setGridCellSizeIndex(combo.getSelectedIndex());
+		theApp.reset();
 		combo.requestFocusInWindow();
 	});
 
