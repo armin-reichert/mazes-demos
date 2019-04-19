@@ -12,7 +12,6 @@ import static de.amr.swing.Swing.setEnabled;
 import static de.amr.swing.Swing.setNormalCursor;
 import static de.amr.swing.Swing.setWaitCursor;
 
-import java.awt.Dimension;
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -40,13 +39,11 @@ import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 
 /**
- * Controller for the UI which controls the maze generation and solving..
+ * Controls the UI for maze generation and solving.
  * 
  * @author Armin Reichert
  */
 public class ControlViewController implements PropertyChangeListener {
-
-	private static final int COLLAPSED_WINDOW_HEIGHT = 160;
 
 	private final MazeDemoModel model;
 	private boolean hiddenWhenBusy;
@@ -71,11 +68,10 @@ public class ControlViewController implements PropertyChangeListener {
 	final Action actionFloodFill;
 	final Action actionSaveImage;
 
-	public ControlViewController(MazeDemoModel model, Dimension gridWindowSize,
-			GridViewController gridViewController) {
+	public ControlViewController(GridViewController gridViewController) {
 
 		// connect controller with model
-		this.model = model;
+		this.model = gridViewController.getModel();
 		model.changePublisher.addPropertyChangeListener(this);
 
 		// create actions
@@ -96,8 +92,8 @@ public class ControlViewController implements PropertyChangeListener {
 					TraversalState.COMPLETED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
-			theApp.getGridViewController().clearView();
-			theApp.getGridViewController().drawGrid();
+			gridViewController.clearView();
+			gridViewController.drawGrid();
 		});
 		actionStopBackgroundThread = action("Stop", e -> theApp.stopBackgroundThread());
 		actionCreateAllMazes = new CreateAllMazes("All Mazes", gridViewController, this);
@@ -110,8 +106,8 @@ public class ControlViewController implements PropertyChangeListener {
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = gridWindowSize.width / cellSize;
-			int numRows = gridWindowSize.height / cellSize;
+			int numCols = gridViewController.getWindow().getWidth() / cellSize;
+			int numRows = gridViewController.getWindow().getHeight() / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -189,7 +185,8 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public void placeWindowRelativeTo(Window parentWindow) {
-		window.setLocation((parentWindow.getWidth() - window.getWidth()) / 2, 42);
+		window.setLocation(parentWindow.getX() + (parentWindow.getWidth() - window.getWidth()) / 2,
+				parentWindow.getY() + 42);
 	}
 
 	public void showWindow() {
@@ -201,7 +198,7 @@ public class ControlViewController implements PropertyChangeListener {
 		view.getCollapsibleArea().setVisible(false);
 		view.getBtnShowHideDetails().setAction(actionExpandWindow);
 		window.pack();
-		window.setSize(window.getWidth(), COLLAPSED_WINDOW_HEIGHT);
+		window.setSize(window.getWidth(), window.getHeight() - view.getCollapsibleArea().getHeight());
 	}
 
 	public void expandWindow() {

@@ -40,6 +40,7 @@ public class ControlView extends JPanel {
 	private JScrollPane scrollPane;
 	private JPanel collapsibleArea;
 	private JButton btnShowHideDetails;
+	private JPanel fixedArea;
 
 	public ControlView() {
 		setBackground(new Color(210, 180, 140));
@@ -47,7 +48,7 @@ public class ControlView extends JPanel {
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
 
-		JPanel fixedArea = new JPanel();
+		fixedArea = new JPanel();
 		fixedArea.setOpaque(false);
 		add(fixedArea, BorderLayout.NORTH);
 		fixedArea.setLayout(new MigLayout("", "[][][][][grow][right]", "[28px][]"));
@@ -182,5 +183,9 @@ public class ControlView extends JPanel {
 
 	public JButton getBtnShowHideDetails() {
 		return btnShowHideDetails;
+	}
+
+	public JPanel getFixedArea() {
+		return fixedArea;
 	}
 }

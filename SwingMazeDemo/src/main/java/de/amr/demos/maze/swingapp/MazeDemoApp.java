@@ -67,10 +67,10 @@ public class MazeDemoApp {
 
 		gridViewController = new GridViewController(model, gridWindowSize);
 
-		controlViewController = new ControlViewController(model, gridWindowSize, gridViewController);
+		controlViewController = new ControlViewController(gridViewController);
+		controlViewController.setBusy(false);
 		controlViewController.setHiddenWhenBusy(false);
 		controlViewController.expandWindow();
-		controlViewController.setBusy(false);
 
 		model.findGenerator(Armin.class).ifPresent(controlViewController::selectGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
