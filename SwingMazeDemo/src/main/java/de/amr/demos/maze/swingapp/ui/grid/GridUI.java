@@ -29,9 +29,9 @@ public class GridUI implements PropertyChangeListener {
 	private final GridView view;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
 
-	public GridUI(MazeDemoModel model, Dimension windowSize) {
+	public GridUI(MazeDemoModel model, Dimension displayAreaSize) {
 		this.model = model;
-		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
+		model.createGrid(displayAreaSize.width / model.getGridCellSize(), displayAreaSize.height / model.getGridCellSize(),
 				false, TraversalState.UNVISITED);
 
 		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
@@ -40,10 +40,15 @@ public class GridUI implements PropertyChangeListener {
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
 		window.setContentPane(view.getCanvas());
-		window.setSize(windowSize);
-		if (windowSize.equals(getDisplaySize())) {
+		window.setResizable(false);
+		if (displayAreaSize.equals(getDisplaySize())) {
+			window.setSize(displayAreaSize);
 			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			window.setUndecorated(true);
+		} else {
+			view.getCanvas().setSize(displayAreaSize);
+			window.pack();
+			window.setLocationRelativeTo(null);
 		}
 		startModelChangeListening();
 	}

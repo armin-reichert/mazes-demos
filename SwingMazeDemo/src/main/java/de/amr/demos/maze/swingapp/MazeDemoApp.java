@@ -1,7 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
 import static de.amr.swing.Swing.action;
-import static de.amr.swing.Swing.getDisplaySize;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -20,14 +19,15 @@ import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.Armin;
+import de.amr.swing.Swing;
 
 /**
  * This application visualizes different maze generation algorithms and path finders.
  * <p>
- * The application provides an undecorated full-screen preview area where the maze generation and
- * path finding algorithms are displayed as animations. Using a control window one can change the
- * maze generation path finder algorithm. the size/resolution of the grid, the rendering style and
- * other settings.
+ * The application provides an undecorated (by default full-screen) grid display area where the maze
+ * generation and path finding animations are show. Using a control window one can change the maze
+ * generation path finder algorithm. the size/resolution of the grid, the rendering style and other
+ * settings.
  * 
  * @author Armin Reichert
  */
@@ -39,7 +39,13 @@ public class MazeDemoApp {
 			converter = ThemeConverter.class)
 	private String theme = NimbusLookAndFeel.class.getName();
 
-	private MazeDemoModel model;
+	@Parameter(description = "Grid window width", names = { "-width" })
+	private int windowWidth = Swing.getDisplaySize().width;
+
+	@Parameter(description = "Grid window height", names = { "-height" })
+	private int windowHeight = Swing.getDisplaySize().height;
+
+	private final MazeDemoModel model = new MazeDemoModel();
 	private ControlUI controlUI;
 	private GridUI gridUI;
 
@@ -48,23 +54,17 @@ public class MazeDemoApp {
 		JCommander commander = JCommander.newBuilder().addObject(theApp).build();
 		commander.usage();
 		commander.parse(args);
-		EventQueue.invokeLater(() -> theApp.createAndShowUI(getDisplaySize()));
+		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 
-	private MazeDemoApp() {
-		model = new MazeDemoModel();
-	}
-
-	private void createAndShowUI(Dimension gridWindowSize) {
+	private void createAndShowUI() {
 		try {
 			UIManager.setLookAndFeel(theme);
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-
-		gridUI = new GridUI(model, gridWindowSize);
-
+		gridUI = new GridUI(model, new Dimension(windowWidth, windowHeight));
 		controlUI = new ControlUI(gridUI);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
@@ -72,10 +72,8 @@ public class MazeDemoApp {
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
 		controlUI.expandWindow();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
-
 		gridUI.getView().getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showControlUI");
 		gridUI.getView().getCanvas().getActionMap().put("showControlUI", action("", e -> controlUI.show()));
-
 		gridUI.show();
 		controlUI.show();
 	}
