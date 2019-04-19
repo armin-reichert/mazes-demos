@@ -8,8 +8,8 @@ import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
@@ -28,11 +28,11 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 	}
 
-	protected final ControlViewController controlUI;
-	protected final GridViewController gridUI;
+	protected final ControlUI controlUI;
+	protected final GridUI gridUI;
 	protected final MazeDemoModel model;
 
-	public CreateMazeAction(String name, ControlViewController controlUI, GridViewController gridUI) {
+	public CreateMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
 		this.gridUI = gridUI;
 		this.controlUI = controlUI;

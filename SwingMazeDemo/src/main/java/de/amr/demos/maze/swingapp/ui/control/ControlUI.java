@@ -1,10 +1,10 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
-import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildOptionMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildSolverMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildCanvasMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildGeneratorMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildOptionMenu;
+import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildSolverMenu;
 import static de.amr.swing.Swing.action;
 import static de.amr.swing.Swing.icon;
 import static de.amr.swing.Swing.setEnabled;
@@ -39,7 +39,7 @@ import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
 import de.amr.demos.maze.swingapp.ui.grid.GridView;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
@@ -63,11 +63,11 @@ import de.amr.util.StopWatch;
  * 
  * @author Armin Reichert
  */
-public class ControlViewController implements PropertyChangeListener {
+public class ControlUI implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 
-	private final GridViewController gridViewController;
+	private final GridUI gridUI;
 
 	private Thread bgThread;
 	private boolean hiddenWhenBusy;
@@ -93,12 +93,12 @@ public class ControlViewController implements PropertyChangeListener {
 	final Action actionFloodFill;
 	final Action actionSaveImage;
 
-	public ControlViewController(GridViewController gridViewController) {
+	public ControlUI(GridUI gridUI) {
 
-		this.gridViewController = gridViewController;
+		this.gridUI = gridUI;
 
 		// connect controller with model
-		this.model = gridViewController.getModel();
+		this.model = gridUI.getModel();
 		model.changePublisher.addPropertyChangeListener(this);
 
 		afterGenerationAction = AfterGenerationAction.NOTHING;
@@ -119,22 +119,22 @@ public class ControlViewController implements PropertyChangeListener {
 			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), true, TraversalState.COMPLETED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
-			gridViewController.clearView();
-			gridViewController.drawGrid();
+			gridUI.clearView();
+			gridUI.drawGrid();
 		});
 		actionStopBackgroundThread = action("Stop", e -> stopBackgroundThread());
-		actionCreateAllMazes = new CreateAllMazes("All Mazes", this, gridViewController);
-		actionCreateSingleMaze = new CreateSingleMaze("New Maze", this, gridViewController);
-		actionSolveMaze = new SolveMaze("Solve", this, gridViewController);
-		actionFloodFill = new FloodFill("Flood-fill", this, gridViewController);
-		actionSaveImage = new SaveImage("Save Image...", this, gridViewController);
+		actionCreateAllMazes = new CreateAllMazes("All Mazes", this, gridUI);
+		actionCreateSingleMaze = new CreateSingleMaze("New Maze", this, gridUI);
+		actionSolveMaze = new SolveMaze("Solve", this, gridUI);
+		actionFloodFill = new FloodFill("Flood-fill", this, gridUI);
+		actionSaveImage = new SaveImage("Save Image...", this, gridUI);
 
 		// create and initialize UI
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = gridViewController.getWindow().getWidth() / cellSize;
-			int numRows = gridViewController.getWindow().getHeight() / cellSize;
+			int numCols = gridUI.getWindow().getWidth() / cellSize;
+			int numRows = gridUI.getWindow().getHeight() / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -287,13 +287,13 @@ public class ControlViewController implements PropertyChangeListener {
 
 	public void resetDisplay() {
 		setBusy(true);
-		gridViewController.stopModelChangeListening();
-		int numCols = gridViewController.getWindow().getWidth() / model.getGridCellSize();
-		int numRows = gridViewController.getWindow().getHeight() / model.getGridCellSize();
+		gridUI.stopModelChangeListening();
+		int numCols = gridUI.getWindow().getWidth() / model.getGridCellSize();
+		int numRows = gridUI.getWindow().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
 		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.resetView();
-		gridViewController.startModelChangeListening();
+		gridUI.resetView();
+		gridUI.startModelChangeListening();
 		setBusy(false);
 	}
 
@@ -303,11 +303,11 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public Optional<Algorithm> getSelectedGenerator() {
-		return ControlWindowMenus.getSelectedAlgorithm(generatorMenu);
+		return ControlUIMenus.getSelectedAlgorithm(generatorMenu);
 	}
 
 	public void selectGenerator(Algorithm generatorInfo) {
-		ControlWindowMenus.selectAlgorithm(generatorMenu, generatorInfo);
+		ControlUIMenus.selectAlgorithm(generatorMenu, generatorInfo);
 		updateGeneratorText(generatorInfo);
 		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
@@ -315,11 +315,11 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {
-		return ControlWindowMenus.getSelectedAlgorithm(solverMenu);
+		return ControlUIMenus.getSelectedAlgorithm(solverMenu);
 	}
 
 	public void selectSolver(Algorithm solverInfo) {
-		ControlWindowMenus.selectAlgorithm(solverMenu, solverInfo);
+		ControlUIMenus.selectAlgorithm(solverMenu, solverInfo);
 		updateSolverText(solverInfo);
 	}
 
@@ -366,7 +366,7 @@ public class ControlViewController implements PropertyChangeListener {
 	}
 
 	private void solve(ObservableGraphSearch solverInstance, Algorithm solver) {
-		GridView gridView = gridViewController.getView();
+		GridView gridView = gridUI.getView();
 		int source = model.getGrid().cell(model.getSolverSource());
 		int target = model.getGrid().cell(model.getSolverTarget());
 		boolean informed = solver.isTagged(SolverTag.INFORMED);

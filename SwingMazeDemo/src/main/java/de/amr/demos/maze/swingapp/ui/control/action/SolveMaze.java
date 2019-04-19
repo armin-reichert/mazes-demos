@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 
 /**
  * Animated execution of the selected path finding algorithm ("maze solver") on the current grid.
@@ -14,10 +14,10 @@ import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
  */
 public class SolveMaze extends AbstractAction {
 
-	private final ControlViewController controlUI;
-	private final GridViewController gridUI;
+	private final ControlUI controlUI;
+	private final GridUI gridUI;
 
-	public SolveMaze(String name, ControlViewController controlUI, GridViewController gridUI) {
+	public SolveMaze(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
 		this.controlUI = controlUI;
 		this.gridUI = gridUI;

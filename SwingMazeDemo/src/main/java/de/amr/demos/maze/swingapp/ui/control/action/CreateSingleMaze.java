@@ -3,8 +3,8 @@ package de.amr.demos.maze.swingapp.ui.control.action;
 import java.awt.event.ActionEvent;
 
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 
 /**
@@ -14,9 +14,8 @@ import de.amr.graph.core.api.TraversalState;
  */
 public class CreateSingleMaze extends CreateMazeAction {
 
-	public CreateSingleMaze(String name, ControlViewController controlViewController,
-			GridViewController gridViewController) {
-		super(name, controlViewController, gridViewController);
+	public CreateSingleMaze(String name, ControlUI controlUI, GridUI gridUI) {
+		super(name, controlUI, gridUI);
 	}
 
 	@Override
@@ -52,8 +51,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 					},
 
 					failure -> {
-						controlUI
-								.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
+						controlUI.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
 						controlUI.resetDisplay();
 					});
 		});

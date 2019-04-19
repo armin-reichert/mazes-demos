@@ -9,36 +9,35 @@ import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 
 public class SaveImage extends AbstractAction {
 
-	private final ControlViewController controlViewController;
-	private final GridViewController gridViewController;
+	private final ControlUI controlUI;
+	private final GridUI gridUI;
 
-	public SaveImage(String name, ControlViewController controlViewController,
-			GridViewController gridViewController) {
+	public SaveImage(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
-		this.controlViewController = controlViewController;
-		this.gridViewController = gridViewController;
+		this.controlUI = controlUI;
+		this.gridUI = gridUI;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Portable Network Graphics", "png"));
-		if (fileChooser.showSaveDialog(controlViewController.getWindow()) == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showSaveDialog(controlUI.getWindow()) == JFileChooser.APPROVE_OPTION) {
 			File pngFile = fileChooser.getSelectedFile();
 			String fileName = pngFile.getName();
 			if (!fileName.endsWith(".png")) {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(gridViewController.getView().getCanvas().getDrawingBuffer(), "png", pngFile);
-				controlViewController.showMessage("Image saved as " + pngFile);
+				ImageIO.write(gridUI.getView().getCanvas().getDrawingBuffer(), "png", pngFile);
+				controlUI.showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
-				controlViewController.showMessage("Image could not be saved: " + x.getMessage());
+				controlUI.showMessage("Image could not be saved: " + x.getMessage());
 			}
 		}
 	}

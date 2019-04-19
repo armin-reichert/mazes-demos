@@ -32,7 +32,7 @@ import de.amr.graph.grid.api.GridPosition;
  * 
  * @author Armin Reichert
  */
-public class ControlWindowMenus {
+public class ControlUIMenus {
 
 	public static Optional<Algorithm> getSelectedAlgorithm(JMenu radioButtonMenu) {
 		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
@@ -49,7 +49,7 @@ public class ControlWindowMenus {
 
 	// Maze generator menu
 
-	public static JMenu buildGeneratorMenu(ControlViewController controller) {
+	public static JMenu buildGeneratorMenu(ControlUI controller) {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
@@ -66,7 +66,7 @@ public class ControlWindowMenus {
 		//@formatter:on
 	}
 
-	private static JMenu generatorMenu(ControlViewController controller, ButtonGroup radio, String title,
+	private static JMenu generatorMenu(ControlUI controller, ButtonGroup radio, String title,
 			Predicate<Algorithm> selection) {
 		JMenu menu = new JMenu(title);
 		controller.getModel().generators().filter(selection).forEach(generator -> {
@@ -82,7 +82,7 @@ public class ControlWindowMenus {
 
 	// Solver menu
 
-	public static JMenu buildSolverMenu(ControlViewController controller) {
+	public static JMenu buildSolverMenu(ControlUI controller) {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
@@ -98,7 +98,7 @@ public class ControlWindowMenus {
 		//@formatter:on
 	}
 
-	private static Stream<JMenuItem> solverItems(ControlViewController controller, ButtonGroup radio,
+	private static Stream<JMenuItem> solverItems(ControlUI controller, ButtonGroup radio,
 			Predicate<Algorithm> selection) {
 		return controller.getModel().solvers().filter(selection).map(solver -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
@@ -110,7 +110,7 @@ public class ControlWindowMenus {
 		});
 	}
 
-	private static JMenu buildMetricsMenu(ControlViewController controller) {
+	private static JMenu buildMetricsMenu(ControlUI controller) {
 		Function<Metric, String> translation = metric -> metric.name().substring(0, 1)
 				+ metric.name().substring(1).toLowerCase();
 		//@formatter:off
@@ -129,7 +129,7 @@ public class ControlWindowMenus {
 
 	// Canvas menu
 
-	public static JMenu buildCanvasMenu(ControlViewController controller) {
+	public static JMenu buildCanvasMenu(ControlUI controller) {
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 			.title("Canvas")
@@ -146,7 +146,7 @@ public class ControlWindowMenus {
 
 	// Option menu
 
-	public static JMenu buildOptionMenu(ControlViewController controller) {
+	public static JMenu buildOptionMenu(ControlUI controller) {
 		final MazeDemoModel model = controller.getModel();
 		//@formatter:off
 		return MenuBuilder.newBuilder()

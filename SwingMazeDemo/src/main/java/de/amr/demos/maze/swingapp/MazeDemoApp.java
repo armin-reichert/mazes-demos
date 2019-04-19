@@ -14,8 +14,8 @@ import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.Armin;
 
@@ -42,9 +42,9 @@ public class MazeDemoApp {
 
 	private MazeDemoModel model;
 
-	private ControlViewController controlViewController;
+	private ControlUI controlUI;
 
-	private GridViewController gridViewController;
+	private GridUI gridUI;
 
 	private MazeDemoApp() {
 		model = new MazeDemoModel();
@@ -59,16 +59,16 @@ public class MazeDemoApp {
 			e.printStackTrace();
 		}
 
-		gridViewController = new GridViewController(model, gridWindowSize);
-		gridViewController.showWindow();
+		gridUI = new GridUI(model, gridWindowSize);
+		gridUI.showWindow();
 
-		controlViewController = new ControlViewController(gridViewController);
-		controlViewController.setBusy(false);
-		controlViewController.setHiddenWhenBusy(false);
-		model.findGenerator(Armin.class).ifPresent(controlViewController::selectGenerator);
-		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
-		controlViewController.expandWindow();
-		controlViewController.placeWindowRelativeTo(gridViewController.getWindow());
-		controlViewController.showWindow();
+		controlUI = new ControlUI(gridUI);
+		controlUI.setBusy(false);
+		controlUI.setHiddenWhenBusy(false);
+		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
+		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
+		controlUI.expandWindow();
+		controlUI.placeWindowRelativeTo(gridUI.getWindow());
+		controlUI.showWindow();
 	}
 }

@@ -25,7 +25,7 @@ import de.amr.util.StopWatch;
  * 
  * @author Armin Reichert
  */
-public class GridViewController implements PropertyChangeListener {
+public class GridUI implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 
@@ -35,7 +35,7 @@ public class GridViewController implements PropertyChangeListener {
 
 	private final Action actionShowControlWindow = action("Show Controls", e -> showWindow());
 
-	public GridViewController(MazeDemoModel model, Dimension windowSize) {
+	public GridUI(MazeDemoModel model, Dimension windowSize) {
 		this.model = model;
 		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
 				false, TraversalState.UNVISITED);

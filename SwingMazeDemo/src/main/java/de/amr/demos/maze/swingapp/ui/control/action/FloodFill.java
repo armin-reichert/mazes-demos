@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.util.StopWatch;
 
 /**
@@ -18,35 +18,34 @@ import de.amr.util.StopWatch;
  */
 public class FloodFill extends AbstractAction {
 
-	private final ControlViewController controlViewController;
-	private final GridViewController gridViewController;
+	private final ControlUI controlUI;
+	private final GridUI gridUI;
 	private final MazeDemoModel model;
 
-	public FloodFill(String name, ControlViewController controlViewController,
-			GridViewController gridViewController) {
+	public FloodFill(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
-		this.controlViewController = controlViewController;
-		this.gridViewController = gridViewController;
-		this.model = controlViewController.getModel();
+		this.controlUI = controlUI;
+		this.gridUI = gridUI;
+		this.model = controlUI.getModel();
 	}
 
 	private void floodFill() {
-		gridViewController.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
+		gridUI.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		controlViewController.startBackgroundThread(
+		controlUI.startBackgroundThread(
 
 				() -> {
-					gridViewController.drawGrid();
+					gridUI.drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::floodFill);
-					controlViewController.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
+					controlUI.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
 				},
 
 				interruption -> {
-					controlViewController.showMessage("Flood-fill interrupted");
+					controlUI.showMessage("Flood-fill interrupted");
 				},
 
 				failure -> {

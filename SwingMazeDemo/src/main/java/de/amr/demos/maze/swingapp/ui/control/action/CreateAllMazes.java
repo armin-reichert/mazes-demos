@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
-import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
-import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
+import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 
 /**
@@ -15,9 +15,8 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
  */
 public class CreateAllMazes extends CreateMazeAction {
 
-	public CreateAllMazes(String name, ControlViewController controlViewController,
-			GridViewController gridViewController) {
-		super(name, controlViewController, gridViewController);
+	public CreateAllMazes(String name, ControlUI controlUI, GridUI gridUI) {
+		super(name, controlUI, gridUI);
 	}
 
 	@Override
@@ -62,8 +61,7 @@ public class CreateAllMazes extends CreateMazeAction {
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError x) {
-				controlUI
-						.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
+				controlUI.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
 				controlUI.resetDisplay();
 			} catch (Exception x) {
 				throw new RuntimeException(x);
