@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
-
 import java.awt.event.ActionEvent;
 
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
@@ -16,15 +14,15 @@ import de.amr.graph.core.api.TraversalState;
  */
 public class CreateSingleMaze extends CreateMazeAction {
 
-	public CreateSingleMaze(String name, GridViewController gridViewController,
-			ControlViewController controlViewController) {
-		super(name, gridViewController, controlViewController);
+	public CreateSingleMaze(String name, ControlViewController controlViewController,
+			GridViewController gridViewController) {
+		super(name, controlViewController, gridViewController);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		controlViewController.getSelectedGenerator().ifPresent(generatorInfo -> {
-			theApp.startBackgroundThread(
+			controlViewController.startBackgroundThread(
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
@@ -39,13 +37,14 @@ public class CreateSingleMaze extends CreateMazeAction {
 					},
 
 					interruption -> {
-						theApp.showMessage("Animation interrupted");
-						theApp.reset();
+						controlViewController.showMessage("Animation interrupted");
+						controlViewController.resetDisplay();
 					},
 
 					failure -> {
-						theApp.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
-						theApp.reset();
+						controlViewController
+								.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
+						controlViewController.resetDisplay();
 					});
 		});
 	}

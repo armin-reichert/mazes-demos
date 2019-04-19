@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
-
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -12,32 +10,35 @@ import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
+import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 
 public class SaveImage extends AbstractAction {
 
-	private ControlViewController controller;
+	private final ControlViewController controlViewController;
+	private final GridViewController gridViewController;
 
-	public SaveImage(String name, ControlViewController controller) {
+	public SaveImage(String name, ControlViewController controlViewController,
+			GridViewController gridViewController) {
 		super(name);
-		this.controller = controller;
+		this.controlViewController = controlViewController;
+		this.gridViewController = gridViewController;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Portable Network Graphics", "png"));
-		if (fileChooser.showSaveDialog(controller.getWindow()) == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showSaveDialog(controlViewController.getWindow()) == JFileChooser.APPROVE_OPTION) {
 			File pngFile = fileChooser.getSelectedFile();
 			String fileName = pngFile.getName();
 			if (!fileName.endsWith(".png")) {
 				pngFile = new File(pngFile.getParentFile(), fileName + ".png");
 			}
 			try {
-				ImageIO.write(theApp.getGridViewController().getView().getCanvas().getDrawingBuffer(), "png",
-						pngFile);
-				theApp.showMessage("Image saved as " + pngFile);
+				ImageIO.write(gridViewController.getView().getCanvas().getDrawingBuffer(), "png", pngFile);
+				controlViewController.showMessage("Image saved as " + pngFile);
 			} catch (IOException x) {
-				theApp.showMessage("Image could not be saved: " + x.getMessage());
+				controlViewController.showMessage("Image could not be saved: " + x.getMessage());
 			}
 		}
 	}

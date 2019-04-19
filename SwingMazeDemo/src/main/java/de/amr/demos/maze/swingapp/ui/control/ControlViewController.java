@@ -1,6 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildCanvasMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlWindowMenus.buildGeneratorMenu;
@@ -17,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
@@ -37,6 +37,7 @@ import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 
 /**
  * Controls the UI for maze generation and solving.
@@ -46,6 +47,10 @@ import de.amr.graph.core.api.TraversalState;
 public class ControlViewController implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
+
+	private final GridViewController gridViewController;
+
+	private Thread bgThread;
 	private boolean hiddenWhenBusy;
 
 	private final JFrame window;
@@ -70,6 +75,8 @@ public class ControlViewController implements PropertyChangeListener {
 
 	public ControlViewController(GridViewController gridViewController) {
 
+		this.gridViewController = gridViewController;
+
 		// connect controller with model
 		this.model = gridViewController.getModel();
 		model.changePublisher.addPropertyChangeListener(this);
@@ -79,28 +86,26 @@ public class ControlViewController implements PropertyChangeListener {
 		actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
 		actionChangeGridResolution = action("Change Resolution", e -> {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
-			getModel().setGridCellSizeIndex(combo.getSelectedIndex());
-			theApp.reset();
+			model.setGridCellSizeIndex(combo.getSelectedIndex());
+			resetDisplay();
 			combo.requestFocusInWindow();
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> {
-			getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), false,
-					TraversalState.COMPLETED);
+			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), false, TraversalState.COMPLETED);
 		});
 		actionCreateFullGrid = action("Create Full Grid", e -> {
-			getModel().createGrid(getModel().getGrid().numCols(), getModel().getGrid().numRows(), true,
-					TraversalState.COMPLETED);
+			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), true, TraversalState.COMPLETED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridViewController.clearView();
 			gridViewController.drawGrid();
 		});
-		actionStopBackgroundThread = action("Stop", e -> theApp.stopBackgroundThread());
-		actionCreateAllMazes = new CreateAllMazes("All Mazes", gridViewController, this);
-		actionCreateSingleMaze = new CreateSingleMaze("New Maze", gridViewController, this);
-		actionSolveMaze = new SolveMaze("Solve");
-		actionFloodFill = new FloodFill("Flood-fill", gridViewController);
-		actionSaveImage = new SaveImage("Save Image...", this);
+		actionStopBackgroundThread = action("Stop", e -> stopBackgroundThread());
+		actionCreateAllMazes = new CreateAllMazes("All Mazes", this, gridViewController);
+		actionCreateSingleMaze = new CreateSingleMaze("New Maze", this, gridViewController);
+		actionSolveMaze = new SolveMaze("Solve", this, gridViewController);
+		actionFloodFill = new FloodFill("Flood-fill", this, gridViewController);
+		actionSaveImage = new SaveImage("Save Image...", this, gridViewController);
 
 		// create and initialize UI
 		view = new ControlView();
@@ -154,6 +159,29 @@ public class ControlViewController implements PropertyChangeListener {
 		updateMenuSelection(solverMenu);
 		updateMenuSelection(canvasMenu);
 		updateMenuSelection(optionMenu);
+	}
+
+	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
+			Consumer<Throwable> onFailure) {
+		bgThread = new Thread(() -> {
+			setBusy(true);
+			code.run();
+			setBusy(false);
+		}, "MazeDemoWorker");
+		bgThread.setUncaughtExceptionHandler((thread, e) -> {
+			if (e.getClass() == AnimationInterruptedException.class) {
+				onInterruption.accept((AnimationInterruptedException) e);
+			}
+			else {
+				onFailure.accept(e);
+			}
+			setBusy(false);
+		});
+		bgThread.start();
+	}
+
+	public void stopBackgroundThread() {
+		bgThread.interrupt();
 	}
 
 	@Override
@@ -269,5 +297,17 @@ public class ControlViewController implements PropertyChangeListener {
 
 	private void updateGeneratorText(Algorithm generatorInfo) {
 		view.getLblGeneratorName().setText(generatorInfo.getDescription());
+	}
+
+	public void resetDisplay() {
+		setBusy(true);
+		gridViewController.stopModelChangeListening();
+		int numCols = gridViewController.getWindow().getWidth() / model.getGridCellSize();
+		int numRows = gridViewController.getWindow().getHeight() / model.getGridCellSize();
+		boolean full = model.getGrid().isFull();
+		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		gridViewController.resetView();
+		gridViewController.startModelChangeListening();
+		setBusy(false);
 	}
 }

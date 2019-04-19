@@ -4,7 +4,6 @@ import static de.amr.swing.Swing.getDisplaySize;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.util.function.Consumer;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -17,8 +16,6 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
-import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.Armin;
 
@@ -34,23 +31,20 @@ import de.amr.maze.alg.Armin;
  */
 public class MazeDemoApp {
 
-	public static final MazeDemoApp theApp = new MazeDemoApp();
-
 	public static void main(String[] args) {
+		MazeDemoApp theApp = new MazeDemoApp();
 		JCommander.newBuilder().addObject(theApp).build().parse(args);
 		EventQueue.invokeLater(() -> theApp.createAndShowUI(getDisplaySize()));
 	}
 
-	private final MazeDemoModel model;
+	@Parameter(names = { "-theme" }, description = "Theme", converter = ThemeConverter.class)
+	private String theme;
+
+	private MazeDemoModel model;
 
 	private ControlViewController controlViewController;
 
 	private GridViewController gridViewController;
-
-	private Thread bgThread;
-
-	@Parameter(names = { "-theme" }, description = "Theme", converter = ThemeConverter.class)
-	private String theme;
 
 	private MazeDemoApp() {
 		model = new MazeDemoModel();
@@ -66,68 +60,15 @@ public class MazeDemoApp {
 		}
 
 		gridViewController = new GridViewController(model, gridWindowSize);
+		gridViewController.showWindow();
 
 		controlViewController = new ControlViewController(gridViewController);
 		controlViewController.setBusy(false);
 		controlViewController.setHiddenWhenBusy(false);
-		controlViewController.expandWindow();
-
 		model.findGenerator(Armin.class).ifPresent(controlViewController::selectGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlViewController::selectSolver);
-
-		gridViewController.showWindow();
+		controlViewController.expandWindow();
 		controlViewController.placeWindowRelativeTo(gridViewController.getWindow());
 		controlViewController.showWindow();
-	}
-
-	public MazeDemoModel getModel() {
-		return model;
-	}
-
-	public ControlViewController getControlViewController() {
-		return controlViewController;
-	}
-
-	public GridViewController getGridViewController() {
-		return gridViewController;
-	}
-
-	public void reset() {
-		controlViewController.setBusy(true);
-		gridViewController.stopModelChangeListening();
-		int numCols = getGridViewController().getWindow().getWidth() / model.getGridCellSize();
-		int numRows = getGridViewController().getWindow().getHeight() / model.getGridCellSize();
-		boolean full = model.getGrid().isFull();
-		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.resetView();
-		gridViewController.startModelChangeListening();
-		controlViewController.setBusy(false);
-	}
-
-	public void showMessage(String msg) {
-		controlViewController.showMessage(msg);
-	}
-
-	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
-			Consumer<Throwable> onFailure) {
-		bgThread = new Thread(() -> {
-			controlViewController.setBusy(true);
-			code.run();
-			controlViewController.setBusy(false);
-		}, "MazeDemoWorker");
-		bgThread.setUncaughtExceptionHandler((thread, e) -> {
-			if (e.getClass() == AnimationInterruptedException.class) {
-				onInterruption.accept((AnimationInterruptedException) e);
-			}
-			else {
-				onFailure.accept(e);
-			}
-			controlViewController.setBusy(false);
-		});
-		bgThread.start();
-	}
-
-	public void stopBackgroundThread() {
-		bgThread.interrupt();
 	}
 }

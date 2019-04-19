@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
-
 import java.awt.event.ActionEvent;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
@@ -17,26 +15,26 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
  */
 public class CreateAllMazes extends CreateMazeAction {
 
-	public CreateAllMazes(String name, GridViewController gridViewController,
-			ControlViewController controlViewController) {
-		super(name, gridViewController, controlViewController);
+	public CreateAllMazes(String name, ControlViewController controlViewController,
+			GridViewController gridViewController) {
+		super(name, controlViewController, gridViewController);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		theApp.startBackgroundThread(
+		controlViewController.startBackgroundThread(
 
 				this::createAllMazes,
 
 				interruption -> {
-					theApp.showMessage("Animation interrupted");
-					theApp.reset();
+					controlViewController.showMessage("Animation interrupted");
+					controlViewController.resetDisplay();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
-					theApp.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
-					theApp.reset();
+					controlViewController.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
+					controlViewController.resetDisplay();
 				});
 	}
 
@@ -54,13 +52,14 @@ public class CreateAllMazes extends CreateMazeAction {
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError x) {
-				theApp.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
-				theApp.reset();
+				controlViewController
+						.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
+				controlViewController.resetDisplay();
 			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
 			pause(2);
 		}
-		theApp.showMessage("Done.");
+		controlViewController.showMessage("Done.");
 	}
 }

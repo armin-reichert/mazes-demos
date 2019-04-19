@@ -1,6 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.String.format;
 
 import java.lang.reflect.InvocationTargetException;
@@ -29,12 +28,12 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 	}
 
-	protected final GridViewController gridViewController;
 	protected final ControlViewController controlViewController;
+	protected final GridViewController gridViewController;
 	protected final MazeDemoModel model;
 
-	public CreateMazeAction(String name, GridViewController gridViewController,
-			ControlViewController controlViewController) {
+	public CreateMazeAction(String name, ControlViewController controlViewController,
+			GridViewController gridViewController) {
 		super(name);
 		this.gridViewController = gridViewController;
 		this.controlViewController = controlViewController;
@@ -58,7 +57,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
-		theApp.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
+		controlViewController
+				.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
 		if (model.isGenerationAnimated()) {
 			generatorInstance.createMaze(x, y);
 		}
@@ -69,9 +69,9 @@ public abstract class CreateMazeAction extends AbstractAction {
 			watch.start();
 			generatorInstance.createMaze(x, y);
 			watch.stop();
-			theApp.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
+			controlViewController.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> gridViewController.drawGrid());
-			theApp.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
+			controlViewController.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
 			gridViewController.getAnimation().setEnabled(true);
 		}
 	}

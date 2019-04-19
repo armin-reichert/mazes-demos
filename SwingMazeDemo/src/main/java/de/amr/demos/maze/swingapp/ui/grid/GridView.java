@@ -42,7 +42,7 @@ public class GridView {
 		this.fnPassageWidth = fnPassageWidth;
 		reset(grid, cellSize);
 	}
-	
+
 	public void changeGridSize(GridGraph<TraversalState, Integer> grid, int cellSize) {
 		canvas.setGrid(grid, false);
 		canvas.replaceRenderer(createRenderer(grid, cellSize));

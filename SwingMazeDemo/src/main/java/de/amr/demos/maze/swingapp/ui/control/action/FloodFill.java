@@ -1,6 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static de.amr.demos.maze.swingapp.MazeDemoApp.theApp;
 import static java.lang.String.format;
 
 import java.awt.event.ActionEvent;
@@ -8,6 +7,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.ui.control.ControlViewController;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.util.StopWatch;
 
@@ -18,31 +18,35 @@ import de.amr.util.StopWatch;
  */
 public class FloodFill extends AbstractAction {
 
-	private final GridViewController controller;
+	private final ControlViewController controlViewController;
+	private final GridViewController gridViewController;
+	private final MazeDemoModel model;
 
-	public FloodFill(String name, GridViewController controller) {
+	public FloodFill(String name, ControlViewController controlViewController,
+			GridViewController gridViewController) {
 		super(name);
-		this.controller = controller;
+		this.controlViewController = controlViewController;
+		this.gridViewController = gridViewController;
+		this.model = controlViewController.getModel();
 	}
 
 	private void floodFill() {
-		MazeDemoModel model = controller.getModel();
-		controller.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
+		gridViewController.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		theApp.startBackgroundThread(
+		controlViewController.startBackgroundThread(
 
 				() -> {
-					controller.drawGrid();
+					gridViewController.drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(this::floodFill);
-					theApp.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
+					controlViewController.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
 				},
 
 				interruption -> {
-					theApp.showMessage("Flood-fill interrupted");
+					controlViewController.showMessage("Flood-fill interrupted");
 				},
 
 				failure -> {
