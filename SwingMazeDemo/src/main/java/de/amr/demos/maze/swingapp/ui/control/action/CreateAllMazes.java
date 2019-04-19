@@ -22,19 +22,19 @@ public class CreateAllMazes extends CreateMazeAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		controlViewController.startBackgroundThread(
+		controlUI.startBackgroundThread(
 
 				this::createAllMazes,
 
 				interruption -> {
-					controlViewController.showMessage("Animation interrupted");
-					controlViewController.resetDisplay();
+					controlUI.showMessage("Animation interrupted");
+					controlUI.resetDisplay();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
-					controlViewController.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
-					controlViewController.resetDisplay();
+					controlUI.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
+					controlUI.resetDisplay();
 				});
 	}
 
@@ -42,24 +42,34 @@ public class CreateAllMazes extends CreateMazeAction {
 		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow))
 				.toArray(Algorithm[]::new);
 		for (Algorithm generator : fastOnes) {
-			controlViewController.selectGenerator(generator);
+			controlUI.selectGenerator(generator);
 			try {
 				createMaze(generator, model.getGenerationStart());
-				if (model.isFloodFillAfterGeneration()) {
+				switch (controlUI.getAfterGenerationAction()) {
+				case FLOOD_FILL:
 					pause(1);
 					floodFill();
+					break;
+				case NOTHING:
+					break;
+				case SOLVE:
+					pause(1);
+					controlUI.solve();
+					break;
+				default:
+					break;
 				}
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError x) {
-				controlViewController
+				controlUI
 						.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
-				controlViewController.resetDisplay();
+				controlUI.resetDisplay();
 			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
 			pause(2);
 		}
-		controlViewController.showMessage("Done.");
+		controlUI.showMessage("Done.");
 	}
 }

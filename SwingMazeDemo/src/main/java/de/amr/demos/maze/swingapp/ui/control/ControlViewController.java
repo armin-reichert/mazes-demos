@@ -10,6 +10,7 @@ import static de.amr.swing.Swing.icon;
 import static de.amr.swing.Swing.setEnabled;
 import static de.amr.swing.Swing.setNormalCursor;
 import static de.amr.swing.Swing.setWaitCursor;
+import static java.lang.String.format;
 
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
@@ -17,6 +18,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.ToDoubleBiFunction;
 
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
@@ -30,14 +32,31 @@ import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
+import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.demos.maze.swingapp.ui.grid.GridViewController;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
+import de.amr.graph.grid.ui.animation.BFSAnimation;
+import de.amr.graph.grid.ui.animation.DFSAnimation;
+import de.amr.graph.pathfinder.api.ObservableGraphSearch;
+import de.amr.graph.pathfinder.impl.AStarSearch;
+import de.amr.graph.pathfinder.impl.BestFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiAStarSearch;
+import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
+import de.amr.graph.pathfinder.impl.BidiDijkstraSearch;
+import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
+import de.amr.graph.pathfinder.impl.DepthFirstSearch;
+import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
+import de.amr.graph.pathfinder.impl.DijkstraSearch;
+import de.amr.graph.pathfinder.impl.HillClimbingSearch;
+import de.amr.graph.pathfinder.impl.IDDFS;
+import de.amr.util.StopWatch;
 
 /**
  * Controls the UI for maze generation and solving.
@@ -52,6 +71,7 @@ public class ControlViewController implements PropertyChangeListener {
 
 	private Thread bgThread;
 	private boolean hiddenWhenBusy;
+	private AfterGenerationAction afterGenerationAction;
 
 	private final JFrame window;
 	private final JMenu generatorMenu;
@@ -80,6 +100,8 @@ public class ControlViewController implements PropertyChangeListener {
 		// connect controller with model
 		this.model = gridViewController.getModel();
 		model.changePublisher.addPropertyChangeListener(this);
+
+		afterGenerationAction = AfterGenerationAction.NOTHING;
 
 		// create actions
 		actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
@@ -204,6 +226,14 @@ public class ControlViewController implements PropertyChangeListener {
 		updateMenuSelection(optionMenu);
 	}
 
+	public AfterGenerationAction getAfterGenerationAction() {
+		return afterGenerationAction;
+	}
+
+	public void setAfterGenerationAction(AfterGenerationAction afterGenerationAction) {
+		this.afterGenerationAction = afterGenerationAction;
+	}
+
 	public JFrame getWindow() {
 		return window;
 	}
@@ -255,6 +285,18 @@ public class ControlViewController implements PropertyChangeListener {
 		}
 	}
 
+	public void resetDisplay() {
+		setBusy(true);
+		gridViewController.stopModelChangeListening();
+		int numCols = gridViewController.getWindow().getWidth() / model.getGridCellSize();
+		int numRows = gridViewController.getWindow().getHeight() / model.getGridCellSize();
+		boolean full = model.getGrid().isFull();
+		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		gridViewController.resetView();
+		gridViewController.startModelChangeListening();
+		setBusy(false);
+	}
+
 	public void showMessage(String msg) {
 		view.getTextArea().append(msg + "\n");
 		view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
@@ -281,6 +323,83 @@ public class ControlViewController implements PropertyChangeListener {
 		updateSolverText(solverInfo);
 	}
 
+	public void solve() {
+		if (!getSelectedSolver().isPresent()) {
+			return;
+		}
+		Algorithm solver = getSelectedSolver().get();
+		int targetCell = model.getGrid().cell(model.getSolverTarget());
+
+		if (solver.getAlgorithmClass() == BreadthFirstSearch.class) {
+			solve(new BreadthFirstSearch(model.getGrid()), solver);
+		}
+		else if (solver.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
+			solve(new BidiBreadthFirstSearch(model.getGrid(), (u, v) -> 1), solver);
+		}
+		else if (solver.getAlgorithmClass() == DijkstraSearch.class) {
+			solve(new DijkstraSearch(model.getGrid(), (u, v) -> 1), solver);
+		}
+		else if (solver.getAlgorithmClass() == BidiDijkstraSearch.class) {
+			solve(new BidiDijkstraSearch(model.getGrid(), (u, v) -> 1), solver);
+		}
+		else if (solver.getAlgorithmClass() == BestFirstSearch.class) {
+			solve(new BestFirstSearch(model.getGrid(), v -> metric().applyAsDouble(v, targetCell)), solver);
+		}
+		else if (solver.getAlgorithmClass() == AStarSearch.class) {
+			solve(new AStarSearch(model.getGrid(), (u, v) -> 1, metric()), solver);
+		}
+		else if (solver.getAlgorithmClass() == BidiAStarSearch.class) {
+			solve(new BidiAStarSearch(model.getGrid(), (u, v) -> 1, metric(), metric()), solver);
+		}
+		else if (solver.getAlgorithmClass() == DepthFirstSearch.class) {
+			solve(new DepthFirstSearch(model.getGrid()), solver);
+		}
+		else if (solver.getAlgorithmClass() == DepthFirstSearch2.class) {
+			solve(new DepthFirstSearch2(model.getGrid()), solver);
+		}
+		else if (solver.getAlgorithmClass() == IDDFS.class) {
+			solve(new IDDFS(model.getGrid()), solver);
+		}
+		else if (solver.getAlgorithmClass() == HillClimbingSearch.class) {
+			solve(new HillClimbingSearch(model.getGrid(), v -> metric().applyAsDouble(v, targetCell)), solver);
+		}
+	}
+
+	private void solve(ObservableGraphSearch solverInstance, Algorithm solver) {
+		GridView gridView = gridViewController.getView();
+		int source = model.getGrid().cell(model.getSolverSource());
+		int target = model.getGrid().cell(model.getSolverTarget());
+		boolean informed = solver.isTagged(SolverTag.INFORMED);
+		StopWatch watch = new StopWatch();
+		if (solver.isTagged(SolverTag.BFS)) {
+			BFSAnimation anim = BFSAnimation.builder().canvas(gridView.getCanvas()).delay(() -> model.getDelay())
+					.pathColor(gridView.getPathColor()).distanceVisible(model.isDistancesVisible()).build();
+			watch.measure(() -> anim.run(solverInstance, source, target));
+			anim.showPath(solverInstance, source, target);
+		}
+		else if (solver.isTagged(SolverTag.DFS)) {
+			DFSAnimation anim = DFSAnimation.builder().canvas(gridView.getCanvas()).delay(() -> model.getDelay())
+					.pathColor(gridView.getPathColor()).build();
+			watch.measure(() -> anim.run(solverInstance, source, target));
+		}
+		showMessage(informed
+				? format("%s (%s): %.2f seconds.", solver.getDescription(), model.getMetric(), watch.getSeconds())
+				: format("%s: %.2f seconds.", solver.getDescription(), watch.getSeconds()));
+	}
+
+	private ToDoubleBiFunction<Integer, Integer> metric() {
+		switch (model.getMetric()) {
+		case CHEBYSHEV:
+			return model.getGrid()::chebyshev;
+		case EUCLIDEAN:
+			return model.getGrid()::euclidean;
+		case MANHATTAN:
+			return model.getGrid()::manhattan;
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
 	private void onMetricChanged(Metric metric) {
 		getSelectedSolver().ifPresent(this::updateSolverText);
 	}
@@ -297,17 +416,5 @@ public class ControlViewController implements PropertyChangeListener {
 
 	private void updateGeneratorText(Algorithm generatorInfo) {
 		view.getLblGeneratorName().setText(generatorInfo.getDescription());
-	}
-
-	public void resetDisplay() {
-		setBusy(true);
-		gridViewController.stopModelChangeListening();
-		int numCols = gridViewController.getWindow().getWidth() / model.getGridCellSize();
-		int numRows = gridViewController.getWindow().getHeight() / model.getGridCellSize();
-		boolean full = model.getGrid().isFull();
-		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-		gridViewController.resetView();
-		gridViewController.startModelChangeListening();
-		setBusy(false);
 	}
 }

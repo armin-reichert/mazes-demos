@@ -21,30 +21,40 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		controlViewController.getSelectedGenerator().ifPresent(generatorInfo -> {
-			controlViewController.startBackgroundThread(
+		controlUI.getSelectedGenerator().ifPresent(generatorInfo -> {
+			controlUI.startBackgroundThread(
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 						model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
 								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-						gridViewController.clearView();
+						gridUI.clearView();
 						createMaze(generatorInfo, model.getGenerationStart());
-						if (model.isFloodFillAfterGeneration()) {
+						switch (controlUI.getAfterGenerationAction()) {
+						case FLOOD_FILL:
 							pause(1);
 							floodFill();
+							break;
+						case NOTHING:
+							break;
+						case SOLVE:
+							pause(1);
+							controlUI.solve();
+							break;
+						default:
+							break;
 						}
 					},
 
 					interruption -> {
-						controlViewController.showMessage("Animation interrupted");
-						controlViewController.resetDisplay();
+						controlUI.showMessage("Animation interrupted");
+						controlUI.resetDisplay();
 					},
 
 					failure -> {
-						controlViewController
+						controlUI
 								.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
-						controlViewController.resetDisplay();
+						controlUI.resetDisplay();
 					});
 		});
 	}

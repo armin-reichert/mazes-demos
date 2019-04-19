@@ -162,7 +162,6 @@ public class MazeDemoModel {
 	private boolean generationAnimated;
 	private int delay;
 	private GridPosition generationStart;
-	private boolean floodFillAfterGeneration;
 	private boolean distancesVisible;
 	private Metric metric;
 	private GridPosition solverSource;
@@ -180,7 +179,6 @@ public class MazeDemoModel {
 		setSolverTarget(BOTTOM_RIGHT);
 		setMetric(Metric.EUCLIDEAN);
 		setGenerationAnimated(true);
-		setFloodFillAfterGeneration(false);
 		setDistancesVisible(false);
 	}
 
@@ -286,14 +284,6 @@ public class MazeDemoModel {
 		Metric oldMetric = this.metric;
 		this.metric = newMetric;
 		changePublisher.firePropertyChange("metric", oldMetric, newMetric);
-	}
-
-	public boolean isFloodFillAfterGeneration() {
-		return floodFillAfterGeneration;
-	}
-
-	public void setFloodFillAfterGeneration(boolean floodFillAfterGeneration) {
-		this.floodFillAfterGeneration = floodFillAfterGeneration;
 	}
 
 	public boolean isDistancesVisible() {

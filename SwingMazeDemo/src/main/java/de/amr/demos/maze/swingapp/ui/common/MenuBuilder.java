@@ -40,7 +40,7 @@ public class MenuBuilder {
 			}
 			else if (item instanceof JRadioButtonMenuItem) {
 				JRadioButtonMenuItem radioButton = (JRadioButtonMenuItem) item;
-				Optional<Supplier<Boolean>> selection = getProperty(radioButton, "selection");
+				Optional<Supplier<?>> selection = getProperty(radioButton, "selection");
 				Optional<?> selectionValue = getProperty(radioButton, "selectionValue");
 				if (selection.isPresent() && selectionValue.isPresent()
 						&& selection.get().get().equals(selectionValue.get())) {
@@ -141,8 +141,8 @@ public class MenuBuilder {
 			}
 
 			public RadioButtonGroupBuilder<T> build() {
-				Objects.requireNonNull(selectionValue);
-				Objects.requireNonNull(selection);
+				Objects.requireNonNull(selectionValue, "selection value is required");
+				Objects.requireNonNull(selection, "selection function is required");
 				JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
 				radioButton.putClientProperty("selectionValue", selectionValue);
 				radioButton.putClientProperty("selection", selection);

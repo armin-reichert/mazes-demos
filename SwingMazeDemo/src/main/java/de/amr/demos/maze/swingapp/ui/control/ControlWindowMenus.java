@@ -24,6 +24,7 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.graph.grid.api.GridPosition;
 
 /**
@@ -154,15 +155,27 @@ public class ControlWindowMenus {
 			.menu(buildPositionMenu("Solution Start", model::setSolverSource, model::getSolverSource))
 			.menu(buildPositionMenu("Solution Target", model::setSolverTarget, model::getSolverTarget))
 			.separator()
+			.radioButtonGroup(AfterGenerationAction.class)
+				.onSelect(controller::setAfterGenerationAction)
+				.selection(controller::getAfterGenerationAction)
+				.button()
+					.text("No action after generation")
+					.selectionValue(AfterGenerationAction.NOTHING)
+					.build()
+				.button()
+					.text("Solve after generation")
+					.selectionValue(AfterGenerationAction.SOLVE)
+					.build()
+				.button()
+					.text("Flood-fill after generation")
+					.selectionValue(AfterGenerationAction.FLOOD_FILL)
+					.build()
+			.build()
+			.separator()
 			.checkBox()
 				.text("Animate Generation")
 				.onSelect(model::setGenerationAnimated)
 				.selection(model::isGenerationAnimated)
-				.build()
-			.checkBox()
-				.text("Flood-fill after generation")
-				.onSelect(model::setFloodFillAfterGeneration)
-				.selection(model::isFloodFillAfterGeneration)
 				.build()
 			.checkBox()
 				.text("Show distances")

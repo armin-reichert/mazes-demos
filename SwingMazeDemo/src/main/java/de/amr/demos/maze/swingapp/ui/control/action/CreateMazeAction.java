@@ -28,21 +28,20 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 	}
 
-	protected final ControlViewController controlViewController;
-	protected final GridViewController gridViewController;
+	protected final ControlViewController controlUI;
+	protected final GridViewController gridUI;
 	protected final MazeDemoModel model;
 
-	public CreateMazeAction(String name, ControlViewController controlViewController,
-			GridViewController gridViewController) {
+	public CreateMazeAction(String name, ControlViewController controlUI, GridViewController gridUI) {
 		super(name);
-		this.gridViewController = gridViewController;
-		this.controlViewController = controlViewController;
-		model = gridViewController.getModel();
+		this.gridUI = gridUI;
+		this.controlUI = controlUI;
+		model = gridUI.getModel();
 	}
 
 	protected void floodFill() {
 		int startCell = model.getGrid().cell(model.getGenerationStart());
-		gridViewController.floodFill(startCell, false);
+		gridUI.floodFill(startCell, false);
 	}
 
 	protected void createMaze(Algorithm generator, GridPosition startPosition) {
@@ -57,22 +56,21 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
-		controlViewController
-				.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
+		controlUI.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
 		if (model.isGenerationAnimated()) {
 			generatorInstance.createMaze(x, y);
 		}
 		else {
-			gridViewController.getAnimation().setEnabled(false);
-			gridViewController.clearView();
+			gridUI.getAnimation().setEnabled(false);
+			gridUI.clearView();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generatorInstance.createMaze(x, y);
 			watch.stop();
-			controlViewController.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
-			watch.measure(() -> gridViewController.drawGrid());
-			controlViewController.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			gridViewController.getAnimation().setEnabled(true);
+			controlUI.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
+			watch.measure(() -> gridUI.drawGrid());
+			controlUI.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
+			gridUI.getAnimation().setEnabled(true);
 		}
 	}
 }
