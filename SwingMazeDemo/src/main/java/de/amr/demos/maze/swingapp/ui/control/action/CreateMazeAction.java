@@ -39,11 +39,6 @@ public abstract class CreateMazeAction extends AbstractAction {
 		model = gridUI.getModel();
 	}
 
-	protected void floodFill() {
-		int startCell = model.getGrid().cell(model.getGenerationStart());
-		gridUI.floodFill(startCell, false);
-	}
-
 	protected void createMaze(Algorithm generator, GridPosition startPosition) {
 		ObservableGridGraph<TraversalState, Integer> grid = model.getGrid();
 		MazeGenerator generatorInstance = null;

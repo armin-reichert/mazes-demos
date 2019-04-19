@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.util.StopWatch;
@@ -20,17 +19,11 @@ public class FloodFill extends AbstractAction {
 
 	private final ControlUI controlUI;
 	private final GridUI gridUI;
-	private final MazeDemoModel model;
 
 	public FloodFill(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
 		this.controlUI = controlUI;
 		this.gridUI = gridUI;
-		this.model = controlUI.getModel();
-	}
-
-	private void floodFill() {
-		gridUI.floodFill(model.getGrid().cell(model.getSolverSource()), model.isDistancesVisible());
 	}
 
 	@Override
@@ -40,7 +33,7 @@ public class FloodFill extends AbstractAction {
 				() -> {
 					gridUI.drawGrid();
 					StopWatch watch = new StopWatch();
-					watch.measure(this::floodFill);
+					watch.measure(gridUI::floodFill);
 					controlUI.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
 				},
 

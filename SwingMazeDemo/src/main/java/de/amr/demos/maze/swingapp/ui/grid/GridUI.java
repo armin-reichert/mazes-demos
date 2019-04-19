@@ -31,8 +31,8 @@ public class GridUI implements PropertyChangeListener {
 
 	public GridUI(MazeDemoModel model, Dimension displayAreaSize) {
 		this.model = model;
-		model.createGrid(displayAreaSize.width / model.getGridCellSize(), displayAreaSize.height / model.getGridCellSize(),
-				false, TraversalState.UNVISITED);
+		model.createGrid(displayAreaSize.width / model.getGridCellSize(),
+				displayAreaSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 
 		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
 		addAnimation(model.getGrid());
@@ -45,7 +45,8 @@ public class GridUI implements PropertyChangeListener {
 			window.setSize(displayAreaSize);
 			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 			window.setUndecorated(true);
-		} else {
+		}
+		else {
 			view.getCanvas().setSize(displayAreaSize);
 			window.pack();
 			window.setLocationRelativeTo(null);
@@ -142,8 +143,9 @@ public class GridUI implements PropertyChangeListener {
 		view.getCanvas().drawGrid();
 	}
 
-	public void floodFill(int startCell, boolean distanceVisible) {
-		BFSAnimation.builder().canvas(view.getCanvas()).distanceVisible(distanceVisible).build()
-				.floodFill(startCell);
+	public void floodFill() {
+		int startCell = model.getGrid().cell(model.getSolverSource());
+		BFSAnimation.builder().canvas(view.getCanvas()).delay(() -> model.getDelay())
+				.distanceVisible(model.isDistancesVisible()).build().floodFill(startCell);
 	}
 }

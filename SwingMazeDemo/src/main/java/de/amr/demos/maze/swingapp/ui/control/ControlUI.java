@@ -288,8 +288,8 @@ public class ControlUI implements PropertyChangeListener {
 	public void resetDisplay() {
 		setBusy(true);
 		gridUI.stopModelChangeListening();
-		int numCols = gridUI.getWindow().getWidth() / model.getGridCellSize();
-		int numRows = gridUI.getWindow().getHeight() / model.getGridCellSize();
+		int numCols = gridUI.getView().getCanvas().getWidth() / model.getGridCellSize();
+		int numRows = gridUI.getView().getCanvas().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
 		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
 		gridUI.resetView();

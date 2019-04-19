@@ -32,7 +32,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 						switch (controlUI.getAfterGenerationAction()) {
 						case FLOOD_FILL:
 							pause(1);
-							floodFill();
+							gridUI.floodFill();
 							break;
 						case NOTHING:
 							break;
