@@ -15,7 +15,6 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
-import de.amr.util.StopWatch;
 
 /**
  * View Controller for the grid display UI.
@@ -135,9 +134,7 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void drawGrid() {
-		StopWatch watch = new StopWatch();
-		watch.measure(view.getCanvas()::drawGrid);
-		System.out.println(String.format("%s, drawing time: %.0f ms", model.getGrid(), watch.getMillis()));
+		view.getCanvas().drawGrid();
 	}
 
 	public void floodFill(int startCell, boolean distanceVisible) {

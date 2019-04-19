@@ -33,14 +33,14 @@ import de.amr.maze.alg.Armin;
  */
 public class MazeDemoApp {
 
-	@Parameter(names = { "-theme" }, 
-			description = "Theme class name (or short form: 'system', 'cross', 'metal', 'nimbus')", converter = ThemeConverter.class)
+	@Parameter(
+			description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')",
+			names = { "-laf", "-theme" },
+			converter = ThemeConverter.class)
 	private String theme = NimbusLookAndFeel.class.getName();
 
 	private MazeDemoModel model;
-
 	private ControlUI controlUI;
-
 	private GridUI gridUI;
 
 	public static void main(String[] args) {
