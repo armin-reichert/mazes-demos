@@ -33,14 +33,9 @@ import de.amr.maze.alg.Armin;
  */
 public class MazeDemoApp {
 
-	public static void main(String[] args) {
-		MazeDemoApp theApp = new MazeDemoApp();
-		JCommander.newBuilder().addObject(theApp).build().parse(args);
-		EventQueue.invokeLater(() -> theApp.createAndShowUI(getDisplaySize()));
-	}
-
-	@Parameter(names = { "-theme" }, description = "Theme", converter = ThemeConverter.class)
-	private String theme;
+	@Parameter(names = { "-theme" }, 
+			description = "Theme class name (or short form: 'system', 'cross', 'metal', 'nimbus')", converter = ThemeConverter.class)
+	private String theme = NimbusLookAndFeel.class.getName();
 
 	private MazeDemoModel model;
 
@@ -48,9 +43,16 @@ public class MazeDemoApp {
 
 	private GridUI gridUI;
 
+	public static void main(String[] args) {
+		MazeDemoApp theApp = new MazeDemoApp();
+		JCommander commander = JCommander.newBuilder().addObject(theApp).build();
+		commander.usage();
+		commander.parse(args);
+		EventQueue.invokeLater(() -> theApp.createAndShowUI(getDisplaySize()));
+	}
+
 	private MazeDemoApp() {
 		model = new MazeDemoModel();
-		theme = NimbusLookAndFeel.class.getName();
 	}
 
 	private void createAndShowUI(Dimension gridWindowSize) {
