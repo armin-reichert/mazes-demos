@@ -38,8 +38,8 @@ import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
-import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
+import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
@@ -247,7 +247,7 @@ public class ControlUI implements PropertyChangeListener {
 				parentWindow.getY() + 42);
 	}
 
-	public void showWindow() {
+	public void show() {
 		window.setVisible(true);
 		window.requestFocusInWindow();
 	}

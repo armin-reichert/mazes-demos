@@ -1,6 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
-import static de.amr.swing.Swing.action;
 import static de.amr.swing.Swing.getDisplaySize;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -9,9 +8,7 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.Action;
 import javax.swing.JFrame;
-import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.core.api.TraversalState;
@@ -33,8 +30,6 @@ public class GridUI implements PropertyChangeListener {
 	private final GridView view;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
 
-	private final Action actionShowControlWindow = action("Show Controls", e -> showWindow());
-
 	public GridUI(MazeDemoModel model, Dimension windowSize) {
 		this.model = model;
 		model.createGrid(windowSize.width / model.getGridCellSize(), windowSize.height / model.getGridCellSize(),
@@ -42,9 +37,6 @@ public class GridUI implements PropertyChangeListener {
 
 		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
 		addAnimation(model.getGrid());
-
-		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showControlWindow");
-		view.getCanvas().getActionMap().put("showControlWindow", actionShowControlWindow);
 
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
@@ -134,7 +126,7 @@ public class GridUI implements PropertyChangeListener {
 		return animation;
 	}
 
-	public void showWindow() {
+	public void show() {
 		window.setVisible(true);
 	}
 

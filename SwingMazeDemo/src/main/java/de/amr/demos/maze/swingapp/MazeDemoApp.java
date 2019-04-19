@@ -1,10 +1,12 @@
 package de.amr.demos.maze.swingapp;
 
+import static de.amr.swing.Swing.action;
 import static de.amr.swing.Swing.getDisplaySize;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
 
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -60,7 +62,6 @@ public class MazeDemoApp {
 		}
 
 		gridUI = new GridUI(model, gridWindowSize);
-		gridUI.showWindow();
 
 		controlUI = new ControlUI(gridUI);
 		controlUI.setBusy(false);
@@ -69,6 +70,11 @@ public class MazeDemoApp {
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
 		controlUI.expandWindow();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
-		controlUI.showWindow();
+
+		gridUI.getView().getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showControlUI");
+		gridUI.getView().getCanvas().getActionMap().put("showControlUI", action("", e -> controlUI.show()));
+
+		gridUI.show();
+		controlUI.show();
 	}
 }
