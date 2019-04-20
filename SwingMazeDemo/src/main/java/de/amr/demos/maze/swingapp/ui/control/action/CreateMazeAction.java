@@ -56,8 +56,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 			generatorInstance.createMaze(x, y);
 		}
 		else {
-			gridUI.getAnimation().setEnabled(false);
-			gridUI.clearView();
+			gridUI.enableAnimation(false);
+			gridUI.clear();
 			StopWatch watch = new StopWatch();
 			watch.start();
 			generatorInstance.createMaze(x, y);
@@ -65,7 +65,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			controlUI.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> gridUI.drawGrid());
 			controlUI.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
-			gridUI.getAnimation().setEnabled(true);
+			gridUI.enableAnimation(true);
 		}
 	}
 }

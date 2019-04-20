@@ -94,20 +94,16 @@ public class GridUI implements PropertyChangeListener {
 		switch (change.getPropertyName()) {
 		case "grid":
 			if (change.getOldValue() != null) {
-				ObservableGridGraph<TraversalState, Integer> oldGrid = (ObservableGridGraph<TraversalState, Integer>) change
-						.getOldValue();
-				removeAnimation(oldGrid);
+				removeAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
 			}
-			ObservableGridGraph<TraversalState, Integer> newGrid = (ObservableGridGraph<TraversalState, Integer>) change
-					.getNewValue();
-			getView().changeGridSize(newGrid, model.getGridCellSize());
-			addAnimation(newGrid);
-			clearView();
+			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
+			addAnimation(model.getGrid());
+			clear();
 			drawGrid();
 			window.validate();
 			break;
 		case "passageWidthPercentage":
-			clearView();
+			clear();
 			drawGrid();
 			break;
 		default:
@@ -127,20 +123,20 @@ public class GridUI implements PropertyChangeListener {
 		return window;
 	}
 
-	public GridCanvasAnimation<TraversalState, Integer> getAnimation() {
-		return animation;
-	}
-
 	public void show() {
 		window.setVisible(true);
 	}
 
-	public void clearView() {
+	public void clear() {
 		view.getCanvas().clear();
 	}
 
 	public void drawGrid() {
 		view.getCanvas().drawGrid();
+	}
+
+	public void enableAnimation(boolean enabled) {
+		animation.setEnabled(enabled);
 	}
 
 	public void floodFill() {

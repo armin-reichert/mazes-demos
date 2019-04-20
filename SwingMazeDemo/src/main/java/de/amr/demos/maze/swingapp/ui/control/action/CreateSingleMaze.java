@@ -27,7 +27,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
 						model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
 								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
-						gridUI.clearView();
+						gridUI.clear();
 						createMaze(generatorInfo, model.getGenerationStart());
 						switch (controlUI.getAfterGenerationAction()) {
 						case FLOOD_FILL:

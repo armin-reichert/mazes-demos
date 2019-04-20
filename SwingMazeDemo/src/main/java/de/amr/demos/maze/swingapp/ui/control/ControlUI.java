@@ -119,7 +119,7 @@ public class ControlUI implements PropertyChangeListener {
 			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), true, TraversalState.COMPLETED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
-			gridUI.clearView();
+			gridUI.clear();
 			gridUI.drawGrid();
 		});
 		actionStopBackgroundThread = action("Stop", e -> stopBackgroundThread());
