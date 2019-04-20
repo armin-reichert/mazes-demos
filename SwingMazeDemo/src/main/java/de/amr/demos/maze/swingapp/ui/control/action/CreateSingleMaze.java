@@ -6,6 +6,7 @@ import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 
 /**
  * Action for creating a maze using the currently selected generation algorithm.
@@ -31,13 +32,13 @@ public class CreateSingleMaze extends CreateMazeAction {
 						createMaze(generatorInfo, model.getGenerationStart());
 						switch (controlUI.getAfterGenerationAction()) {
 						case FLOOD_FILL:
-							pause(1);
+							GridCanvasAnimation.pause(1);
 							gridUI.floodFill();
 							break;
 						case NOTHING:
 							break;
 						case SOLVE:
-							pause(1);
+							GridCanvasAnimation.pause(1);
 							controlUI.solve();
 							break;
 						default:

@@ -14,19 +14,10 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeAction extends AbstractAction {
-
-	protected static void pause(float seconds) {
-		try {
-			Thread.sleep(Math.round(seconds * 1000));
-		} catch (InterruptedException e) {
-			throw new AnimationInterruptedException();
-		}
-	}
 
 	protected final ControlUI controlUI;
 	protected final GridUI gridUI;

@@ -7,6 +7,7 @@ import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
+import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 
 /**
  * Action for running all maze generators (except slow ones) one by one.
@@ -46,13 +47,13 @@ public class CreateAllMazes extends CreateMazeAction {
 				createMaze(generator, model.getGenerationStart());
 				switch (controlUI.getAfterGenerationAction()) {
 				case FLOOD_FILL:
-					pause(1);
+					GridCanvasAnimation.pause(1);
 					gridUI.floodFill();
 					break;
 				case NOTHING:
 					break;
 				case SOLVE:
-					pause(1);
+					GridCanvasAnimation.pause(1);
 					controlUI.solve();
 					break;
 				default:
@@ -66,7 +67,7 @@ public class CreateAllMazes extends CreateMazeAction {
 			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
-			pause(2);
+			GridCanvasAnimation.pause(2);
 		}
 		controlUI.showMessage("Done.");
 	}
