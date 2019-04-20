@@ -51,9 +51,9 @@ public class MazeDemoApp {
 
 	public static void main(String[] args) {
 		MazeDemoApp theApp = new MazeDemoApp();
-		JCommander commander = JCommander.newBuilder().addObject(theApp).build();
-		commander.usage();
-		commander.parse(args);
+		JCommander argsParser = JCommander.newBuilder().addObject(theApp).build();
+		argsParser.usage();
+		argsParser.parse(args);
 		EventQueue.invokeLater(theApp::createAndShowUI);
 	}
 

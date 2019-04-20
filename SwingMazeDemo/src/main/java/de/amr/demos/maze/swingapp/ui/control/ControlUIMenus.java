@@ -34,14 +34,14 @@ import de.amr.graph.grid.api.GridPosition;
  */
 public class ControlUIMenus {
 
-	public static Optional<Algorithm> getSelectedAlgorithm(JMenu radioButtonMenu) {
-		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
+	public static Optional<Algorithm> getSelectedAlgorithm(JMenu menu) {
+		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
 		return Collections.list(radio.getElements()).stream().filter(AbstractButton::isSelected)
 				.map(button -> (Algorithm) button.getClientProperty("algorithm")).findFirst();
 	}
 
-	public static void selectAlgorithm(JMenu radioButtonMenu, Algorithm algorithm) {
-		ButtonGroup radio = (ButtonGroup) radioButtonMenu.getClientProperty("radio");
+	public static void selectAlgorithm(JMenu menu, Algorithm algorithm) {
+		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
 		Collections.list(radio.getElements()).stream()
 				.filter(button -> algorithm.equals(button.getClientProperty("algorithm"))).findFirst()
 				.ifPresent(button -> button.setSelected(true));
@@ -111,7 +111,7 @@ public class ControlUIMenus {
 	}
 
 	private static JMenu buildMetricsMenu(ControlUI controller) {
-		Function<Metric, String> translation = metric -> metric.name().substring(0, 1)
+		Function<Metric, String> displayName = metric -> metric.name().substring(0, 1)
 				+ metric.name().substring(1).toLowerCase();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
@@ -119,9 +119,9 @@ public class ControlUIMenus {
 				.radioButtonGroup(Metric.class)
 					.onSelect(controller.getModel()::setMetric)
 					.selection(controller.getModel()::getMetric)
-					.button().selectionValue(Metric.EUCLIDEAN).text(translation.apply(Metric.EUCLIDEAN)).build()
-					.button().selectionValue(Metric.MANHATTAN).text(translation.apply(Metric.MANHATTAN)).build()
-					.button().selectionValue(Metric.CHEBYSHEV).text(translation.apply(Metric.CHEBYSHEV)).build()
+					.button().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).build()
+					.button().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).build()
+					.button().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).build()
 				.build()
 		.build();
 		//@formatter:on
