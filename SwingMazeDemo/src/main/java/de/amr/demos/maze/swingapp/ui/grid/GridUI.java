@@ -34,7 +34,7 @@ public class GridUI implements PropertyChangeListener {
 		model.createGrid(displayAreaSize.width / model.getGridCellSize(),
 				displayAreaSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 
-		view = new GridView(model.getGrid(), model.getGridCellSize(), this::computePassageWidth);
+		view = new GridView(model.getGrid(), model.getGridCellSize(), this::passageWidth);
 		addAnimation(model.getGrid());
 
 		window = new JFrame();
@@ -54,6 +54,18 @@ public class GridUI implements PropertyChangeListener {
 		startModelChangeListening();
 	}
 
+	public MazeDemoModel getModel() {
+		return model;
+	}
+
+	public JFrame getWindow() {
+		return window;
+	}
+
+	public GridView getView() {
+		return view;
+	}
+
 	private void addAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
 		animation = new GridCanvasAnimation<>(view.getCanvas());
 		animation.fnDelay = model::getDelay;
@@ -64,20 +76,19 @@ public class GridUI implements PropertyChangeListener {
 		grid.removeGraphObserver(animation);
 	}
 
-	private int computePassageWidth(int u, int v) {
-		int passageWidth = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
-		if (model.isPassageWidthFluent()) {
-			float factor = (float) model.getGrid().col(u) / model.getGrid().numCols();
-			passageWidth = Math.round(factor * passageWidth);
-		}
-		passageWidth = max(1, passageWidth);
-		passageWidth = min(model.getGridCellSize() - 1, passageWidth);
-		return passageWidth;
+	public void enableAnimation(boolean enabled) {
+		animation.setEnabled(enabled);
 	}
 
-	public void resetView() {
-		view.reset(model.getGrid(), model.getGridCellSize());
-		window.validate();
+	private int passageWidth(int either, int other) {
+		int w = model.getGridCellSize() * model.getPassageWidthPercentage() / 100;
+		if (model.isPassageWidthFluent()) {
+			float factor = (float) model.getGrid().col(either) / model.getGrid().numCols();
+			w = Math.round(factor * w);
+		}
+		w = max(1, w);
+		w = min(model.getGridCellSize() - 1, w);
+		return w;
 	}
 
 	public void stopModelChangeListening() {
@@ -88,39 +99,9 @@ public class GridUI implements PropertyChangeListener {
 		model.changePublisher.addPropertyChangeListener(this);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void propertyChange(PropertyChangeEvent change) {
-		switch (change.getPropertyName()) {
-		case "grid":
-			if (change.getOldValue() != null) {
-				removeAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
-			}
-			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
-			addAnimation(model.getGrid());
-			clear();
-			drawGrid();
-			window.validate();
-			break;
-		case "passageWidthPercentage":
-			clear();
-			drawGrid();
-			break;
-		default:
-			break;
-		}
-	}
-
-	public MazeDemoModel getModel() {
-		return model;
-	}
-
-	public GridView getView() {
-		return view;
-	}
-
-	public JFrame getWindow() {
-		return window;
+	public void reset() {
+		view.reset(model.getGrid(), model.getGridCellSize());
+		window.validate();
 	}
 
 	public void show() {
@@ -135,13 +116,34 @@ public class GridUI implements PropertyChangeListener {
 		view.getCanvas().drawGrid();
 	}
 
-	public void enableAnimation(boolean enabled) {
-		animation.setEnabled(enabled);
-	}
-
 	public void floodFill() {
 		int startCell = model.getGrid().cell(model.getSolverSource());
 		BFSAnimation.builder().canvas(view.getCanvas()).delay(() -> model.getDelay())
 				.distanceVisible(model.isDistancesVisible()).build().floodFill(startCell);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void propertyChange(PropertyChangeEvent change) {
+//		System.err.println("GridUI received property change:\n" + change);
+		switch (change.getPropertyName()) {
+		case "grid":
+			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
+			if (change.getOldValue() != null) {
+				removeAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
+			}
+			addAnimation(model.getGrid());
+			clear();
+			drawGrid();
+			window.validate();
+			break;
+		case "passageWidthPercentage":
+			clear();
+			drawGrid();
+			break;
+		default:
+//			System.err.println("Unhandled property change " + change);
+			break;
+		}
 	}
 }

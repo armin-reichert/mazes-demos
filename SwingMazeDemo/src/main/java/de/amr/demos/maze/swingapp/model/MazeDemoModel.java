@@ -214,9 +214,11 @@ public class MazeDemoModel {
 		return gridCellSizeIndex;
 	}
 
-	public void setGridCellSizeIndex(int gridCellSizeIndex) {
-		if (0 <= gridCellSizeIndex && gridCellSizeIndex < gridCellSizes.length) {
-			this.gridCellSizeIndex = gridCellSizeIndex;
+	public void setGridCellSizeIndex(int newValue) {
+		if (0 <= newValue && newValue < gridCellSizes.length) {
+			int oldValue = gridCellSizeIndex;
+			gridCellSizeIndex = newValue;
+			changePublisher.firePropertyChange("gridCellSizeIndex", oldValue, newValue);
 		}
 		else {
 			throw new IndexOutOfBoundsException();
@@ -227,26 +229,30 @@ public class MazeDemoModel {
 		return passageWidthPercentage;
 	}
 
-	public void setPassageWidthPercentage(int newWidthPercentage) {
-		int oldWidthPercentage = this.passageWidthPercentage;
-		this.passageWidthPercentage = newWidthPercentage;
-		changePublisher.firePropertyChange("passageWidthPercentage", oldWidthPercentage, newWidthPercentage);
+	public void setPassageWidthPercentage(int newValue) {
+		int oldValue = passageWidthPercentage;
+		passageWidthPercentage = newValue;
+		changePublisher.firePropertyChange("passageWidthPercentage", oldValue, newValue);
 	}
 
 	public boolean isPassageWidthFluent() {
 		return passageWidthFluent;
 	}
 
-	public void setPassageWidthFluent(boolean fluent) {
-		this.passageWidthFluent = fluent;
+	public void setPassageWidthFluent(boolean newValue) {
+		boolean oldValue = passageWidthFluent;
+		passageWidthFluent = newValue;
+		changePublisher.firePropertyChange("passageWidthFluent", oldValue, newValue);
 	}
 
 	public boolean isGenerationAnimated() {
 		return generationAnimated;
 	}
 
-	public void setGenerationAnimated(boolean generationAnimated) {
-		this.generationAnimated = generationAnimated;
+	public void setGenerationAnimated(boolean newValue) {
+		boolean oldValue = generationAnimated;
+		generationAnimated = newValue;
+		changePublisher.firePropertyChange("generationAnimated", oldValue, newValue);
 	}
 
 	public ObservableGridGraph<TraversalState, Integer> getGrid() {
@@ -264,49 +270,59 @@ public class MazeDemoModel {
 		return delay;
 	}
 
-	public void setDelay(int delay) {
-		this.delay = delay;
+	public void setDelay(int newValue) {
+		int oldValue = delay;
+		delay = newValue;
+		changePublisher.firePropertyChange("delay", oldValue, newValue);
 	}
 
 	public GridPosition getGenerationStart() {
 		return generationStart;
 	}
 
-	public void setGenerationStart(GridPosition pos) {
-		this.generationStart = pos;
+	public void setGenerationStart(GridPosition newValue) {
+		GridPosition oldValue = generationStart;
+		generationStart = newValue;
+		changePublisher.firePropertyChange("generationStart", oldValue, newValue);
 	}
 
 	public Metric getMetric() {
 		return metric;
 	}
 
-	public void setMetric(Metric newMetric) {
-		Metric oldMetric = this.metric;
-		this.metric = newMetric;
-		changePublisher.firePropertyChange("metric", oldMetric, newMetric);
+	public void setMetric(Metric newValue) {
+		Metric oldValue = metric;
+		metric = newValue;
+		changePublisher.firePropertyChange("metric", oldValue, newValue);
 	}
 
 	public boolean isDistancesVisible() {
 		return distancesVisible;
 	}
 
-	public void setDistancesVisible(boolean distancesVisible) {
-		this.distancesVisible = distancesVisible;
+	public void setDistancesVisible(boolean newValue) {
+		boolean oldValue = distancesVisible;
+		distancesVisible = newValue;
+		changePublisher.firePropertyChange("distancesVisible", oldValue, newValue);
 	}
 
 	public GridPosition getSolverSource() {
 		return solverSource;
 	}
 
-	public void setSolverSource(GridPosition pos) {
-		this.solverSource = pos;
+	public void setSolverSource(GridPosition newValue) {
+		GridPosition oldValue = solverSource;
+		solverSource = newValue;
+		changePublisher.firePropertyChange("solverSource", oldValue, newValue);
 	}
 
 	public GridPosition getSolverTarget() {
 		return solverTarget;
 	}
 
-	public void setSolverTarget(GridPosition pos) {
-		this.solverTarget = pos;
+	public void setSolverTarget(GridPosition newValue) {
+		GridPosition oldValue = solverTarget;
+		solverTarget = newValue;
+		changePublisher.firePropertyChange("solverTarget", oldValue, newValue);
 	}
 }

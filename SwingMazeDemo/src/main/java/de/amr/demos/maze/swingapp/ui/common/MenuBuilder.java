@@ -82,12 +82,12 @@ public class MenuBuilder {
 
 	public class CheckBoxBuilder {
 
-		private Consumer<Boolean> onSelect;
+		private Consumer<Boolean> onToggle;
 		private Supplier<Boolean> selection;
 		private String text;
 
-		public CheckBoxBuilder onSelect(Consumer<Boolean> onSelect) {
-			this.onSelect = onSelect;
+		public CheckBoxBuilder onToggle(Consumer<Boolean> onToggle) {
+			this.onToggle = onToggle;
 			return this;
 		}
 
@@ -103,8 +103,8 @@ public class MenuBuilder {
 
 		public MenuBuilder build() {
 			JCheckBoxMenuItem checkBox = new JCheckBoxMenuItem();
-			if (onSelect != null) {
-				checkBox.addActionListener(ignore -> onSelect.accept(checkBox.isSelected()));
+			if (onToggle != null) {
+				checkBox.addItemListener(change -> onToggle.accept(change.getStateChange() == ItemEvent.SELECTED));
 			}
 			if (selection != null) {
 				checkBox.putClientProperty("selection", selection);
