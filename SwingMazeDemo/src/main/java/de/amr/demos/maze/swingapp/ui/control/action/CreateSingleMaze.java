@@ -26,8 +26,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 					() -> {
 						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-						model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
-								full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+						model.replaceGrid(full, TraversalState.UNVISITED);
 						gridUI.clear();
 						createMaze(generatorInfo, model.getGenerationStart());
 						switch (controlUI.getAfterGenerationAction()) {

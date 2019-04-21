@@ -113,10 +113,10 @@ public class ControlUI implements PropertyChangeListener {
 			combo.requestFocusInWindow();
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> {
-			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), false, TraversalState.COMPLETED);
+			model.replaceGrid(false, TraversalState.UNVISITED);
 		});
 		actionCreateFullGrid = action("Create Full Grid", e -> {
-			model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), true, TraversalState.COMPLETED);
+			model.replaceGrid(true, TraversalState.UNVISITED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridUI.clear();
@@ -291,7 +291,7 @@ public class ControlUI implements PropertyChangeListener {
 		int numCols = gridUI.getView().getCanvas().getWidth() / model.getGridCellSize();
 		int numRows = gridUI.getView().getCanvas().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
-		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.createGrid(numCols, numRows, full, TraversalState.UNVISITED);
 		gridUI.reset();
 		gridUI.startModelChangeListening();
 		setBusy(false);
@@ -306,21 +306,20 @@ public class ControlUI implements PropertyChangeListener {
 		return ControlUIMenus.getSelectedAlgorithm(generatorMenu);
 	}
 
-	public void selectGenerator(Algorithm generatorInfo) {
-		ControlUIMenus.selectAlgorithm(generatorMenu, generatorInfo);
-		updateGeneratorText(generatorInfo);
-		boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-		model.createGrid(model.getGrid().numCols(), model.getGrid().numRows(), full,
-				full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+	public void selectGenerator(Algorithm generator) {
+		ControlUIMenus.selectAlgorithm(generatorMenu, generator);
+		updateGeneratorText(generator);
+		boolean full = generator.isTagged(GeneratorTag.FullGridRequired);
+		model.replaceGrid(full, TraversalState.UNVISITED);
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {
 		return ControlUIMenus.getSelectedAlgorithm(solverMenu);
 	}
 
-	public void selectSolver(Algorithm solverInfo) {
-		ControlUIMenus.selectAlgorithm(solverMenu, solverInfo);
-		updateSolverText(solverInfo);
+	public void selectSolver(Algorithm solver) {
+		ControlUIMenus.selectAlgorithm(solverMenu, solver);
+		updateSolverText(solver);
 	}
 
 	public void solve() {
@@ -404,9 +403,9 @@ public class ControlUI implements PropertyChangeListener {
 		getSelectedSolver().ifPresent(this::updateSolverText);
 	}
 
-	private void updateSolverText(Algorithm solverInfo) {
-		String text = solverInfo.getDescription();
-		if (solverInfo.isTagged(SolverTag.INFORMED)) {
+	private void updateSolverText(Algorithm solver) {
+		String text = solver.getDescription();
+		if (solver.isTagged(SolverTag.INFORMED)) {
 			String metric = model.getMetric().toString();
 			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
 			text += " (" + metric + ")";
@@ -414,7 +413,7 @@ public class ControlUI implements PropertyChangeListener {
 		view.getLblSolverName().setText(text);
 	}
 
-	private void updateGeneratorText(Algorithm generatorInfo) {
-		view.getLblGeneratorName().setText(generatorInfo.getDescription());
+	private void updateGeneratorText(Algorithm generator) {
+		view.getLblGeneratorName().setText(generator.getDescription());
 	}
 }

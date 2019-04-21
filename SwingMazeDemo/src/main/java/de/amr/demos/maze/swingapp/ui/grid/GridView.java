@@ -50,7 +50,7 @@ public class GridView {
 
 	private void initProperties() {
 		gridBackgroundColor = Color.BLACK;
-		unvisitedCellColor = Color.BLACK;
+		unvisitedCellColor = Color.LIGHT_GRAY;
 		visitedCellColor = Color.BLUE;
 		completedCellColor = Color.WHITE;
 		pathColor = Color.RED;
@@ -73,12 +73,10 @@ public class GridView {
 			case VISITED:
 				return getVisitedCellColor();
 			default:
-				return r.getGridBgColor();
+				return getUnvisitedCellColor();
 			}
 		};
-		r.fnPassageColor = (u, dir) -> {
-			return r.getCellBgColor(u);
-		};
+		r.fnPassageColor = (cell, dir) -> r.getCellBgColor(cell);
 		return r;
 	}
 

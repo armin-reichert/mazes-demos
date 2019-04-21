@@ -266,6 +266,10 @@ public class MazeDemoModel {
 		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 
+	public void replaceGrid(boolean full, TraversalState defaultState) {
+		createGrid(grid.numCols(), grid.numRows(), full, defaultState);
+	}
+
 	public int getDelay() {
 		return delay;
 	}
