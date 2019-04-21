@@ -23,9 +23,9 @@ import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.ui.common.MenuBuilder;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.graph.grid.api.GridPosition;
+import de.amr.swing.MenuBuilder;
 
 /**
  * The menus of the control window.

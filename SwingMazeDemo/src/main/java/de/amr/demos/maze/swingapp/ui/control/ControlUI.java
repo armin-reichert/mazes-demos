@@ -1,10 +1,10 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.demos.maze.swingapp.ui.common.MenuBuilder.updateMenuSelection;
 import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildCanvasMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildGeneratorMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildOptionMenu;
 import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildSolverMenu;
+import static de.amr.swing.MenuBuilder.updateMenuSelection;
 import static de.amr.swing.Swing.action;
 import static de.amr.swing.Swing.icon;
 import static de.amr.swing.Swing.setEnabled;
