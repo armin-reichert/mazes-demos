@@ -113,10 +113,10 @@ public class ControlUI implements PropertyChangeListener {
 			combo.requestFocusInWindow();
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> {
-			model.replaceGrid(false, TraversalState.COMPLETED);
+			model.replaceGrid(false, TraversalState.UNVISITED);
 		});
 		actionCreateFullGrid = action("Create Full Grid", e -> {
-			model.replaceGrid(true, TraversalState.COMPLETED);
+			model.replaceGrid(true, TraversalState.UNVISITED);
 		});
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridUI.clear();
@@ -291,7 +291,7 @@ public class ControlUI implements PropertyChangeListener {
 		int numCols = gridUI.getView().getCanvas().getWidth() / model.getGridCellSize();
 		int numRows = gridUI.getView().getCanvas().getHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
-		model.createGrid(numCols, numRows, full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.createGrid(numCols, numRows, full, TraversalState.UNVISITED);
 		gridUI.reset();
 		gridUI.startModelChangeListening();
 		setBusy(false);
@@ -310,7 +310,7 @@ public class ControlUI implements PropertyChangeListener {
 		ControlUIMenus.selectAlgorithm(generatorMenu, generator);
 		updateGeneratorText(generator);
 		boolean full = generator.isTagged(GeneratorTag.FullGridRequired);
-		model.replaceGrid(full, full ? TraversalState.COMPLETED : TraversalState.UNVISITED);
+		model.replaceGrid(full, TraversalState.UNVISITED);
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {
