@@ -5,16 +5,20 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
+import de.amr.swing.Swing;
 
 /**
  * View Controller for the grid display UI.
@@ -25,35 +29,70 @@ public class GridUI implements PropertyChangeListener {
 
 	private final MazeDemoModel model;
 
-	private final JFrame window;
+	private JFrame window;
 	private final GridView view;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
+	private final Dimension gridViewSize;
 
-	public GridUI(MazeDemoModel model, Dimension displayAreaSize) {
+	public GridUI(MazeDemoModel model, Dimension gridViewSize) {
 		this.model = model;
-		model.createGrid(displayAreaSize.width / model.getGridCellSize(),
-				displayAreaSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
+		this.gridViewSize = gridViewSize;
+
+		model.createGrid(gridViewSize.width / model.getGridCellSize(),
+				gridViewSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 
 		view = new GridView(model.getGrid(), model.getGridCellSize(),
 				() -> model.getGrid().cell(model.getSolverSource()),
 				() -> model.getGrid().cell(model.getSolverTarget()), this::passageWidth);
-		addAnimation(model.getGrid());
+		addCanvasAnimation();
 
+		view.getCanvas().getActionMap().put("toggleFullscreen",
+				Swing.action("toggleFullscreen", e -> toggleFullscreen()));
+		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "toggleFullscreen");
+
+		if (gridViewSize.equals(getDisplaySize())) {
+			showFullscreenWindow();
+		}
+		else {
+			showNormalWindow();
+		}
+		startModelChangeListening();
+	}
+
+	private void createWindow() {
+		if (window != null) {
+			window.dispose();
+		}
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
 		window.setContentPane(view.getCanvas());
 		window.setResizable(false);
-		if (displayAreaSize.equals(getDisplaySize())) {
-			window.setSize(displayAreaSize);
-			window.setExtendedState(JFrame.MAXIMIZED_BOTH);
-			window.setUndecorated(true);
+	}
+
+	private void showNormalWindow() {
+		createWindow();
+		view.getCanvas().setSize(gridViewSize);
+		window.pack();
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+	}
+
+	private void showFullscreenWindow() {
+		createWindow();
+		window.setSize(gridViewSize);
+		window.setExtendedState(Frame.MAXIMIZED_BOTH);
+		window.setUndecorated(true);
+		window.setVisible(true);
+	}
+
+	private void toggleFullscreen() {
+		boolean fullscreen = (window.getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
+		if (fullscreen) {
+			showNormalWindow();
 		}
 		else {
-			view.getCanvas().setSize(displayAreaSize);
-			window.pack();
-			window.setLocationRelativeTo(null);
+			showFullscreenWindow();
 		}
-		startModelChangeListening();
 	}
 
 	public MazeDemoModel getModel() {
@@ -68,13 +107,13 @@ public class GridUI implements PropertyChangeListener {
 		return view;
 	}
 
-	private void addAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
+	private void addCanvasAnimation() {
 		animation = new GridCanvasAnimation<>(view.getCanvas());
 		animation.fnDelay = model::getDelay;
-		grid.addGraphObserver(animation);
+		model.getGrid().addGraphObserver(animation);
 	}
 
-	private void removeAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
+	private void removeCanvasAnimation(ObservableGridGraph<TraversalState, Integer> grid) {
 		grid.removeGraphObserver(animation);
 	}
 
@@ -133,9 +172,9 @@ public class GridUI implements PropertyChangeListener {
 		case "grid":
 			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
 			if (change.getOldValue() != null) {
-				removeAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
+				removeCanvasAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
 			}
-			addAnimation(model.getGrid());
+			addCanvasAnimation();
 			clear();
 			drawGrid();
 			window.validate();
