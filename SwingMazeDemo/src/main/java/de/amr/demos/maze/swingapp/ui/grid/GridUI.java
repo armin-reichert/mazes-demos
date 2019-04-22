@@ -34,7 +34,9 @@ public class GridUI implements PropertyChangeListener {
 		model.createGrid(displayAreaSize.width / model.getGridCellSize(),
 				displayAreaSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
 
-		view = new GridView(model.getGrid(), model.getGridCellSize(), this::passageWidth);
+		view = new GridView(model.getGrid(), model.getGridCellSize(),
+				() -> model.getGrid().cell(model.getSolverSource()),
+				() -> model.getGrid().cell(model.getSolverTarget()), this::passageWidth);
 		addAnimation(model.getGrid());
 
 		window = new JFrame();
@@ -140,6 +142,10 @@ public class GridUI implements PropertyChangeListener {
 			break;
 		case "passageWidthPercentage":
 			clear();
+			drawGrid();
+			break;
+		case "solverSource":
+		case "solverTarget":
 			drawGrid();
 			break;
 		default:

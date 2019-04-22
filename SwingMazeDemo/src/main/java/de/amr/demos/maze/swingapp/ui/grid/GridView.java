@@ -1,7 +1,9 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.function.BiFunction;
+import java.util.function.IntSupplier;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
 import de.amr.graph.core.api.TraversalState;
@@ -26,6 +28,8 @@ public class GridView {
 	private Color pathColor;
 	private Style style;
 	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
+	private IntSupplier fnSourceCell;
+	private IntSupplier fnTargetCell;
 
 	public GridView() {
 		initProperties();
@@ -33,13 +37,15 @@ public class GridView {
 		canvas.setCentered(true);
 	}
 
-	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize,
-			BiFunction<Integer, Integer, Integer> fnPassageWidth) {
+	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize, IntSupplier fnSourceCell,
+			IntSupplier fnTargetCell, BiFunction<Integer, Integer, Integer> fnPassageWidth) {
 		initProperties();
+		this.fnPassageWidth = fnPassageWidth;
+		this.fnSourceCell = fnSourceCell;
+		this.fnTargetCell = fnTargetCell;
 		canvas = new GridCanvas(grid, cellSize);
 		canvas.setCentered(true);
 		canvas.pushRenderer(createRenderer(grid, cellSize));
-		this.fnPassageWidth = fnPassageWidth;
 		reset(grid, cellSize);
 	}
 
@@ -64,6 +70,17 @@ public class GridView {
 		r.fnGridBgColor = () -> getGridBackgroundColor();
 		r.fnCellSize = () -> cellSize;
 		r.fnPassageWidth = fnPassageWidth;
+		r.fnText = cell -> {
+			if (cell == fnSourceCell.getAsInt()) {
+				return "S";
+			}
+			if (cell == fnTargetCell.getAsInt()) {
+				return "T";
+			}
+			return "";
+		};
+		r.fnTextColor = cell -> Color.YELLOW;
+		r.fnTextFont = cell -> new Font("Arial Narrow", Font.BOLD, cellSize/2);
 		r.fnCellBgColor = cell -> {
 			switch (grid.get(cell)) {
 			case COMPLETED:
