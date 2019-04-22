@@ -100,7 +100,9 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void reset() {
+		stopModelChangeListening();
 		view.reset(model.getGrid(), model.getGridCellSize());
+		startModelChangeListening();
 		window.validate();
 	}
 

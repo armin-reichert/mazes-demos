@@ -50,12 +50,12 @@ public class CreateSingleMaze extends CreateMazeAction {
 
 					interruption -> {
 						controlUI.showMessage("Animation interrupted");
-						controlUI.resetDisplay();
+						controlUI.reset();
 					},
 
 					failure -> {
 						controlUI.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
-						controlUI.resetDisplay();
+						controlUI.reset();
 					});
 		});
 	}

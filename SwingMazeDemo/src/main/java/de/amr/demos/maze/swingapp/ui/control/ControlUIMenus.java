@@ -32,46 +32,98 @@ import de.amr.swing.MenuBuilder;
  * 
  * @author Armin Reichert
  */
-public class ControlUIMenus {
+class ControlUIMenus {
 
-	public static Optional<Algorithm> getSelectedAlgorithm(JMenu menu) {
+	private static Optional<Algorithm> getSelectedAlgorithm(JMenu menu) {
 		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
 		return Collections.list(radio.getElements()).stream().filter(AbstractButton::isSelected)
 				.map(button -> (Algorithm) button.getClientProperty("algorithm")).findFirst();
 	}
 
-	public static void selectAlgorithm(JMenu menu, Algorithm algorithm) {
+	private static void selectAlgorithm(JMenu menu, Algorithm algorithm) {
 		ButtonGroup radio = (ButtonGroup) menu.getClientProperty("radio");
 		Collections.list(radio.getElements()).stream()
 				.filter(button -> algorithm.equals(button.getClientProperty("algorithm"))).findFirst()
 				.ifPresent(button -> button.setSelected(true));
 	}
 
+	private final ControlUI controlUI;
+	private final JMenu generatorMenu;
+	private final JMenu canvasMenu;
+	private final JMenu solverMenu;
+	private final JMenu optionMenu;
+
+	public ControlUIMenus(ControlUI controlUI) {
+		this.controlUI = controlUI;
+		generatorMenu = buildGeneratorMenu();
+		solverMenu = buildSolverMenu();
+		canvasMenu = buildCanvasMenu();
+		optionMenu = buildOptionMenu();
+	}
+
+	public JMenu getGeneratorMenu() {
+		return generatorMenu;
+	}
+
+	public JMenu getSolverMenu() {
+		return solverMenu;
+	}
+
+	public JMenu getCanvasMenu() {
+		return canvasMenu;
+	}
+
+	public JMenu getOptionMenu() {
+		return optionMenu;
+	}
+
+	public void updateSelection() {
+		MenuBuilder.updateMenuSelection(generatorMenu);
+		MenuBuilder.updateMenuSelection(solverMenu);
+		MenuBuilder.updateMenuSelection(canvasMenu);
+		MenuBuilder.updateMenuSelection(optionMenu);
+	}
+
+	public void selectGenerator(Algorithm generator) {
+		selectAlgorithm(generatorMenu, generator);
+	}
+
+	public Optional<Algorithm> getSelectedGenerator() {
+		return getSelectedAlgorithm(generatorMenu);
+	}
+
+	public void selectSolver(Algorithm solver) {
+		selectAlgorithm(solverMenu, solver);
+	}
+
+	public Optional<Algorithm> getSelectedSolver() {
+		return getSelectedAlgorithm(solverMenu);
+	}
+
 	// Maze generator menu
 
-	public static JMenu buildGeneratorMenu(ControlUI controller) {
+	private JMenu buildGeneratorMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 			.title("Generators")
 			.property("radio", radio)
 			.items(
-				generatorMenu(controller, radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)),
-				generatorMenu(controller, radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)),
-				generatorMenu(controller, radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)),
-				generatorMenu(controller, radio, "Others", 
+				generatorMenu(radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)),
+				generatorMenu(radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)),
+				generatorMenu(radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)),
+				generatorMenu(radio, "Others", 
 					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST)))
 			)
 		.build();
 		//@formatter:on
 	}
 
-	private static JMenu generatorMenu(ControlUI controller, ButtonGroup radio, String title,
-			Predicate<Algorithm> selection) {
+	private JMenu generatorMenu(ButtonGroup radio, String title, Predicate<Algorithm> selection) {
 		JMenu menu = new JMenu(title);
-		controller.getModel().generators().filter(selection).forEach(generator -> {
+		controlUI.getModel().generators().filter(selection).forEach(generator -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
-			radioButton.addActionListener(e -> controller.selectGenerator(generator));
+			radioButton.addActionListener(e -> controlUI.selectGenerator(generator));
 			radioButton.setText(generator.getDescription());
 			radioButton.putClientProperty("algorithm", generator);
 			radio.add(radioButton);
@@ -82,27 +134,26 @@ public class ControlUIMenus {
 
 	// Solver menu
 
-	public static JMenu buildSolverMenu(ControlUI controller) {
+	private JMenu buildSolverMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 				.title("Solvers")
 				.property("radio", radio)
 				.caption("Uninformed Solvers")
-				.items(solverItems(controller, radio, solver -> !solver.isTagged(SolverTag.INFORMED)))
+				.items(solverItems(radio, solver -> !solver.isTagged(SolverTag.INFORMED)))
 				.separator()
 				.caption("Informed Solvers")
-				.menu(buildMetricsMenu(controller))
-				.items(solverItems(controller, radio, solver -> solver.isTagged(SolverTag.INFORMED)))
+				.menu(buildMetricsMenu())
+				.items(solverItems(radio, solver -> solver.isTagged(SolverTag.INFORMED)))
 		.build();
 		//@formatter:on
 	}
 
-	private static Stream<JMenuItem> solverItems(ControlUI controller, ButtonGroup radio,
-			Predicate<Algorithm> selection) {
-		return controller.getModel().solvers().filter(selection).map(solver -> {
+	private Stream<JMenuItem> solverItems(ButtonGroup radio, Predicate<Algorithm> selection) {
+		return controlUI.getModel().solvers().filter(selection).map(solver -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
-			radioButton.addActionListener(event -> controller.selectSolver(solver));
+			radioButton.addActionListener(event -> controlUI.selectSolver(solver));
 			radioButton.setText(solver.getDescription());
 			radioButton.putClientProperty("algorithm", solver);
 			radio.add(radioButton);
@@ -110,15 +161,15 @@ public class ControlUIMenus {
 		});
 	}
 
-	private static JMenu buildMetricsMenu(ControlUI controller) {
+	private JMenu buildMetricsMenu() {
 		Function<Metric, String> displayName = metric -> metric.name().substring(0, 1)
 				+ metric.name().substring(1).toLowerCase();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 				.title("Metric")
 				.radioButtonGroup(Metric.class)
-					.onSelect(controller.getModel()::setMetric)
-					.selection(controller.getModel()::getMetric)
+					.onSelect(controlUI.getModel()::setMetric)
+					.selection(controlUI.getModel()::getMetric)
 					.button().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).build()
 					.button().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).build()
 					.button().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).build()
@@ -129,25 +180,25 @@ public class ControlUIMenus {
 
 	// Canvas menu
 
-	public static JMenu buildCanvasMenu(ControlUI controller) {
+	private JMenu buildCanvasMenu() {
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 			.title("Canvas")
-			.action(controller.actionClearCanvas)
-			.action(controller.actionFloodFill)
+			.action(controlUI.actionClearCanvas)
+			.action(controlUI.actionFloodFill)
 			.separator()
-			.action(controller.actionCreateEmptyGrid)
-			.action(controller.actionCreateFullGrid)
+			.action(controlUI.actionCreateEmptyGrid)
+			.action(controlUI.actionCreateFullGrid)
 			.separator()
-			.action(controller.actionSaveImage)
+			.action(controlUI.actionSaveImage)
 		.build();		
 		//@formatter:on
 	}
 
 	// Option menu
 
-	public static JMenu buildOptionMenu(ControlUI controller) {
-		final MazeDemoModel model = controller.getModel();
+	private JMenu buildOptionMenu() {
+		final MazeDemoModel model = controlUI.getModel();
 		//@formatter:off
 		return MenuBuilder.newBuilder()
 			.title("Options")
@@ -156,8 +207,8 @@ public class ControlUIMenus {
 			.menu(buildPositionMenu("Solution Target", model::setSolverTarget, model::getSolverTarget))
 			.separator()
 			.radioButtonGroup(AfterGenerationAction.class)
-				.onSelect(controller::setAfterGenerationAction)
-				.selection(controller::getAfterGenerationAction)
+				.onSelect(controlUI::setAfterGenerationAction)
+				.selection(controlUI::getAfterGenerationAction)
 				.button()
 					.text("No action after generation")
 					.selectionValue(AfterGenerationAction.NOTHING)
@@ -190,14 +241,14 @@ public class ControlUIMenus {
 			.separator()	
 			.checkBox()
 				.text("Hide this dialog when running")
-				.onToggle(controller::setHiddenWhenBusy)
-				.selection(controller::isHiddenWhenBusy)
+				.onToggle(controlUI::setHiddenWhenBusy)
+				.selection(controlUI::isHiddenWhenBusy)
 				.build()
 		.build();
 		//@formatter:on
 	}
 
-	private static JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelect,
+	private JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelect,
 			Supplier<GridPosition> selection) {
 		Function<GridPosition, String> translation = position -> ResourceBundle.getBundle("texts")
 				.getString(position.name());

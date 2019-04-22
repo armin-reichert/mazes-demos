@@ -1,10 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildCanvasMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildGeneratorMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildOptionMenu;
-import static de.amr.demos.maze.swingapp.ui.control.ControlUIMenus.buildSolverMenu;
-import static de.amr.swing.MenuBuilder.updateMenuSelection;
 import static de.amr.swing.Swing.action;
 import static de.amr.swing.Swing.icon;
 import static de.amr.swing.Swing.setEnabled;
@@ -23,7 +18,6 @@ import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
@@ -61,10 +55,7 @@ public class ControlUI implements PropertyChangeListener {
 	private AfterGenerationAction afterGenerationAction;
 
 	private final JFrame window;
-	private final JMenu generatorMenu;
-	private final JMenu canvasMenu;
-	private final JMenu solverMenu;
-	private final JMenu optionMenu;
+	private final ControlUIMenus menus;
 	private final ControlView view;
 
 	final Action actionCollapseWindow;
@@ -96,7 +87,7 @@ public class ControlUI implements PropertyChangeListener {
 		actionChangeGridResolution = action("Change Resolution", e -> {
 			JComboBox<?> combo = (JComboBox<?>) e.getSource();
 			model.setGridCellSizeIndex(combo.getSelectedIndex());
-			resetDisplay();
+			reset();
 			combo.requestFocusInWindow();
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
@@ -116,8 +107,8 @@ public class ControlUI implements PropertyChangeListener {
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = gridUI.getView().getCanvas().getWidth() / cellSize;
-			int numRows = gridUI.getView().getCanvas().getHeight() / cellSize;
+			int numCols = getCanvasWidth() / cellSize;
+			int numRows = getCanvasHeight() / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -154,16 +145,13 @@ public class ControlUI implements PropertyChangeListener {
 		window.setAlwaysOnTop(true);
 		window.setContentPane(view);
 
+		menus = new ControlUIMenus(this);
+		menus.updateSelection();
 		window.setJMenuBar(new JMenuBar());
-		window.getJMenuBar().add(generatorMenu = buildGeneratorMenu(this));
-		window.getJMenuBar().add(solverMenu = buildSolverMenu(this));
-		window.getJMenuBar().add(canvasMenu = buildCanvasMenu(this));
-		window.getJMenuBar().add(optionMenu = buildOptionMenu(this));
-
-		updateMenuSelection(generatorMenu);
-		updateMenuSelection(solverMenu);
-		updateMenuSelection(canvasMenu);
-		updateMenuSelection(optionMenu);
+		window.getJMenuBar().add(menus.getGeneratorMenu());
+		window.getJMenuBar().add(menus.getSolverMenu());
+		window.getJMenuBar().add(menus.getCanvasMenu());
+		window.getJMenuBar().add(menus.getOptionMenu());
 	}
 
 	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
@@ -207,7 +195,7 @@ public class ControlUI implements PropertyChangeListener {
 
 	public void setHiddenWhenBusy(boolean b) {
 		this.hiddenWhenBusy = b;
-		updateMenuSelection(optionMenu);
+		menus.updateSelection();
 	}
 
 	public AfterGenerationAction getAfterGenerationAction() {
@@ -255,10 +243,9 @@ public class ControlUI implements PropertyChangeListener {
 
 	private void solve(Algorithm solver) {
 		ObservableGraphSearch solverInstance = model.createSolverInstance(solver);
-		GridView gridView = gridUI.getView();
 		int source = model.getGrid().cell(model.getSolverSource());
 		int target = model.getGrid().cell(model.getSolverTarget());
-		boolean informed = solver.isTagged(SolverTag.INFORMED);
+		GridView gridView = gridUI.getView();
 		StopWatch watch = new StopWatch();
 		if (solver.isTagged(SolverTag.BFS)) {
 			BFSAnimation anim = BFSAnimation.builder().canvas(gridView.getCanvas()).delay(() -> model.getDelay())
@@ -271,7 +258,7 @@ public class ControlUI implements PropertyChangeListener {
 					.pathColor(gridView.getPathColor()).build();
 			watch.measure(() -> anim.run(solverInstance, source, target));
 		}
-		showMessage(informed
+		showMessage(solver.isTagged(SolverTag.INFORMED)
 				? format("%s (%s): %.2f seconds.", solver.getDescription(), model.getMetric(), watch.getSeconds())
 				: format("%s: %.2f seconds.", solver.getDescription(), watch.getSeconds()));
 	}
@@ -281,7 +268,8 @@ public class ControlUI implements PropertyChangeListener {
 			if (hiddenWhenBusy) {
 				window.setVisible(false);
 			}
-			setEnabled(false, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(false, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(),
+					menus.getOptionMenu());
 			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
 			setWaitCursor(view);
@@ -289,23 +277,30 @@ public class ControlUI implements PropertyChangeListener {
 		}
 		else {
 			window.setVisible(true);
-			setEnabled(true, generatorMenu, solverMenu, canvasMenu, optionMenu);
+			setEnabled(true, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(),
+					menus.getOptionMenu());
 			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
 					actionSolveMaze);
 			setNormalCursor(view);
 		}
 	}
 
-	public void resetDisplay() {
+	public void reset() {
 		setBusy(true);
-		gridUI.stopModelChangeListening();
-		int numCols = gridUI.getView().getCanvas().getWidth() / model.getGridCellSize();
-		int numRows = gridUI.getView().getCanvas().getHeight() / model.getGridCellSize();
+		int numCols = getCanvasWidth() / model.getGridCellSize();
+		int numRows = getCanvasHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
 		model.createGrid(numCols, numRows, full, TraversalState.UNVISITED);
 		gridUI.reset();
-		gridUI.startModelChangeListening();
 		setBusy(false);
+	}
+
+	private int getCanvasHeight() {
+		return gridUI.getView().getCanvas().getHeight();
+	}
+
+	private int getCanvasWidth() {
+		return gridUI.getView().getCanvas().getWidth();
 	}
 
 	public void showMessage(String msg) {
@@ -314,11 +309,11 @@ public class ControlUI implements PropertyChangeListener {
 	}
 
 	public Optional<Algorithm> getSelectedGenerator() {
-		return ControlUIMenus.getSelectedAlgorithm(generatorMenu);
+		return menus.getSelectedGenerator();
 	}
 
 	public void selectGenerator(Algorithm generator) {
-		ControlUIMenus.selectAlgorithm(generatorMenu, generator);
+		menus.selectGenerator(generator);
 		updateGeneratorText(generator);
 		if (generator.isTagged(GeneratorTag.FullGridRequired)) {
 			model.fullGrid();
@@ -329,11 +324,11 @@ public class ControlUI implements PropertyChangeListener {
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {
-		return ControlUIMenus.getSelectedAlgorithm(solverMenu);
+		return menus.getSelectedSolver();
 	}
 
 	public void selectSolver(Algorithm solver) {
-		ControlUIMenus.selectAlgorithm(solverMenu, solver);
+		menus.selectSolver(solver);
 		updateSolverText(solver);
 	}
 

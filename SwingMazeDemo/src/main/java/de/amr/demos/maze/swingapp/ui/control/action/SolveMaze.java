@@ -34,13 +34,13 @@ public class SolveMaze extends AbstractAction {
 
 				interruption -> {
 					controlUI.showMessage("Animation interrupted");
-					controlUI.resetDisplay();
+					controlUI.reset();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
 					controlUI.showMessage("Solving failed: " + failure.getMessage());
-					controlUI.resetDisplay();
+					controlUI.reset();
 				});
 	}
 }

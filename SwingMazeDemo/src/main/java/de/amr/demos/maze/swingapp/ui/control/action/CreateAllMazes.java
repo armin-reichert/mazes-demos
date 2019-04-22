@@ -28,13 +28,13 @@ public class CreateAllMazes extends CreateMazeAction {
 
 				interruption -> {
 					controlUI.showMessage("Animation interrupted");
-					controlUI.resetDisplay();
+					controlUI.reset();
 				},
 
 				failure -> {
 					failure.printStackTrace(System.err);
 					controlUI.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
-					controlUI.resetDisplay();
+					controlUI.reset();
 				});
 	}
 
@@ -63,7 +63,7 @@ public class CreateAllMazes extends CreateMazeAction {
 				throw x;
 			} catch (StackOverflowError x) {
 				controlUI.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
-				controlUI.resetDisplay();
+				controlUI.reset();
 			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
