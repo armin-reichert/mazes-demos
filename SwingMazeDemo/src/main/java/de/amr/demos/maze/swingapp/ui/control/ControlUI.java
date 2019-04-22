@@ -133,8 +133,8 @@ public class ControlUI implements PropertyChangeListener {
 		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = gridUI.getWindow().getWidth() / cellSize;
-			int numRows = gridUI.getWindow().getHeight() / cellSize;
+			int numCols = gridUI.getView().getCanvas().getWidth() / cellSize;
+			int numRows = gridUI.getView().getCanvas().getHeight() / cellSize;
 			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
 					cellSize);
 		}).toArray(String[]::new);
@@ -213,6 +213,7 @@ public class ControlUI implements PropertyChangeListener {
 			onMetricChanged((Metric) change.getNewValue());
 			break;
 		default:
+			System.out.println(change);
 			break;
 		}
 	}
