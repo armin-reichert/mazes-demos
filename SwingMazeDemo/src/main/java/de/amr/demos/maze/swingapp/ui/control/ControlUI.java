@@ -248,14 +248,23 @@ public class ControlUI implements PropertyChangeListener {
 		GridView gridView = gridUI.getView();
 		StopWatch watch = new StopWatch();
 		if (solver.isTagged(SolverTag.BFS)) {
-			BFSAnimation anim = BFSAnimation.builder().canvas(gridView.getCanvas()).delay(() -> model.getDelay())
-					.pathColor(gridView.getPathColor()).distanceVisible(model.isDistancesVisible()).build();
+			/*@formatter:off*/
+			BFSAnimation anim = BFSAnimation.builder()
+					.canvas(gridView.getCanvas())
+					.delay(() -> model.getDelay())
+					.distanceVisible(model.isDistancesVisible())
+					.build();
+			/*@formatter:on*/
 			watch.measure(() -> anim.run(solverInstance, source, target));
 			anim.showPath(solverInstance, source, target);
 		}
 		else if (solver.isTagged(SolverTag.DFS)) {
-			DFSAnimation anim = DFSAnimation.builder().canvas(gridView.getCanvas()).delay(() -> model.getDelay())
-					.pathColor(gridView.getPathColor()).build();
+			/*@formatter:off*/
+			DFSAnimation anim = DFSAnimation.builder()
+					.canvas(gridView.getCanvas())
+					.delay(() -> model.getDelay())
+					.build();
+			/*@formatter:on*/
 			watch.measure(() -> anim.run(solverInstance, source, target));
 		}
 		showMessage(solver.isTagged(SolverTag.INFORMED)

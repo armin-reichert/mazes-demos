@@ -25,7 +25,6 @@ public class GridView {
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
 	private Color completedCellColor;
-	private Color pathColor;
 	private Style style;
 	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
 	private IntSupplier fnSourceCell;
@@ -59,15 +58,14 @@ public class GridView {
 		unvisitedCellColor = Color.LIGHT_GRAY;
 		visitedCellColor = Color.BLUE;
 		completedCellColor = Color.WHITE;
-		pathColor = Color.RED;
 		style = Style.WALL_PASSAGES;
 		fnPassageWidth = (u, v) -> 1;
 	}
 
 	private ConfigurableGridRenderer createRenderer(GridGraph<TraversalState, Integer> grid, int cellSize) {
-		ConfigurableGridRenderer r = getStyle() == Style.PEARLS ? new PearlsGridRenderer()
+		ConfigurableGridRenderer r = style == Style.PEARLS ? new PearlsGridRenderer()
 				: new WallPassageGridRenderer();
-		r.fnGridBgColor = () -> getGridBackgroundColor();
+		r.fnGridBgColor = () -> gridBackgroundColor;
 		r.fnCellSize = () -> cellSize;
 		r.fnPassageWidth = fnPassageWidth;
 		r.fnText = cell -> {
@@ -79,18 +77,18 @@ public class GridView {
 			}
 			return "";
 		};
-		r.fnTextColor = cell -> Color.YELLOW;
-		r.fnTextFont = cell -> new Font("Arial Narrow", Font.BOLD, cellSize/2);
+		r.fnTextColor = cell -> Color.RED;
+		r.fnTextFont = cell -> new Font("Arial Narrow", Font.BOLD, cellSize / 2);
 		r.fnCellBgColor = cell -> {
 			switch (grid.get(cell)) {
 			case COMPLETED:
-				return getCompletedCellColor();
+				return completedCellColor;
 			case UNVISITED:
-				return getUnvisitedCellColor();
+				return unvisitedCellColor;
 			case VISITED:
-				return getVisitedCellColor();
+				return visitedCellColor;
 			default:
-				return getUnvisitedCellColor();
+				return unvisitedCellColor;
 			}
 		};
 		r.fnPassageColor = (cell, dir) -> r.getCellBgColor(cell);
@@ -106,53 +104,5 @@ public class GridView {
 
 	public GridCanvas getCanvas() {
 		return canvas;
-	}
-
-	public Color getGridBackgroundColor() {
-		return gridBackgroundColor;
-	}
-
-	public void setGridBackgroundColor(Color color) {
-		this.gridBackgroundColor = color;
-	}
-
-	public Color getUnvisitedCellColor() {
-		return unvisitedCellColor;
-	}
-
-	public void setUnvisitedCellColor(Color color) {
-		this.unvisitedCellColor = color;
-	}
-
-	public Color getVisitedCellColor() {
-		return visitedCellColor;
-	}
-
-	public void setVisitedCellColor(Color color) {
-		this.visitedCellColor = color;
-	}
-
-	public Color getCompletedCellColor() {
-		return completedCellColor;
-	}
-
-	public void setCompletedCellColor(Color color) {
-		this.completedCellColor = color;
-	}
-
-	public Color getPathColor() {
-		return pathColor;
-	}
-
-	public void setPathColor(Color color) {
-		this.pathColor = color;
-	}
-
-	public Style getStyle() {
-		return style;
-	}
-
-	public void setStyle(Style style) {
-		this.style = style;
 	}
 }
