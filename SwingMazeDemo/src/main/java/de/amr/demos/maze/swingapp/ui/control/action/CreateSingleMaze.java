@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
-import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 
 /**
@@ -25,8 +24,12 @@ public class CreateSingleMaze extends CreateMazeAction {
 			controlUI.startBackgroundThread(
 
 					() -> {
-						boolean full = generatorInfo.isTagged(GeneratorTag.FullGridRequired);
-						model.replaceGrid(full, TraversalState.UNVISITED);
+						if (generatorInfo.isTagged(GeneratorTag.FullGridRequired)) {
+							model.fullGrid();
+						}
+						else {
+							model.emptyGrid();
+						}
 						gridUI.clear();
 						createMaze(generatorInfo, model.getGenerationStart());
 						switch (controlUI.getAfterGenerationAction()) {

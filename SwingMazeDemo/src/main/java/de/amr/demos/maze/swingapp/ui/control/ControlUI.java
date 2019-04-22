@@ -99,12 +99,8 @@ public class ControlUI implements PropertyChangeListener {
 			resetDisplay();
 			combo.requestFocusInWindow();
 		});
-		actionCreateEmptyGrid = action("Create Empty Grid", e -> {
-			model.replaceGrid(false, TraversalState.UNVISITED);
-		});
-		actionCreateFullGrid = action("Create Full Grid", e -> {
-			model.replaceGrid(true, TraversalState.UNVISITED);
-		});
+		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
+		actionCreateFullGrid = action("Create Full Grid", e -> model.fullGrid());
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridUI.clear();
 			gridUI.drawGrid();
@@ -324,8 +320,12 @@ public class ControlUI implements PropertyChangeListener {
 	public void selectGenerator(Algorithm generator) {
 		ControlUIMenus.selectAlgorithm(generatorMenu, generator);
 		updateGeneratorText(generator);
-		boolean full = generator.isTagged(GeneratorTag.FullGridRequired);
-		model.replaceGrid(full, TraversalState.UNVISITED);
+		if (generator.isTagged(GeneratorTag.FullGridRequired)) {
+			model.fullGrid();
+		}
+		else {
+			model.emptyGrid();
+		}
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {
