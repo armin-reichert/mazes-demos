@@ -125,7 +125,6 @@ public class GridUI implements PropertyChangeListener {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
-//		System.err.println("GridUI received property change:\n" + change);
 		switch (change.getPropertyName()) {
 		case "grid":
 			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
@@ -142,7 +141,7 @@ public class GridUI implements PropertyChangeListener {
 			drawGrid();
 			break;
 		default:
-//			System.err.println("Unhandled property change " + change);
+			System.out.println(String.format("%10s ignored %s", getClass().getSimpleName(), change));
 			break;
 		}
 	}

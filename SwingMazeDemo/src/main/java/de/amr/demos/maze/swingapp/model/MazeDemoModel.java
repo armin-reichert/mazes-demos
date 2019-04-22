@@ -18,12 +18,14 @@ import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.pathfinder.api.ObservableGraphSearch;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.graph.pathfinder.impl.BidiAStarSearch;
@@ -177,7 +179,7 @@ public class MazeDemoModel {
 		setGenerationStart(CENTER);
 		setSolverSource(TOP_LEFT);
 		setSolverTarget(BOTTOM_RIGHT);
-		setMetric(Metric.EUCLIDEAN);
+		setMetric(Metric.MANHATTAN);
 		setGenerationAnimated(true);
 		setDistancesVisible(false);
 	}
@@ -328,5 +330,57 @@ public class MazeDemoModel {
 		GridPosition oldValue = solverTarget;
 		solverTarget = newValue;
 		changePublisher.firePropertyChange("solverTarget", oldValue, newValue);
+	}
+
+	private ToDoubleBiFunction<Integer, Integer> metric() {
+		switch (metric) {
+		case CHEBYSHEV:
+			return grid::chebyshev;
+		case EUCLIDEAN:
+			return grid::euclidean;
+		case MANHATTAN:
+			return grid::manhattan;
+		default:
+			throw new IllegalStateException();
+		}
+	}
+
+	public ObservableGraphSearch createSolverInstance(Algorithm solver) {
+		int targetCell = grid.cell(solverTarget);
+
+		if (solver.getAlgorithmClass() == BreadthFirstSearch.class) {
+			return new BreadthFirstSearch(grid);
+		}
+		if (solver.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
+			return new BidiBreadthFirstSearch(grid, (u, v) -> 1);
+		}
+		if (solver.getAlgorithmClass() == DijkstraSearch.class) {
+			return new DijkstraSearch(grid, (u, v) -> 1);
+		}
+		if (solver.getAlgorithmClass() == BidiDijkstraSearch.class) {
+			return new BidiDijkstraSearch(grid, (u, v) -> 1);
+		}
+		if (solver.getAlgorithmClass() == BestFirstSearch.class) {
+			return new BestFirstSearch(grid, v -> metric().applyAsDouble(v, targetCell));
+		}
+		if (solver.getAlgorithmClass() == AStarSearch.class) {
+			return new AStarSearch(grid, (u, v) -> 1, metric());
+		}
+		if (solver.getAlgorithmClass() == BidiAStarSearch.class) {
+			return new BidiAStarSearch(grid, (u, v) -> 1, metric(), metric());
+		}
+		if (solver.getAlgorithmClass() == DepthFirstSearch.class) {
+			return new DepthFirstSearch(grid);
+		}
+		if (solver.getAlgorithmClass() == DepthFirstSearch2.class) {
+			return new DepthFirstSearch2(grid);
+		}
+		if (solver.getAlgorithmClass() == IDDFS.class) {
+			return new IDDFS(grid);
+		}
+		if (solver.getAlgorithmClass() == HillClimbingSearch.class) {
+			return new HillClimbingSearch(grid, v -> metric().applyAsDouble(v, targetCell));
+		}
+		throw new IllegalArgumentException();
 	}
 }
