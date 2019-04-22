@@ -109,17 +109,17 @@ class ControlUIMenus {
 			.title("Generators")
 			.property("radio", radio)
 			.items(
-				generatorMenu(radio, "Graph Traversal", algorithm -> algorithm.isTagged(Traversal)),
-				generatorMenu(radio, "Minimum Spanning Tree", algorithm -> algorithm.isTagged(MST)),
-				generatorMenu(radio, "Uniform Spanning Tree", algorithm -> algorithm.isTagged(UST)),
-				generatorMenu(radio, "Others", 
+				generatorMenu("Graph Traversal", radio, algorithm -> algorithm.isTagged(Traversal)),
+				generatorMenu("Minimum Spanning Tree", radio, algorithm -> algorithm.isTagged(MST)),
+				generatorMenu("Uniform Spanning Tree", radio, algorithm -> algorithm.isTagged(UST)),
+				generatorMenu("Others", radio,
 					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST)))
 			)
 		.build();
 		//@formatter:on
 	}
 
-	private JMenu generatorMenu(ButtonGroup radio, String title, Predicate<Algorithm> selection) {
+	private JMenu generatorMenu(String title, ButtonGroup radio, Predicate<Algorithm> selection) {
 		JMenu menu = new JMenu(title);
 		controlUI.getModel().generators().filter(selection).forEach(generator -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
