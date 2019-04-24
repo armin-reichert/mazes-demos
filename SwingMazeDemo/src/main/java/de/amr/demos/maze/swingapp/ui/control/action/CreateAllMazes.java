@@ -45,19 +45,14 @@ public class CreateAllMazes extends CreateMazeAction {
 			controlUI.selectGenerator(generator);
 			try {
 				createMaze(generator, model.getGenerationStart());
-				switch (controlUI.getAfterGenerationAction()) {
-				case FLOOD_FILL:
+				AfterGenerationAction andNow = controlUI.getAfterGenerationAction();
+				if (andNow == AfterGenerationAction.FLOOD_FILL) {
 					GridCanvasAnimation.pause(1);
 					gridUI.floodFill();
-					break;
-				case NOTHING:
-					break;
-				case SOLVE:
+				}
+				else if (andNow == AfterGenerationAction.SOLVE) {
 					GridCanvasAnimation.pause(1);
 					controlUI.solve();
-					break;
-				default:
-					break;
 				}
 			} catch (AnimationInterruptedException x) {
 				throw x;

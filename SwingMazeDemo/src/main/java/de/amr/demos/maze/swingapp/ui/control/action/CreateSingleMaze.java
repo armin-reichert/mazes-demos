@@ -32,19 +32,14 @@ public class CreateSingleMaze extends CreateMazeAction {
 						}
 						gridUI.clear();
 						createMaze(generatorInfo, model.getGenerationStart());
-						switch (controlUI.getAfterGenerationAction()) {
-						case FLOOD_FILL:
+						AfterGenerationAction andNow = controlUI.getAfterGenerationAction();
+						if (andNow == AfterGenerationAction.FLOOD_FILL) {
 							GridCanvasAnimation.pause(1);
 							gridUI.floodFill();
-							break;
-						case NOTHING:
-							break;
-						case SOLVE:
+						}
+						else if (andNow == AfterGenerationAction.SOLVE) {
 							GridCanvasAnimation.pause(1);
 							controlUI.solve();
-							break;
-						default:
-							break;
 						}
 					},
 
