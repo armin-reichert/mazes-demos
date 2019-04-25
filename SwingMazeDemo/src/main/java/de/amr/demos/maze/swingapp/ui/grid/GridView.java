@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.util.function.BiFunction;
 import java.util.function.IntSupplier;
 
-import de.amr.demos.maze.swingapp.model.MazeDemoModel.Style;
+import de.amr.demos.maze.swingapp.model.Style;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;

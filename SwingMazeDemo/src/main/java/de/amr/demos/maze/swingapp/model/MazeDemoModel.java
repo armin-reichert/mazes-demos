@@ -86,15 +86,7 @@ import de.amr.maze.alg.ust.WilsonUSTRowsTopDown;
  */
 public class MazeDemoModel {
 
-	public enum Style {
-		WALL_PASSAGES, PEARLS
-	};
-
-	public enum Metric {
-		EUCLIDEAN, MANHATTAN, CHEBYSHEV
-	}
-
-	private static final Algorithm[] GENERATOR_ALGORITHMS = {
+	private static final Algorithm[] GENERATORS = {
 		/*@formatter:off*/
 		new Algorithm(RecursiveDFS.class, "Random recursive DFS (small grids only!)", Traversal, SmallGrid),
 		new Algorithm(IterativeDFS.class, "Random non-recursive DFS", Traversal),
@@ -140,7 +132,7 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
-	private static final Algorithm[] PATHFINDER_ALGORITHMS = {
+	private static final Algorithm[] SOLVERS = {
 		/*@formatter:off*/
 		new Algorithm(BreadthFirstSearch.class, "Breadth-First Search", BFS),
 		new Algorithm(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", BFS),
@@ -156,6 +148,8 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
+	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
+	
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private int[] gridCellSizes;
 	private int gridCellSizeIndex;
@@ -168,8 +162,6 @@ public class MazeDemoModel {
 	private Metric metric;
 	private GridPosition solverSource;
 	private GridPosition solverTarget;
-
-	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
 
 	public MazeDemoModel() {
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
@@ -189,11 +181,11 @@ public class MazeDemoModel {
 	}
 
 	public Stream<Algorithm> generators() {
-		return Arrays.stream(GENERATOR_ALGORITHMS);
+		return Arrays.stream(GENERATORS);
 	}
 
 	public Stream<Algorithm> solvers() {
-		return Arrays.stream(PATHFINDER_ALGORITHMS);
+		return Arrays.stream(SOLVERS);
 	}
 
 	public Optional<Algorithm> findSolver(Class<?> clazz) {

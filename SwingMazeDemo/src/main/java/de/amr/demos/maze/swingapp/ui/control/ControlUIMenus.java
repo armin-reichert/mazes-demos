@@ -21,7 +21,7 @@ import javax.swing.JRadioButtonMenuItem;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.model.MazeDemoModel.Metric;
+import de.amr.demos.maze.swingapp.model.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.graph.grid.api.GridPosition;
