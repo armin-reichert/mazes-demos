@@ -304,7 +304,7 @@ public class ControlUI implements PropertyChangeListener {
 		int numCols = getCanvasWidth() / model.getGridCellSize();
 		int numRows = getCanvasHeight() / model.getGridCellSize();
 		boolean full = model.getGrid().isFull();
-		model.createGrid(numCols, numRows, full, TraversalState.UNVISITED);
+		model.createGridSilently(numCols, numRows, full, TraversalState.UNVISITED);
 		gridUI.reset();
 		setBusy(false);
 	}

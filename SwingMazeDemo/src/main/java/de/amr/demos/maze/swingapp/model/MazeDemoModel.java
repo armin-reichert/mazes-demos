@@ -260,6 +260,11 @@ public class MazeDemoModel {
 		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 
+	public void createGridSilently(int numCols, int numRows, boolean full, TraversalState defaultState) {
+		grid = full ? fullObservableGrid(numCols, numRows, Top4.get(), defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, Top4.get(), defaultState, 0);
+	}
+
 	public void emptyGrid() {
 		createGrid(grid.numCols(), grid.numRows(), false, TraversalState.UNVISITED);
 	}
