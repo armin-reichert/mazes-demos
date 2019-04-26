@@ -16,6 +16,7 @@ import com.beust.jcommander.Parameter;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
 import de.amr.maze.alg.Armin;
@@ -68,6 +69,7 @@ public class MazeDemoApp {
 		controlUI = new ControlUI(gridUI);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
+		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
 		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
 		controlUI.expandWindow();

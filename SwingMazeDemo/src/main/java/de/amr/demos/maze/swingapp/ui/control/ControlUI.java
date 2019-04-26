@@ -79,7 +79,7 @@ public class ControlUI implements PropertyChangeListener {
 		this.model = gridUI.getModel();
 		model.changePublisher.addPropertyChangeListener(this);
 
-		afterGenerationAction = AfterGenerationAction.NOTHING;
+		afterGenerationAction = AfterGenerationAction.IDLE;
 
 		// create actions
 		actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
@@ -195,7 +195,9 @@ public class ControlUI implements PropertyChangeListener {
 
 	public void setHiddenWhenBusy(boolean b) {
 		this.hiddenWhenBusy = b;
-		menus.updateSelection();
+		if (menus != null) {
+			menus.updateSelection();
+		}
 	}
 
 	public AfterGenerationAction getAfterGenerationAction() {
@@ -204,6 +206,9 @@ public class ControlUI implements PropertyChangeListener {
 
 	public void setAfterGenerationAction(AfterGenerationAction afterGenerationAction) {
 		this.afterGenerationAction = afterGenerationAction;
+		if (menus != null) {
+			menus.updateSelection();
+		}
 	}
 
 	public JFrame getWindow() {

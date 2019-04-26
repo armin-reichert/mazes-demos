@@ -211,7 +211,7 @@ class ControlUIMenus {
 				.selection(controlUI::getAfterGenerationAction)
 				.button()
 					.text("No action after generation")
-					.selectionValue(AfterGenerationAction.NOTHING)
+					.selectionValue(AfterGenerationAction.IDLE)
 					.build()
 				.button()
 					.text("Solve after generation")
