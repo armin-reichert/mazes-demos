@@ -25,8 +25,8 @@ import de.amr.swing.Swing;
 /**
  * This application visualizes different maze generation algorithms and path finders.
  * <p>
- * The application provides an undecorated (by default full-screen) grid display area where the maze
- * generation and path finding animations are show. Using a control window one can change the maze
+ * The application provides a (by default full-screen, undecorated) grid display area where the maze
+ * generation and path finding animations are shown. Using a control window one can change the maze
  * generation path finder algorithm. the size/resolution of the grid, the rendering style and other
  * settings.
  * 
@@ -34,10 +34,8 @@ import de.amr.swing.Swing;
  */
 public class MazeDemoApp {
 
-	@Parameter(
-			description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')",
-			names = { "-laf", "-theme" },
-			converter = ThemeConverter.class)
+	@Parameter(description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
+			"-theme" }, converter = ThemeConverter.class)
 	private String theme = NimbusLookAndFeel.class.getName();
 
 	@Parameter(description = "Grid window width", names = { "-width" })
