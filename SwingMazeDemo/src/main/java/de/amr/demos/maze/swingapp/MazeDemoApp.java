@@ -44,8 +44,6 @@ public class MazeDemoApp {
 	private int windowHeight = Swing.getDisplaySize().height;
 
 	private final MazeDemoModel model = new MazeDemoModel();
-	private ControlUI controlUI;
-	private GridUI gridUI;
 
 	public static void main(String[] args) {
 		MazeDemoApp theApp = new MazeDemoApp();
@@ -63,9 +61,9 @@ public class MazeDemoApp {
 			e.printStackTrace();
 		}
 
-		gridUI = new GridUI(model, windowWidth, windowHeight);
-		controlUI = new ControlUI(gridUI);
+		GridUI gridUI = new GridUI(model, windowWidth, windowHeight);
 
+		ControlUI controlUI = new ControlUI(gridUI);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
 		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
@@ -74,7 +72,7 @@ public class MazeDemoApp {
 		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
 
-		gridUI.setEscapeAction(action("", e -> controlUI.show()));
+		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
 
 		gridUI.show();
 		controlUI.show();
