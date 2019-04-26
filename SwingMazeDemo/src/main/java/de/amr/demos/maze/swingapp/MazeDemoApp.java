@@ -26,9 +26,10 @@ import de.amr.swing.Swing;
  * This application visualizes different maze generation algorithms and path finders.
  * <p>
  * The application provides a (by default full-screen, undecorated) grid display area where the maze
- * generation and path finding animations are shown. Using a control window one can change the maze
- * generation path finder algorithm. the size/resolution of the grid, the rendering style and other
- * settings.
+ * generation and path finding animations are shown.
+ * <p>
+ * A control window allows changing the generation and path finder algorithm, changing the
+ * resolution of the grid, the rendering style and other settings.
  * 
  * @author Armin Reichert
  */
