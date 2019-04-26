@@ -2,10 +2,8 @@ package de.amr.demos.maze.swingapp;
 
 import static de.amr.swing.Swing.action;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -64,17 +62,20 @@ public class MazeDemoApp {
 				| UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		gridUI = new GridUI(model, new Dimension(windowWidth, windowHeight));
+
+		gridUI = new GridUI(model, windowWidth, windowHeight);
 		controlUI = new ControlUI(gridUI);
+
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
 		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
-		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
-		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
 		controlUI.expandWindow();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
-		gridUI.getView().getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "showControlUI");
-		gridUI.getView().getCanvas().getActionMap().put("showControlUI", action("", e -> controlUI.show()));
+		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
+		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
+
+		gridUI.setEscapeAction(action("", e -> controlUI.show()));
+
 		gridUI.show();
 		controlUI.show();
 	}

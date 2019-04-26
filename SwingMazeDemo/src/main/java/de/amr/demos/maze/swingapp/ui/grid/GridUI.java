@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
@@ -34,9 +35,9 @@ public class GridUI implements PropertyChangeListener {
 	private GridCanvasAnimation<TraversalState, Integer> animation;
 	private final Dimension gridViewSize;
 
-	public GridUI(MazeDemoModel model, Dimension gridViewSize) {
+	public GridUI(MazeDemoModel model, int width, int height) {
 		this.model = model;
-		this.gridViewSize = gridViewSize;
+		this.gridViewSize = new Dimension(width, height);
 
 		model.createGrid(gridViewSize.width / model.getGridCellSize(),
 				gridViewSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
@@ -138,6 +139,11 @@ public class GridUI implements PropertyChangeListener {
 
 	public void startModelChangeListening() {
 		model.changePublisher.addPropertyChangeListener(this);
+	}
+
+	public void setEscapeAction(Action action) {
+		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapeAction");
+		view.getCanvas().getActionMap().put("escapeAction", action);
 	}
 
 	public void reset() {
