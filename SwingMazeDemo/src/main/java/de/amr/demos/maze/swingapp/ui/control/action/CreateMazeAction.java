@@ -14,6 +14,7 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
+import de.amr.maze.alg.BinaryTree;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.util.StopWatch;
 
@@ -42,6 +43,10 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
+		if (generatorInstance instanceof BinaryTree) {
+			BinaryTree binaryTreeGenerator = (BinaryTree) generatorInstance;
+			binaryTreeGenerator.rootPosition = startPosition;
+		}
 		controlUI.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
 		if (model.isGenerationAnimated()) {
 			generatorInstance.createMaze(x, y);
