@@ -1,6 +1,6 @@
 package de.amr.demos.grid.maze.swing;
 
-import de.amr.maze.alg.RecursiveDivision;
+import de.amr.maze.alg.others.RecursiveDivision;
 
 public class RecursiveDivisionApp {
 

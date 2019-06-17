@@ -17,7 +17,7 @@ import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
-import de.amr.maze.alg.Armin;
+import de.amr.maze.alg.others.Armin;
 import de.amr.swing.Swing;
 
 /**

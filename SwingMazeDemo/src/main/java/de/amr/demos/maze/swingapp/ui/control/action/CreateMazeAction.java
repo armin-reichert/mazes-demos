@@ -14,8 +14,8 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.maze.alg.BinaryTree;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.others.BinaryTree;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeAction extends AbstractAction {
