@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
@@ -255,14 +255,14 @@ public class MazeDemoModel {
 
 	public void createGrid(int numCols, int numRows, boolean full, TraversalState defaultState) {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
-		grid = full ? fullObservableGrid(numCols, numRows, Top4.get(), defaultState, 0)
-				: emptyObservableGrid(numCols, numRows, Top4.get(), defaultState, 0);
+		grid = full ? fullObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0);
 		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public void createGridSilently(int numCols, int numRows, boolean full, TraversalState defaultState) {
-		grid = full ? fullObservableGrid(numCols, numRows, Top4.get(), defaultState, 0)
-				: emptyObservableGrid(numCols, numRows, Top4.get(), defaultState, 0);
+		grid = full ? fullObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0);
 	}
 
 	public void emptyGrid() {

@@ -9,7 +9,7 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.maze.alg.core.MazeGenerator;
 
@@ -72,7 +72,7 @@ public class MazeDemoApp extends SwingGridSampleApp {
 			int numCols = getCanvas().getWidth() / cellSize;
 			int numRows = getCanvas().getHeight() / cellSize;
 			ObservableGridGraph<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(numCols, numRows,
-					Top4.get(), UNVISITED, 0);
+					Grid4Topology.get(), UNVISITED, 0);
 			setGrid(grid);
 			createGenerator(grid).createMaze(0, 0);
 			floodFill();

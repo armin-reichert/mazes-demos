@@ -11,7 +11,7 @@ import java.util.TimerTask;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.maze.alg.core.MazeGenerator;
@@ -129,7 +129,7 @@ public class MazeDemoFX extends Application {
 
 	private void nextMaze() {
 		canvas.resize((cols + 1) * cellSize, (rows + 1) * cellSize);
-		grid = GridFactory.emptyObservableGrid(cols, rows, Top4.get(), UNVISITED, 0);
+		grid = GridFactory.emptyObservableGrid(cols, rows, Grid4Topology.get(), UNVISITED, 0);
 		randomMazeGenerator(grid).createMaze(0, 0);
 		drawGrid();
 		Path path = new BreadthFirstSearch(grid).findPath(grid.cell(TOP_LEFT), grid.cell(BOTTOM_RIGHT));

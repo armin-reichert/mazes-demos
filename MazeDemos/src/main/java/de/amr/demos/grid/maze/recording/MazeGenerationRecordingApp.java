@@ -16,7 +16,7 @@ import de.amr.graph.event.VertexEvent;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
@@ -114,7 +114,7 @@ public class MazeGenerationRecordingApp {
 			JFrame window = new JFrame();
 			try {
 				GridGraph2D<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(numCols, numRows,
-						Top4.get(), UNVISITED, 0);
+						Grid4Topology.get(), UNVISITED, 0);
 				GridCanvas canvas = new GridCanvas(grid, cellSize);
 				canvas.pushRenderer(createRenderer((ObservableGridGraph2D<TraversalState, Integer>) grid, cellSize));
 				canvas.drawGrid();

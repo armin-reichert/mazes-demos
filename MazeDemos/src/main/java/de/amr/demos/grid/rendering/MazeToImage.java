@@ -14,7 +14,7 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
@@ -74,7 +74,7 @@ public class MazeToImage {
 
 	private static ObservableGridGraph2D<TraversalState, Integer> maze(Params p) {
 		ObservableGridGraph2D<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(p.width, p.height,
-				Top4.get(), UNVISITED, 0);
+				Grid4Topology.get(), UNVISITED, 0);
 		switch (p.alg) {
 		case "dfs":
 			new IterativeDFS(grid).createMaze(0, 0);

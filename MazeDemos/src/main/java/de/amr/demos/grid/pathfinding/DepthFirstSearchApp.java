@@ -22,7 +22,7 @@ import javax.swing.KeyStroke;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.GridFactory;
-import de.amr.graph.grid.impl.Top4;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
@@ -137,7 +137,7 @@ public class DepthFirstSearchApp {
 	}
 
 	private void newMaze(int gridSize) {
-		grid = GridFactory.emptyObservableGrid(gridSize, gridSize, Top4.get(), UNVISITED, 0);
+		grid = GridFactory.emptyObservableGrid(gridSize, gridSize, Grid4Topology.get(), UNVISITED, 0);
 		new KruskalMST(grid).createMaze(0, 0);
 		solution = null;
 	}
