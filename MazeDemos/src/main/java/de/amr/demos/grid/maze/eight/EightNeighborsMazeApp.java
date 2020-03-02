@@ -1,5 +1,7 @@
 package de.amr.demos.grid.maze.eight;
 
+import java.util.Random;
+
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -10,8 +12,12 @@ import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
+import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.others.RecursiveDivision;
 import de.amr.maze.alg.traversal.IterativeDFS;
+import de.amr.maze.alg.traversal.RandomBFS;
+import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
 
 public class EightNeighborsMazeApp {
 
@@ -20,7 +26,7 @@ public class EightNeighborsMazeApp {
 	}
 
 	GridGraph<TraversalState, Integer> grid;
-	MazeGenerator mg;
+	MazeGenerator gen;
 	GridCanvas canvas;
 
 	public EightNeighborsMazeApp() {
@@ -30,8 +36,35 @@ public class EightNeighborsMazeApp {
 	void maze() {
 		grid = GridFactory.emptyGrid(20, 20, Grid8Topology.get(), TraversalState.UNVISITED, 0);
 		int center = grid.cell(GridPosition.CENTER);
-		mg = new IterativeDFS(grid);
-		mg.createMaze(grid.col(center), grid.row(center));
+		int choice = new Random().nextInt(4);
+		switch (choice) {
+		case 0:
+			System.out.println("DFS");
+			gen = new IterativeDFS(grid);
+			break;
+		case 1:
+			System.out.println("Wilson");
+			gen = new WilsonUSTRecursiveCrosses(grid);
+			break;
+		case 2:
+			System.out.println("BFS");
+			gen = new RandomBFS(grid);
+			break;
+		case 3:
+			System.out.println("Recursive Division");
+			gen = new RecursiveDivision(grid);
+			break;
+		default:
+			System.out.println("DFS");
+			gen = new IterativeDFS(grid);
+			break;
+		}
+		gen.createMaze(grid.col(center), grid.row(center));
+		if (GraphUtils.containsCycle(grid)) {
+			System.out.println("No maze! Cycle detected.");
+		} else {
+			System.out.println("Maze created.");
+		}
 	}
 
 	void render() {
