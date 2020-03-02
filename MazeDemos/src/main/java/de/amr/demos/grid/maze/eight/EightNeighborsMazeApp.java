@@ -18,6 +18,7 @@ import de.amr.graph.pathfinder.util.GraphSearchUtils;
 import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.mst.KruskalMST;
+import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.others.BinaryTree;
 import de.amr.maze.alg.others.Eller;
 import de.amr.maze.alg.others.HuntAndKill;
@@ -46,7 +47,7 @@ public class EightNeighborsMazeApp {
 
 	void maze() {
 		int center = grid.cell(GridPosition.CENTER);
-		int choice = new Random().nextInt(7);
+		int choice = new Random().nextInt(8);
 		switch (choice) {
 		case 0:
 			System.out.println("DFS");
@@ -75,6 +76,10 @@ public class EightNeighborsMazeApp {
 		case 6:
 			System.out.println("Hunt and Kill");
 			gen = new HuntAndKill(grid);
+			break;
+		case 7:
+			System.out.println("Prim");
+			gen = new PrimMST(grid);
 			break;
 		default:
 			System.out.println("DFS");
