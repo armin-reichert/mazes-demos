@@ -1,5 +1,6 @@
 package de.amr.demos.grid.maze.eight;
 
+import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
@@ -28,6 +29,9 @@ import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
 
 public class EightNeighborsMazeApp {
 
+	static final int GRID_SIZE = 40;
+	static final int CANVAS_SIZE = 640;
+
 	public static void main(String[] args) {
 		new EightNeighborsMazeApp();
 	}
@@ -35,17 +39,18 @@ public class EightNeighborsMazeApp {
 	GridGraph<TraversalState, Integer> grid;
 	MazeGenerator gen;
 	GridCanvas canvas;
-	volatile boolean next = true;
+	volatile boolean nextMaze = true;
 
 	public EightNeighborsMazeApp() {
 		SwingUtilities.invokeLater(this::showUI);
 	}
 
 	void grid() {
-		grid = GridFactory.emptyGrid(20, 20, Grid8Topology.get(), TraversalState.UNVISITED, 0);
+		grid = GridFactory.emptyGrid(GRID_SIZE, GRID_SIZE, Grid8Topology.get(), TraversalState.UNVISITED, 0);
 	}
 
 	void maze() {
+		grid();
 		int center = grid.cell(GridPosition.CENTER);
 		int choice = new Random().nextInt(8);
 		switch (choice) {
@@ -107,7 +112,7 @@ public class EightNeighborsMazeApp {
 		}
 		boolean connected = GraphSearchUtils.isConnectedGraph(grid);
 		if (!connected) {
-			System.out.println("Disconnected graph");
+			System.out.println("Generated graph is disconnected");
 		}
 		return edgeCountOk && connected && cycleFree;
 	}
@@ -127,34 +132,32 @@ public class EightNeighborsMazeApp {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-					next = true;
+					nextMaze = true;
 				}
 			}
 		});
 		canvas = new GridCanvas();
 		f.getContentPane().add(canvas);
 		PearlsGridRenderer gr = new PearlsGridRenderer();
+		gr.fnPassageColor = (u,v) -> Color.YELLOW;
 		gr.fnRelativePearlSize = () -> .25;
-		gr.fnCellSize = () -> 32;
-		gr.fnPassageWidth = (u, v) -> 4;
+		gr.fnCellSize = () -> CANVAS_SIZE / GRID_SIZE;
+		gr.fnPassageWidth = (u, v) -> 2;
 		canvas.pushRenderer(gr);
+		canvas.setCellSize(CANVAS_SIZE / GRID_SIZE);
 		grid();
 		render();
 		f.pack();
 		f.setVisible(true);
-		new Thread(this::loop).start();
+		new Thread(this::mazes).start();
 	}
 
-	void loop() {
-		while (true) {
-			if (next) {
-				grid();
-				maze();
-				render();
-				next = false;
-			}
+	void mazes() {
+		for (int i = 0; i < 1000; ++i) {
+			maze();
+			render();
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException x) {
 				x.printStackTrace();
 			}
