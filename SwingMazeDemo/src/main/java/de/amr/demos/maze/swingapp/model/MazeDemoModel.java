@@ -23,8 +23,9 @@ import java.util.stream.Stream;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.impl.ObservableGridGraph;
+import de.amr.graph.grid.api.GridTopology;
 import de.amr.graph.grid.impl.Grid4Topology;
+import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
@@ -149,8 +150,9 @@ public class MazeDemoModel {
 	};
 
 	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
-	
+
 	private ObservableGridGraph<TraversalState, Integer> grid;
+	private GridTopology gridTopology;
 	private int[] gridCellSizes;
 	private int gridCellSizeIndex;
 	private int passageWidthPercentage;
@@ -164,6 +166,7 @@ public class MazeDemoModel {
 	private GridPosition solverTarget;
 
 	public MazeDemoModel() {
+		setGridTopology(Grid4Topology.get());
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
 		setGridCellSizeIndex(4);
 		setPassageWidthPercentage(100);
@@ -192,6 +195,14 @@ public class MazeDemoModel {
 		return solvers().filter(generatorInfo -> generatorInfo.getAlgorithmClass() == clazz).findFirst();
 	}
 
+	public GridTopology getGridTopology() {
+		return gridTopology;
+	}
+
+	public void setGridTopology(GridTopology top) {
+		this.gridTopology = top;
+	}
+
 	public int[] getGridCellSizes() {
 		return gridCellSizes;
 	}
@@ -213,8 +224,7 @@ public class MazeDemoModel {
 			int oldValue = gridCellSizeIndex;
 			gridCellSizeIndex = newValue;
 			changePublisher.firePropertyChange("gridCellSizeIndex", oldValue, newValue);
-		}
-		else {
+		} else {
 			throw new IndexOutOfBoundsException();
 		}
 	}
@@ -255,8 +265,8 @@ public class MazeDemoModel {
 
 	public void createGrid(int numCols, int numRows, boolean full, TraversalState defaultState) {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
-		grid = full ? fullObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0)
-				: emptyObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0);
+		grid = full ? fullObservableGrid(numCols, numRows, gridTopology, defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, gridTopology, defaultState, 0);
 		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 

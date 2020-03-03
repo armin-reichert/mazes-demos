@@ -33,6 +33,9 @@ import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridTopology;
+import de.amr.graph.grid.impl.Grid4Topology;
+import de.amr.graph.grid.impl.Grid8Topology;
 import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
@@ -61,6 +64,7 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionCollapseWindow;
 	final Action actionExpandWindow;
 	final Action actionChangeGridResolution;
+	final Action actionChangeGridTopology;
 	final Action actionCreateEmptyGrid;
 	final Action actionCreateFullGrid;
 	final Action actionStopBackgroundThread;
@@ -90,6 +94,18 @@ public class ControlUI implements PropertyChangeListener {
 			reset();
 			combo.requestFocusInWindow();
 		});
+		actionChangeGridTopology = action("Change Topology", e -> {
+			@SuppressWarnings("unchecked")
+			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
+			model.setGridTopology(combo.getItemAt(combo.getSelectedIndex()));
+			getSelectedGenerator().ifPresent(generator -> {
+				if (generator.isTagged(GeneratorTag.FullGridRequired)) {
+					model.fullGrid();
+				} else {
+					model.emptyGrid();
+				}
+			});
+		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
 		actionCreateFullGrid = action("Create Full Grid", e -> model.fullGrid());
 		actionClearCanvas = action("Clear Canvas", e -> {
@@ -109,12 +125,16 @@ public class ControlUI implements PropertyChangeListener {
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
 			int numCols = getCanvasWidth() / cellSize;
 			int numRows = getCanvasHeight() / cellSize;
-			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows,
-					cellSize);
+			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows, cellSize);
 		}).toArray(String[]::new);
 		view.getComboGridResolution().setModel(new DefaultComboBoxModel<>(entries));
 		view.getComboGridResolution().setSelectedIndex(model.getGridCellSizeIndex());
 		view.getComboGridResolution().setAction(actionChangeGridResolution);
+
+		GridTopology topologies[] = { Grid4Topology.get(), Grid8Topology.get() };
+		view.getComboGridTopology().setModel(new DefaultComboBoxModel<>(topologies));
+		view.getComboGridTopology().setSelectedItem(model.getGridTopology());
+		view.getComboGridTopology().setAction(actionChangeGridTopology);
 
 		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
 		view.getSliderPassageWidth().addChangeListener(e -> {
@@ -164,8 +184,7 @@ public class ControlUI implements PropertyChangeListener {
 		bgThread.setUncaughtExceptionHandler((thread, e) -> {
 			if (e.getClass() == AnimationInterruptedException.class) {
 				onInterruption.accept((AnimationInterruptedException) e);
-			}
-			else {
+			} else {
 				onFailure.accept(e);
 			}
 			setBusy(false);
@@ -262,8 +281,7 @@ public class ControlUI implements PropertyChangeListener {
 			/*@formatter:on*/
 			watch.measure(() -> anim.run(solverInstance, source, target));
 			anim.showPath(solverInstance, source, target);
-		}
-		else if (solver.isTagged(SolverTag.DFS)) {
+		} else if (solver.isTagged(SolverTag.DFS)) {
 			/*@formatter:off*/
 			DFSAnimation anim = DFSAnimation.builder()
 					.canvas(gridView.getCanvas())
@@ -282,19 +300,14 @@ public class ControlUI implements PropertyChangeListener {
 			if (hiddenWhenBusy) {
 				window.setVisible(false);
 			}
-			setEnabled(false, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(),
-					menus.getOptionMenu());
-			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
-					actionSolveMaze);
+			setEnabled(false, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(), menus.getOptionMenu());
+			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
 			setWaitCursor(view);
 			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
-		}
-		else {
+		} else {
 			window.setVisible(true);
-			setEnabled(true, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(),
-					menus.getOptionMenu());
-			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes,
-					actionSolveMaze);
+			setEnabled(true, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(), menus.getOptionMenu());
+			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
 			setNormalCursor(view);
 		}
 	}
@@ -331,8 +344,7 @@ public class ControlUI implements PropertyChangeListener {
 		updateGeneratorText(generator);
 		if (generator.isTagged(GeneratorTag.FullGridRequired)) {
 			model.fullGrid();
-		}
-		else {
+		} else {
 			model.emptyGrid();
 		}
 	}

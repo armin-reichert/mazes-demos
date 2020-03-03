@@ -7,6 +7,7 @@ import java.util.function.IntSupplier;
 
 import de.amr.demos.maze.swingapp.model.Style;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.GridGraph;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.GridCanvas;
@@ -48,6 +49,13 @@ public class GridView {
 		reset(grid, cellSize);
 	}
 
+	@SuppressWarnings("unchecked")
+	public void setStyle(Style style) {
+		this.style = style;
+		GridGraph<TraversalState, Integer> grid = (GridGraph<TraversalState, Integer>) canvas.getGrid();
+		reset(grid, canvas.getCellSize());
+	}
+
 	public void changeGridSize(GridGraph<TraversalState, Integer> grid, int cellSize) {
 		canvas.setGrid(grid, false);
 		canvas.replaceRenderer(createRenderer(grid, cellSize));
@@ -62,23 +70,15 @@ public class GridView {
 		fnPassageWidth = (u, v) -> 1;
 	}
 
-	private ConfigurableGridRenderer createRenderer(GridGraph<TraversalState, Integer> grid, int cellSize) {
-		ConfigurableGridRenderer r = style == Style.PEARLS ? new PearlsGridRenderer()
-				: new WallPassageGridRenderer();
+	private ConfigurableGridRenderer createRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
+		ConfigurableGridRenderer r;
+		if (style == Style.PEARLS) {
+			r = createPearlsRenderer(grid, cellSize);
+		} else {
+			r = createWallPassageRenderer(grid, cellSize);
+		}
 		r.fnGridBgColor = () -> gridBackgroundColor;
 		r.fnCellSize = () -> cellSize;
-		r.fnPassageWidth = fnPassageWidth;
-		r.fnText = cell -> {
-			if (cell == fnSourceCell.getAsInt()) {
-				return "S";
-			}
-			if (cell == fnTargetCell.getAsInt()) {
-				return "T";
-			}
-			return "";
-		};
-		r.fnTextColor = cell -> Color.RED;
-		r.fnTextFont = cell -> new Font("Arial Narrow", Font.BOLD, cellSize / 2);
 		r.fnCellBgColor = cell -> {
 			switch (grid.get(cell)) {
 			case COMPLETED:
@@ -91,7 +91,34 @@ public class GridView {
 				return unvisitedCellColor;
 			}
 		};
+		r.fnText = cell -> {
+			if (cell == fnSourceCell.getAsInt()) {
+				return "S";
+			}
+			if (cell == fnTargetCell.getAsInt()) {
+				return "T";
+			}
+			return "";
+		};
+		r.fnTextColor = cell -> Color.RED;
+		r.fnTextFont = cell -> new Font("Arial Narrow", Font.BOLD, cellSize / 2);
+		return r;
+	}
+
+	private WallPassageGridRenderer createWallPassageRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
+		WallPassageGridRenderer r = new WallPassageGridRenderer();
+		r.fnPassageWidth = fnPassageWidth;
 		r.fnPassageColor = (cell, dir) -> r.getCellBgColor(cell);
+		return r;
+	}
+
+	private PearlsGridRenderer createPearlsRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
+		PearlsGridRenderer r = new PearlsGridRenderer();
+		r.fnRelativePearlSize = () -> 0.5;
+		r.fnPassageWidth = (u, v) -> 1;
+		r.fnPassageColor = (u, v) -> {
+			return completedCellColor;
+		};
 		return r;
 	}
 

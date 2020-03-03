@@ -22,13 +22,15 @@ public abstract class CreateMazeAction extends AbstractAction {
 
 	protected final ControlUI controlUI;
 	protected final GridUI gridUI;
-	protected final MazeDemoModel model;
+	protected MazeDemoModel model;
 
 	public CreateMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
 		this.gridUI = gridUI;
 		this.controlUI = controlUI;
-		model = gridUI.getModel();
+		if (gridUI != null) { // avoid exception in WindowBuilder
+			model = gridUI.getModel();
+		}
 	}
 
 	protected void createMaze(Algorithm generator, GridPosition startPosition) {
@@ -37,8 +39,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 		try {
 			generatorInstance = (MazeGenerator) generator.getAlgorithmClass().getConstructor(GridGraph2D.class)
 					.newInstance(model.getGrid());
-		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException | SecurityException e) {
+		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 		int startCell = grid.cell(startPosition);
@@ -50,8 +52,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 		controlUI.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
 		if (model.isGenerationAnimated()) {
 			generatorInstance.createMaze(x, y);
-		}
-		else {
+		} else {
 			gridUI.enableAnimation(false);
 			gridUI.clear();
 			StopWatch watch = new StopWatch();

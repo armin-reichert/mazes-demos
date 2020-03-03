@@ -15,7 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
+import de.amr.demos.maze.swingapp.model.Style;
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
@@ -182,6 +184,11 @@ public class GridUI implements PropertyChangeListener {
 			}
 			addCanvasAnimation();
 			clear();
+			if (model.getGrid().getTopology() == Grid4Topology.get()) {
+				view.setStyle(Style.WALL_PASSAGES);
+			} else {
+				view.setStyle(Style.PEARLS);
+			}
 			drawGrid();
 			window.validate();
 			break;
