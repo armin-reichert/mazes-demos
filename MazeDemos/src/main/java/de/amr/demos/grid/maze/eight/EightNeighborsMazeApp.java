@@ -22,6 +22,7 @@ import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
+import de.amr.maze.alg.others.Armin;
 import de.amr.maze.alg.others.BinaryTreeRandom;
 import de.amr.maze.alg.others.Eller;
 import de.amr.maze.alg.others.HuntAndKill;
@@ -32,22 +33,23 @@ import de.amr.maze.alg.ust.WilsonUSTRandomCell;
 
 class GeneratorInfo {
 	String name;
-	Class<?> genClass;
+	Class<?> impl;
 
-	static GeneratorInfo of(String name, Class<?> genClass) {
+	static GeneratorInfo of(String name, Class<?> impl) {
 		GeneratorInfo gen = new GeneratorInfo();
 		gen.name = name;
-		gen.genClass = genClass;
+		gen.impl = impl;
 		return gen;
 	}
 }
 
 public class EightNeighborsMazeApp {
 
-	static final int GRID_SIZE = 80;
+	static final int GRID_SIZE = 40;
 	static final int CANVAS_SIZE = 640;
+	static final int ITERATIONS = 1;
 
-	static final GeneratorInfo[] GEN = {
+	static final GeneratorInfo[] GENERATORS = {
 		//@formatter:off
 		GeneratorInfo.of("DFS", IterativeDFS.class), 
 		GeneratorInfo.of("BFS", RandomBFS.class),
@@ -56,9 +58,11 @@ public class EightNeighborsMazeApp {
 		GeneratorInfo.of("Prim", PrimMST.class),
 		GeneratorInfo.of("Wilson", WilsonUSTRandomCell.class), 
 		GeneratorInfo.of("Eller", Eller.class),
+		GeneratorInfo.of("Armin", Armin.class),
 		GeneratorInfo.of("BinaryTree", BinaryTreeRandom.class), 
 		GeneratorInfo.of("HuntAndKill", HuntAndKill.class), 
-		GeneratorInfo.of("Sidewinder", Sidewinder.class), 
+		GeneratorInfo.of("Sidewinder", Sidewinder.class),
+//		GeneratorInfo.of("RecursiveDivision", RecursiveDivision.class),
 		//@formatter:on
 	};
 
@@ -80,9 +84,9 @@ public class EightNeighborsMazeApp {
 	}
 
 	void mazes() {
-		for (int i = 0; i < 10; ++i) {
+		for (int i = 0; i < ITERATIONS; ++i) {
 			System.out.println("--- Round #" + i);
-			for (GeneratorInfo genInfo : GEN) {
+			for (GeneratorInfo genInfo : GENERATORS) {
 				maze(genInfo);
 				render();
 				try {
@@ -98,8 +102,8 @@ public class EightNeighborsMazeApp {
 		grid();
 		int center = grid.cell(GridPosition.CENTER);
 		try {
-			gen = (MazeGenerator) genInfo.genClass.getConstructor(GridGraph2D.class).newInstance(grid);
-			System.out.println(genInfo.name);
+			gen = (MazeGenerator) genInfo.impl.getConstructor(GridGraph2D.class).newInstance(grid);
+			System.out.println("Generator: " + genInfo.name);
 			gen.createMaze(grid.col(center), grid.row(center));
 			if (!isMaze()) {
 				System.out.println("No maze!");
