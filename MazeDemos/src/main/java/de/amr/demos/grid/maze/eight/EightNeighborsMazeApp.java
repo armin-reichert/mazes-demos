@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -20,21 +19,23 @@ import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.pathfinder.util.GraphSearchUtils;
 import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
+import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
-import de.amr.maze.alg.others.BinaryTree;
+import de.amr.maze.alg.others.BinaryTreeRandom;
 import de.amr.maze.alg.others.Eller;
 import de.amr.maze.alg.others.HuntAndKill;
+import de.amr.maze.alg.others.Sidewinder;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.maze.alg.ust.WilsonUSTRandomCell;
 
-class Generator {
+class GeneratorInfo {
 	String name;
 	Class<?> genClass;
 
-	static Generator of(String name, Class<?> genClass) {
-		Generator gen = new Generator();
+	static GeneratorInfo of(String name, Class<?> genClass) {
+		GeneratorInfo gen = new GeneratorInfo();
 		gen.name = name;
 		gen.genClass = genClass;
 		return gen;
@@ -46,16 +47,18 @@ public class EightNeighborsMazeApp {
 	static final int GRID_SIZE = 80;
 	static final int CANVAS_SIZE = 640;
 
-	static final Generator[] GEN = {
+	static final GeneratorInfo[] GEN = {
 		//@formatter:off
-		Generator.of("DFS", IterativeDFS.class), 
-		Generator.of("BFS", RandomBFS.class),
-		Generator.of("Kruskal", KruskalMST.class), 
-		Generator.of("Prim", PrimMST.class),
-		Generator.of("Wilson", WilsonUSTRandomCell.class), 
-		Generator.of("Eller", Eller.class),
-		Generator.of("BinaryTree", BinaryTree.class), 
-		Generator.of("HuntAndKill", HuntAndKill.class), 
+		GeneratorInfo.of("DFS", IterativeDFS.class), 
+		GeneratorInfo.of("BFS", RandomBFS.class),
+		GeneratorInfo.of("Kruskal", KruskalMST.class), 
+		GeneratorInfo.of("Boruvka", BoruvkaMST.class), 
+		GeneratorInfo.of("Prim", PrimMST.class),
+		GeneratorInfo.of("Wilson", WilsonUSTRandomCell.class), 
+		GeneratorInfo.of("Eller", Eller.class),
+		GeneratorInfo.of("BinaryTree", BinaryTreeRandom.class), 
+		GeneratorInfo.of("HuntAndKill", HuntAndKill.class), 
+		GeneratorInfo.of("Sidewinder", Sidewinder.class), 
 		//@formatter:on
 	};
 
@@ -77,25 +80,26 @@ public class EightNeighborsMazeApp {
 	}
 
 	void mazes() {
-		for (int i = 0; i < 60; ++i) {
-			System.out.println("#" + i);
-			maze();
-			render();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException x) {
-				x.printStackTrace();
+		for (int i = 0; i < 10; ++i) {
+			System.out.println("--- Round #" + i);
+			for (GeneratorInfo genInfo : GEN) {
+				maze(genInfo);
+				render();
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException x) {
+					x.printStackTrace();
+				}
 			}
 		}
 	}
 
-	void maze() {
+	void maze(GeneratorInfo genInfo) {
 		grid();
 		int center = grid.cell(GridPosition.CENTER);
-		int choice = new Random().nextInt(GEN.length);
 		try {
-			gen = (MazeGenerator) GEN[choice].genClass.getConstructor(GridGraph2D.class).newInstance(grid);
-			System.out.println(GEN[choice].name);
+			gen = (MazeGenerator) genInfo.genClass.getConstructor(GridGraph2D.class).newInstance(grid);
+			System.out.println(genInfo.name);
 			gen.createMaze(grid.col(center), grid.row(center));
 			if (!isMaze()) {
 				System.out.println("No maze!");
