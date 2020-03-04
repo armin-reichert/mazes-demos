@@ -26,6 +26,7 @@ import de.amr.maze.alg.others.Armin;
 import de.amr.maze.alg.others.BinaryTreeRandom;
 import de.amr.maze.alg.others.Eller;
 import de.amr.maze.alg.others.HuntAndKill;
+import de.amr.maze.alg.others.RecursiveDivision;
 import de.amr.maze.alg.others.Sidewinder;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
@@ -62,7 +63,7 @@ public class EightNeighborsMazeApp {
 		GeneratorInfo.of("BinaryTree", BinaryTreeRandom.class), 
 		GeneratorInfo.of("HuntAndKill", HuntAndKill.class), 
 		GeneratorInfo.of("Sidewinder", Sidewinder.class),
-//		GeneratorInfo.of("RecursiveDivision", RecursiveDivision.class),
+		GeneratorInfo.of("RecursiveDivision", RecursiveDivision.class),
 		//@formatter:on
 	};
 
