@@ -16,6 +16,8 @@ import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
+import de.amr.graph.pathfinder.util.GraphSearchUtils;
+import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.others.BinaryTree;
 import de.amr.util.StopWatch;
@@ -71,6 +73,23 @@ public abstract class CreateMazeAction extends AbstractAction {
 			watch.measure(() -> gridUI.drawGrid());
 			controlUI.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
 			gridUI.enableAnimation(true);
+		}
+		boolean maze = true;
+		if (grid.numEdges() != grid.numVertices() - 1) {
+			maze = false;
+			controlUI
+					.showMessage(format("Number of edges not ok, is %d, should be %d", grid.numEdges(), grid.numVertices() - 1));
+		}
+		if (GraphUtils.containsCycle(grid)) {
+			maze = false;
+			controlUI.showMessage("Graph contains cycle");
+		}
+		if (!GraphSearchUtils.isConnectedGraph(grid)) {
+			maze = false;
+			controlUI.showMessage("Graph is not connected");
+		}
+		if (!maze) {
+			controlUI.showMessage("NO MAZE!");
 		}
 	}
 }
