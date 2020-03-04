@@ -21,7 +21,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
-import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
@@ -99,11 +98,12 @@ public class ControlUI implements PropertyChangeListener {
 			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
 			model.setGridTopology(combo.getItemAt(combo.getSelectedIndex()));
 			getSelectedGenerator().ifPresent(generator -> {
-				if (generator.isTagged(GeneratorTag.FullGridRequired)) {
-					model.fullGrid();
-				} else {
-					model.emptyGrid();
-				}
+//				if (generator.isTagged(GeneratorTag.FullGridRequired)) {
+//					model.fullGrid();
+//				} else {
+//					model.emptyGrid();
+//				}
+				model.emptyGrid();
 			});
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
@@ -342,11 +342,7 @@ public class ControlUI implements PropertyChangeListener {
 	public void selectGenerator(Algorithm generator) {
 		menus.selectGenerator(generator);
 		updateGeneratorText(generator);
-		if (generator.isTagged(GeneratorTag.FullGridRequired)) {
-			model.fullGrid();
-		} else {
-			model.emptyGrid();
-		}
+		model.emptyGrid();
 	}
 
 	public Optional<Algorithm> getSelectedSolver() {

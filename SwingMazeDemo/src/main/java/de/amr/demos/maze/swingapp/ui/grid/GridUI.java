@@ -21,6 +21,7 @@ import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
+import de.amr.graph.grid.ui.rendering.GridRenderer;
 import de.amr.swing.Swing;
 
 /**
@@ -108,6 +109,10 @@ public class GridUI implements PropertyChangeListener {
 
 	public GridView getView() {
 		return view;
+	}
+	
+	public GridRenderer getRenderer() {
+		return view.getCanvas().getRenderer();
 	}
 
 	private void addCanvasAnimation() {

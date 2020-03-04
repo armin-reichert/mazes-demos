@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.model;
 
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.FullGridRequired;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.EdgeDeleting;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.SmallGrid;
@@ -99,11 +99,11 @@ public class MazeDemoModel {
 		new Algorithm(KruskalMST.class, "Kruskal MST", MST),
 		new Algorithm(PrimMST.class, "Prim MST", MST),
 		new Algorithm(BoruvkaMST.class, "Boruvka MST", MST),
-		new Algorithm(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow, FullGridRequired),
-		new Algorithm(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow, FullGridRequired),
-		new Algorithm(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow, FullGridRequired),
-		new Algorithm(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow, FullGridRequired),
-		new Algorithm(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow, FullGridRequired),
+		new Algorithm(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS, very slow!)", MST, Slow, EdgeDeleting),
+		new Algorithm(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search, very slow!)", MST, Slow, EdgeDeleting),
+		new Algorithm(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS, very slow!)", MST, Slow, EdgeDeleting),
+		new Algorithm(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing, very slow!)", MST, Slow, EdgeDeleting),
+		new Algorithm(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*, very slow!)", MST, Slow, EdgeDeleting),
 		new Algorithm(AldousBroderUST.class, "Aldous-Broder UST (rather slow)", UST, Slow),
 		new Algorithm(AldousBroderWilsonUST.class, "Houston UST (rather slow)", UST, Slow),
 		new Algorithm(WilsonUSTRandomCell.class, "Wilson UST (random)", UST, Slow),
@@ -129,7 +129,7 @@ public class MazeDemoModel {
 		new Algorithm(Armin.class, "Armin's Algorithm"), 
 		new Algorithm(HuntAndKill.class, "Hunt-And-Kill"),
 		new Algorithm(HuntAndKillRandom.class, "Hunt-And-Kill (random)"),
-		new Algorithm(RecursiveDivision.class, "Recursive Division", FullGridRequired),
+		new Algorithm(RecursiveDivision.class, "Recursive Division", EdgeDeleting),
 		/*@formatter:on*/
 	};
 
