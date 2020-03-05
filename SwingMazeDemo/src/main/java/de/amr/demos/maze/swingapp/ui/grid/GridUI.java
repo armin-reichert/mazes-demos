@@ -42,9 +42,6 @@ public class GridUI implements PropertyChangeListener {
 		this.model = model;
 		this.gridViewSize = new Dimension(width, height);
 
-		model.createGrid(gridViewSize.width / model.getGridCellSize(), gridViewSize.height / model.getGridCellSize(), false,
-				TraversalState.UNVISITED);
-
 		view = new GridView(model.getGrid(), model.getGridCellSize(), () -> model.getGrid().cell(model.getSolverSource()),
 				() -> model.getGrid().cell(model.getSolverTarget()), this::passageWidth);
 		addCanvasAnimation();
@@ -57,7 +54,6 @@ public class GridUI implements PropertyChangeListener {
 		} else {
 			showNormalWindow();
 		}
-		startModelChangeListening();
 	}
 
 	@SuppressWarnings("unchecked")

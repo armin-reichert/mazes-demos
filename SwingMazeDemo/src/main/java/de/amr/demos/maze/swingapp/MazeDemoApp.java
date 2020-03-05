@@ -16,9 +16,30 @@ import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
+import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.AStarSearch;
 import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.swing.Swing;
+
+class Settings {
+
+	@Parameter(description = "Preview window content width", names = { "-width" })
+	int width;
+
+	@Parameter(description = "Preview window content height", names = { "-height" })
+	int height;
+
+	@Parameter(description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
+			"-theme" }, converter = ThemeConverter.class)
+	String theme;
+
+	public Settings() {
+		Dimension displaySize = Swing.getDisplaySize();
+		width = displaySize.width;
+		height = displaySize.height;
+		theme = NimbusLookAndFeel.class.getName();
+	}
+}
 
 /**
  * This application visualizes different maze generation algorithms and path
@@ -42,51 +63,43 @@ import de.amr.swing.Swing;
  */
 public class MazeDemoApp {
 
-	public static void main(String[] args) {
-		MazeDemoApp theApp = new MazeDemoApp();
-		JCommander argsParser = JCommander.newBuilder().addObject(theApp).build();
-		argsParser.usage();
-		argsParser.parse(args);
+	public static void main(String[] commandLineArgs) {
+		Settings settings = new Settings();
+		JCommander commandLineProcessor = JCommander.newBuilder().addObject(settings).build();
+		commandLineProcessor.usage();
+		commandLineProcessor.parse(commandLineArgs);
 		try {
-			UIManager.setLookAndFeel(theApp.theme);
+			UIManager.setLookAndFeel(settings.theme);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		EventQueue.invokeLater(theApp::createAndShowUI);
+		EventQueue.invokeLater(() -> new MazeDemoApp().start(settings));
 	}
 
-	@Parameter(description = "Grid window width", names = { "-width" })
-	private int windowWidth;
+	private void start(Settings settings) {
+		MazeDemoModel model = new MazeDemoModel();
+		model.createGrid(settings.width / model.getGridCellSize(), settings.height / model.getGridCellSize(), false,
+				TraversalState.UNVISITED);
 
-	@Parameter(description = "Grid window height", names = { "-height" })
-	private int windowHeight;
+		GridUI gridUI = new GridUI(model, settings.width, settings.height);
+		ControlUI controlUI = new ControlUI(gridUI, model);
 
-	@Parameter(description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
-			"-theme" }, converter = ThemeConverter.class)
-	private String theme;
-
-	private final MazeDemoModel model;
-
-	public MazeDemoApp() {
-		Dimension displaySize = Swing.getDisplaySize();
-		windowWidth = displaySize.width;
-		windowHeight = displaySize.height;
-		theme = NimbusLookAndFeel.class.getName();
-		model = new MazeDemoModel();
-	}
-
-	private void createAndShowUI() {
-		GridUI gridUI = new GridUI(model, windowWidth, windowHeight);
-		ControlUI controlUI = new ControlUI(gridUI);
+		// configure control UI
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
-		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
+		controlUI.setAfterGenerationAction(AfterGenerationAction.IDLE);
 		controlUI.expandWindow();
-		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		model.findGenerator(RandomBFS.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(AStarSearch.class).ifPresent(controlUI::selectSolver);
+		model.changePublisher.addPropertyChangeListener(controlUI);
+
+		// configure preview UI
 		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
+		gridUI.startModelChangeListening();
+
+		// show both windows
 		gridUI.show();
+		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();
 	}
 }

@@ -76,13 +76,9 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionFloodFill;
 	final Action actionSaveImage;
 
-	public ControlUI(GridUI gridUI) {
-
+	public ControlUI(GridUI gridUI, MazeDemoModel model) {
 		this.gridUI = gridUI;
-
-		// connect controller with model
 		this.model = gridUI.getModel();
-		model.changePublisher.addPropertyChangeListener(this);
 
 		afterGenerationAction = AfterGenerationAction.IDLE;
 
@@ -185,28 +181,6 @@ public class ControlUI implements PropertyChangeListener {
 		window.getJMenuBar().add(menus.getOptionMenu());
 	}
 
-	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
-			Consumer<Throwable> onFailure) {
-		bgThread = new Thread(() -> {
-			setBusy(true);
-			code.run();
-			setBusy(false);
-		}, "MazeDemoWorker");
-		bgThread.setUncaughtExceptionHandler((thread, e) -> {
-			if (e.getClass() == AnimationInterruptedException.class) {
-				onInterruption.accept((AnimationInterruptedException) e);
-			} else {
-				onFailure.accept(e);
-			}
-			setBusy(false);
-		});
-		bgThread.start();
-	}
-
-	public void stopBackgroundThread() {
-		bgThread.interrupt();
-	}
-
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
 		switch (change.getPropertyName()) {
@@ -234,6 +208,28 @@ public class ControlUI implements PropertyChangeListener {
 			System.out.println(String.format("%10s: unhandled event %s", getClass().getSimpleName(), change));
 			break;
 		}
+	}
+
+	public void startBackgroundThread(Runnable code, Consumer<AnimationInterruptedException> onInterruption,
+			Consumer<Throwable> onFailure) {
+		bgThread = new Thread(() -> {
+			setBusy(true);
+			code.run();
+			setBusy(false);
+		}, "MazeDemoWorker");
+		bgThread.setUncaughtExceptionHandler((thread, e) -> {
+			if (e.getClass() == AnimationInterruptedException.class) {
+				onInterruption.accept((AnimationInterruptedException) e);
+			} else {
+				onFailure.accept(e);
+			}
+			setBusy(false);
+		});
+		bgThread.start();
+	}
+
+	public void stopBackgroundThread() {
+		bgThread.interrupt();
 	}
 
 	public boolean isHiddenWhenBusy() {
