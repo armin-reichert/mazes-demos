@@ -60,6 +60,44 @@ public class GridUI implements PropertyChangeListener {
 		startModelChangeListening();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public void propertyChange(PropertyChangeEvent change) {
+		switch (change.getPropertyName()) {
+		case "delay":
+			break;
+		case "grid":
+			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
+			if (change.getOldValue() != null) {
+				removeCanvasAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
+			}
+			addCanvasAnimation();
+			clear();
+			if (model.getGridTopology() == Grid8Topology.get()) {
+				view.setStyle(Style.PEARLS);
+			}
+			drawGrid();
+			window.validate();
+			break;
+		case "gridCellSizeIndex":
+			break;
+		case "passageWidthPercentage":
+			clear();
+			drawGrid();
+			break;
+		case "renderingStyle":
+			view.setStyle(model.getRenderingStyle());
+			break;
+		case "solverSource":
+		case "solverTarget":
+			drawGrid();
+			break;
+		default:
+			System.out.println(String.format("%10s: unhandled event %s", getClass().getSimpleName(), change));
+			break;
+		}
+	}
+
 	private void createWindow() {
 		if (window != null) {
 			window.dispose();
@@ -172,39 +210,5 @@ public class GridUI implements PropertyChangeListener {
 		int startCell = model.getGrid().cell(model.getSolverSource());
 		BFSAnimation.builder().canvas(view.getCanvas()).delay(() -> model.getDelay())
 				.distanceVisible(model.isDistancesVisible()).build().floodFill(startCell);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public void propertyChange(PropertyChangeEvent change) {
-		switch (change.getPropertyName()) {
-		case "grid":
-			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
-			if (change.getOldValue() != null) {
-				removeCanvasAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
-			}
-			addCanvasAnimation();
-			clear();
-			if (model.getGridTopology() == Grid8Topology.get()) {
-				view.setStyle(Style.PEARLS);
-			}
-			drawGrid();
-			window.validate();
-			break;
-		case "renderingStyle":
-			view.setStyle(model.getRenderingStyle());
-			break;
-		case "passageWidthPercentage":
-			clear();
-			drawGrid();
-			break;
-		case "solverSource":
-		case "solverTarget":
-			drawGrid();
-			break;
-		default:
-			System.out.println(String.format("%10s ignored %s", getClass().getSimpleName(), change));
-			break;
-		}
 	}
 }

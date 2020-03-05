@@ -210,13 +210,19 @@ public class ControlUI implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
 		switch (change.getPropertyName()) {
+		case "delay":
+			break;
 		case "grid":
 			if (model.getGridTopology() == Grid8Topology.get()) {
 				view.getComboRenderingStyle().setSelectedIndex(1); // Pearls
 			}
 			break;
+		case "gridCellSizeIndex":
+			break;
 		case "metric":
 			getSelectedSolver().ifPresent(this::updateSolverText);
+			break;
+		case "passageWidthPercentage":
 			break;
 		case "renderingStyle": {
 			Style style = (Style) change.getNewValue();
@@ -225,7 +231,7 @@ public class ControlUI implements PropertyChangeListener {
 			break;
 		}
 		default:
-			System.out.println(String.format("%10s ignored %s", getClass().getSimpleName(), change));
+			System.out.println(String.format("%10s: unhandled event %s", getClass().getSimpleName(), change));
 			break;
 		}
 	}
