@@ -16,18 +16,19 @@ import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
-import de.amr.graph.pathfinder.impl.BidiBreadthFirstSearch;
-import de.amr.maze.alg.others.Armin;
+import de.amr.graph.pathfinder.impl.AStarSearch;
+import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.swing.Swing;
 
 /**
- * This application visualizes different maze generation algorithms and path finders.
+ * This application visualizes different maze generation algorithms and path
+ * finders.
  * <p>
- * The application provides a (by default full-screen, undecorated) grid display area where the maze
- * generation and path finding animations are shown.
+ * The application provides a (by default full-screen, undecorated) grid display
+ * area where the maze generation and path finding animations are shown.
  * <p>
- * A control window allows changing the generation and path finder algorithm, changing the
- * resolution of the grid, the rendering style and other settings.
+ * A control window allows changing the generation and path finder algorithm,
+ * changing the resolution of the grid, the rendering style and other settings.
  * 
  * @author Armin Reichert
  */
@@ -69,8 +70,8 @@ public class MazeDemoApp {
 		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
 		controlUI.expandWindow();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
-		model.findGenerator(Armin.class).ifPresent(controlUI::selectGenerator);
-		model.findSolver(BidiBreadthFirstSearch.class).ifPresent(controlUI::selectSolver);
+		model.findGenerator(RandomBFS.class).ifPresent(controlUI::selectGenerator);
+		model.findSolver(AStarSearch.class).ifPresent(controlUI::selectSolver);
 
 		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
 
