@@ -45,11 +45,11 @@ public class ControlView extends JPanel {
 	private JPanel fixedArea;
 	private JLabel lblGridTopology;
 	private JComboBox<GridTopology> comboGridTopology;
-	private JLabel lblRenderer;
+	private JLabel lblRenderingStyle;
 	private JComboBox<String> comboRenderingStyle;
 
 	public ControlView() {
-		setPreferredSize(new Dimension(520, 400));
+		setPreferredSize(new Dimension(520, 520));
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));
 
@@ -124,10 +124,11 @@ public class ControlView extends JPanel {
 		lblGridTopology.setLabelFor(comboGridTopology);
 		collapsibleArea.add(comboGridTopology, "cell 2 3,growx");
 
-		lblRenderer = new JLabel("Rendering style");
-		collapsibleArea.add(lblRenderer, "cell 0 4");
+		lblRenderingStyle = new JLabel("Rendering style");
+		collapsibleArea.add(lblRenderingStyle, "cell 0 4");
 
 		comboRenderingStyle = new JComboBox<>();
+		lblRenderingStyle.setLabelFor(comboRenderingStyle);
 		comboRenderingStyle.setModel(new DefaultComboBoxModel<>(new String[] { "Walls-Passages", "Pearls" }));
 		collapsibleArea.add(comboRenderingStyle, "cell 2 4,growx");
 
