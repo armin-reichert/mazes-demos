@@ -153,6 +153,7 @@ public class MazeDemoModel {
 
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private GridTopology gridTopology;
+	private Style renderingStyle;
 	private int[] gridCellSizes;
 	private int gridCellSizeIndex;
 	private int passageWidthPercentage;
@@ -167,6 +168,7 @@ public class MazeDemoModel {
 
 	public MazeDemoModel() {
 		setGridTopology(Grid4Topology.get());
+		setRenderingStyle(Style.WALL_PASSAGES);
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
 		setGridCellSizeIndex(4);
 		setPassageWidthPercentage(100);
@@ -201,6 +203,16 @@ public class MazeDemoModel {
 
 	public void setGridTopology(GridTopology top) {
 		this.gridTopology = top;
+	}
+
+	public Style getRenderingStyle() {
+		return renderingStyle;
+	}
+
+	public void setRenderingStyle(Style newValue) {
+		Style oldValue = this.renderingStyle;
+		this.renderingStyle = newValue;
+		changePublisher.firePropertyChange("renderingStyle", oldValue, newValue);
 	}
 
 	public int[] getGridCellSizes() {
@@ -271,8 +283,8 @@ public class MazeDemoModel {
 	}
 
 	public void createGridSilently(int numCols, int numRows, boolean full, TraversalState defaultState) {
-		grid = full ? fullObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0)
-				: emptyObservableGrid(numCols, numRows, Grid4Topology.get(), defaultState, 0);
+		grid = full ? fullObservableGrid(numCols, numRows, gridTopology, defaultState, 0)
+				: emptyObservableGrid(numCols, numRows, gridTopology, defaultState, 0);
 	}
 
 	public void emptyGrid() {

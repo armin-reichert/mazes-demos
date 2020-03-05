@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import de.amr.graph.grid.api.GridTopology;
 import net.miginfocom.swing.MigLayout;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  * View for setting parameters and running maze generator and path finder.
@@ -44,6 +45,8 @@ public class ControlView extends JPanel {
 	private JPanel fixedArea;
 	private JLabel lblGridTopology;
 	private JComboBox<GridTopology> comboGridTopology;
+	private JLabel lblRenderer;
+	private JComboBox<String> comboRenderingStyle;
 
 	public ControlView() {
 		setPreferredSize(new Dimension(520, 400));
@@ -84,7 +87,7 @@ public class ControlView extends JPanel {
 		collapsibleArea = new JPanel();
 		collapsibleArea.setOpaque(false);
 		add(collapsibleArea, BorderLayout.CENTER);
-		collapsibleArea.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][][]"));
+		collapsibleArea.setLayout(new MigLayout("", "[100px:n][3px:n][grow,fill]", "[][][][][][][][]"));
 
 		lblGenerator = new JLabel("Generator");
 		collapsibleArea.add(lblGenerator, "cell 0 0,growx");
@@ -121,8 +124,15 @@ public class ControlView extends JPanel {
 		lblGridTopology.setLabelFor(comboGridTopology);
 		collapsibleArea.add(comboGridTopology, "cell 2 3,growx");
 
+		lblRenderer = new JLabel("Rendering style");
+		collapsibleArea.add(lblRenderer, "cell 0 4");
+
+		comboRenderingStyle = new JComboBox<>();
+		comboRenderingStyle.setModel(new DefaultComboBoxModel<>(new String[] { "Walls-Passages", "Pearls" }));
+		collapsibleArea.add(comboRenderingStyle, "cell 2 4,growx");
+
 		lblPassageWidth = new JLabel("Passage Width (%)");
-		collapsibleArea.add(lblPassageWidth, "cell 0 4,growx,aligny top");
+		collapsibleArea.add(lblPassageWidth, "cell 0 5,growx,aligny top");
 
 		sliderPassageWidth = new JSlider();
 		lblPassageWidth.setLabelFor(sliderPassageWidth);
@@ -131,10 +141,10 @@ public class ControlView extends JPanel {
 		sliderPassageWidth.setPaintLabels(true);
 		sliderPassageWidth.setToolTipText("Passage Width (%)");
 		sliderPassageWidth.setPaintTicks(true);
-		collapsibleArea.add(sliderPassageWidth, "cell 2 4,growx");
+		collapsibleArea.add(sliderPassageWidth, "cell 2 5,growx");
 
 		scrollPane = new JScrollPane();
-		collapsibleArea.add(scrollPane, "cell 0 6 3 1,grow");
+		collapsibleArea.add(scrollPane, "cell 0 7 3 1,grow");
 
 		textArea = new JTextArea();
 		textArea.setEditable(false);
@@ -200,5 +210,9 @@ public class ControlView extends JPanel {
 
 	public JComboBox<GridTopology> getComboGridTopology() {
 		return comboGridTopology;
+	}
+
+	public JComboBox<String> getComboRenderingStyle() {
+		return comboRenderingStyle;
 	}
 }

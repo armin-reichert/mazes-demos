@@ -23,6 +23,7 @@ import javax.swing.JMenuBar;
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
+import de.amr.demos.maze.swingapp.model.Style;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
@@ -64,6 +65,7 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionExpandWindow;
 	final Action actionChangeGridResolution;
 	final Action actionChangeGridTopology;
+	final Action actionChangeRenderingStyle;
 	final Action actionCreateEmptyGrid;
 	final Action actionCreateFullGrid;
 	final Action actionStopBackgroundThread;
@@ -97,14 +99,20 @@ public class ControlUI implements PropertyChangeListener {
 			@SuppressWarnings("unchecked")
 			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
 			model.setGridTopology(combo.getItemAt(combo.getSelectedIndex()));
-			getSelectedGenerator().ifPresent(generator -> {
-//				if (generator.isTagged(GeneratorTag.FullGridRequired)) {
-//					model.fullGrid();
-//				} else {
-//					model.emptyGrid();
-//				}
-				model.emptyGrid();
-			});
+			model.emptyGrid();
+		});
+		actionChangeRenderingStyle = action("Change Style", e -> {
+			@SuppressWarnings("unchecked")
+			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
+			if ("Walls-Passages".equals(combo.getSelectedItem())) {
+				if (model.getGridTopology() == Grid4Topology.get()) {
+					model.setRenderingStyle(Style.WALL_PASSAGES);
+				} else {
+					combo.setSelectedIndex(1);
+				}
+			} else if ("Pearls".equals(combo.getSelectedItem())) {
+				model.setRenderingStyle(Style.PEARLS);
+			}
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
 		actionCreateFullGrid = action("Create Full Grid", e -> model.fullGrid());
@@ -135,6 +143,9 @@ public class ControlUI implements PropertyChangeListener {
 		view.getComboGridTopology().setModel(new DefaultComboBoxModel<>(topologies));
 		view.getComboGridTopology().setSelectedItem(model.getGridTopology());
 		view.getComboGridTopology().setAction(actionChangeGridTopology);
+
+		view.getComboRenderingStyle().setSelectedIndex(0);
+		view.getComboRenderingStyle().setAction(actionChangeRenderingStyle);
 
 		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
 		view.getSliderPassageWidth().addChangeListener(e -> {
@@ -199,9 +210,20 @@ public class ControlUI implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
 		switch (change.getPropertyName()) {
+		case "grid":
+			if (model.getGridTopology() == Grid8Topology.get()) {
+				view.getComboRenderingStyle().setSelectedIndex(1); // Pearls
+			}
+			break;
 		case "metric":
 			getSelectedSolver().ifPresent(this::updateSolverText);
 			break;
+		case "renderingStyle": {
+			Style style = (Style) change.getNewValue();
+			int selection = style == Style.WALL_PASSAGES ? 0 : 1;
+			view.getComboRenderingStyle().setSelectedIndex(selection);
+			break;
+		}
 		default:
 			System.out.println(String.format("%10s ignored %s", getClass().getSimpleName(), change));
 			break;

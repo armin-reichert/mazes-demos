@@ -17,7 +17,7 @@ import javax.swing.KeyStroke;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.Style;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.grid.impl.Grid4Topology;
+import de.amr.graph.grid.impl.Grid8Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
@@ -42,22 +42,19 @@ public class GridUI implements PropertyChangeListener {
 		this.model = model;
 		this.gridViewSize = new Dimension(width, height);
 
-		model.createGrid(gridViewSize.width / model.getGridCellSize(),
-				gridViewSize.height / model.getGridCellSize(), false, TraversalState.UNVISITED);
+		model.createGrid(gridViewSize.width / model.getGridCellSize(), gridViewSize.height / model.getGridCellSize(), false,
+				TraversalState.UNVISITED);
 
-		view = new GridView(model.getGrid(), model.getGridCellSize(),
-				() -> model.getGrid().cell(model.getSolverSource()),
+		view = new GridView(model.getGrid(), model.getGridCellSize(), () -> model.getGrid().cell(model.getSolverSource()),
 				() -> model.getGrid().cell(model.getSolverTarget()), this::passageWidth);
 		addCanvasAnimation();
 
-		view.getCanvas().getActionMap().put("toggleFullscreen",
-				Swing.action("toggleFullscreen", e -> toggleFullscreen()));
+		view.getCanvas().getActionMap().put("toggleFullscreen", Swing.action("toggleFullscreen", e -> toggleFullscreen()));
 		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "toggleFullscreen");
 
 		if (gridViewSize.equals(getDisplaySize())) {
 			showFullscreenWindow();
-		}
-		else {
+		} else {
 			showNormalWindow();
 		}
 		startModelChangeListening();
@@ -93,8 +90,7 @@ public class GridUI implements PropertyChangeListener {
 		boolean fullscreen = (window.getExtendedState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
 		if (fullscreen) {
 			showNormalWindow();
-		}
-		else {
+		} else {
 			showFullscreenWindow();
 		}
 	}
@@ -110,7 +106,7 @@ public class GridUI implements PropertyChangeListener {
 	public GridView getView() {
 		return view;
 	}
-	
+
 	public GridRenderer getRenderer() {
 		return view.getCanvas().getRenderer();
 	}
@@ -189,13 +185,14 @@ public class GridUI implements PropertyChangeListener {
 			}
 			addCanvasAnimation();
 			clear();
-			if (model.getGrid().getTopology() == Grid4Topology.get()) {
-				view.setStyle(Style.WALL_PASSAGES);
-			} else {
+			if (model.getGridTopology() == Grid8Topology.get()) {
 				view.setStyle(Style.PEARLS);
 			}
 			drawGrid();
 			window.validate();
+			break;
+		case "renderingStyle":
+			view.setStyle(model.getRenderingStyle());
 			break;
 		case "passageWidthPercentage":
 			clear();
