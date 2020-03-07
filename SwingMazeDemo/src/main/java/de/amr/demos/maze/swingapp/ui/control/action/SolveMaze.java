@@ -8,7 +8,8 @@ import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 
 /**
- * Animated execution of the selected path finding algorithm ("maze solver") on the current grid.
+ * Animated execution of the selected path finding algorithm ("maze solver") on
+ * the current grid.
  * 
  * @author Armin Reichert
  */
@@ -39,7 +40,7 @@ public class SolveMaze extends AbstractAction {
 
 				failure -> {
 					failure.printStackTrace(System.err);
-					controlUI.showMessage("Solving failed: " + failure.getMessage());
+					controlUI.showMessage("Solving failed: %s", failure.getMessage());
 					controlUI.reset();
 				});
 	}

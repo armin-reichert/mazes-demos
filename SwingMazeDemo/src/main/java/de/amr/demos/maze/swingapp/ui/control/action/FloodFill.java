@@ -1,7 +1,5 @@
 package de.amr.demos.maze.swingapp.ui.control.action;
 
-import static java.lang.String.format;
-
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
@@ -34,7 +32,7 @@ public class FloodFill extends AbstractAction {
 					gridUI.drawGrid();
 					StopWatch watch = new StopWatch();
 					watch.measure(gridUI::floodFill);
-					controlUI.showMessage(format("Flood-fill: %.3f seconds.", watch.getSeconds()));
+					controlUI.showMessage("Flood-fill: %.3f seconds.", watch.getSeconds());
 				},
 
 				interruption -> {

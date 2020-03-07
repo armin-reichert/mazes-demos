@@ -33,14 +33,13 @@ public class CreateAllMazes extends CreateMazeAction {
 
 				failure -> {
 					failure.printStackTrace(System.err);
-					controlUI.showMessage("Maze creation failed: " + failure.getClass().getSimpleName());
+					controlUI.showMessage("Maze creation failed: %s", failure.getClass().getSimpleName());
 					controlUI.reset();
 				});
 	}
 
 	private void createAllMazes() {
-		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow))
-				.toArray(Algorithm[]::new);
+		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow)).toArray(Algorithm[]::new);
 		for (Algorithm generator : fastOnes) {
 			controlUI.selectGenerator(generator);
 			try {
@@ -49,15 +48,14 @@ public class CreateAllMazes extends CreateMazeAction {
 				if (andNow == AfterGenerationAction.FLOOD_FILL) {
 					GridCanvasAnimation.pause(1);
 					gridUI.floodFill();
-				}
-				else if (andNow == AfterGenerationAction.SOLVE) {
+				} else if (andNow == AfterGenerationAction.SOLVE) {
 					GridCanvasAnimation.pause(1);
 					controlUI.solve();
 				}
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError x) {
-				controlUI.showMessage("Maze creation failed because of stack overflow (recursion too deep)");
+				controlUI.showMessage("Maze creation failed: stack overflow (recursion too deep)");
 				controlUI.reset();
 			} catch (Exception x) {
 				throw new RuntimeException(x);

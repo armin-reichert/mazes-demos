@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -17,7 +18,6 @@ import javax.swing.border.EmptyBorder;
 
 import de.amr.graph.grid.api.GridTopology;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  * View for setting parameters and running maze generator and path finder.

@@ -2,8 +2,6 @@ package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static java.lang.String.format;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.swing.AbstractAction;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
@@ -37,28 +35,27 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 	}
 
-	protected void createMaze(Algorithm generator, GridPosition startPosition) {
+	protected void createMaze(Algorithm genInfo, GridPosition startPosition) {
 		ObservableGridGraph<TraversalState, Integer> grid = model.getGrid();
-		MazeGenerator generatorInstance = null;
+		MazeGenerator gen = null;
 		try {
-			generatorInstance = (MazeGenerator) generator.getAlgorithmClass().getConstructor(GridGraph2D.class)
-					.newInstance(model.getGrid());
-		} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | SecurityException e) {
+			gen = (MazeGenerator) genInfo.getAlgorithmClass().getConstructor(GridGraph2D.class).newInstance(grid);
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
-		if (generatorInstance instanceof BinaryTree) {
-			BinaryTree binaryTreeGenerator = (BinaryTree) generatorInstance;
+		if (gen instanceof BinaryTree) {
+			BinaryTree binaryTreeGenerator = (BinaryTree) gen;
 			binaryTreeGenerator.rootPosition = startPosition;
 		}
-		controlUI.showMessage(format("\n%s (%d cells)", generator.getDescription(), grid.numVertices()));
+		controlUI.showMessage("Generated maze (%d cells) using algorithm '%s'", grid.numVertices(),
+				genInfo.getDescription());
 		if (model.isGenerationAnimated()) {
-			generatorInstance.createMaze(x, y);
-			// TODO make Pearls renderer work correctly for algorithms that remove edges
-			// at least render result correctly for now
-			if (generator.isTagged(GeneratorTag.EdgeDeleting) && gridUI.getRenderer() instanceof PearlsGridRenderer) {
+			gen.createMaze(x, y);
+			// TODO: make Pearls renderer work correctly for algorithms that remove edges,
+			// render resulting grid correctly for now
+			if (genInfo.isTagged(GeneratorTag.EdgeDeleting) && gridUI.getRenderer() instanceof PearlsGridRenderer) {
 				gridUI.clear();
 				gridUI.drawGrid();
 			}
@@ -67,7 +64,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			gridUI.clear();
 			StopWatch watch = new StopWatch();
 			watch.start();
-			generatorInstance.createMaze(x, y);
+			gen.createMaze(x, y);
 			watch.stop();
 			controlUI.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
 			watch.measure(() -> gridUI.drawGrid());

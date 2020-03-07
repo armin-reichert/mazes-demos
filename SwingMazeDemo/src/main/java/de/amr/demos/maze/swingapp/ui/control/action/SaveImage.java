@@ -35,9 +35,9 @@ public class SaveImage extends AbstractAction {
 			}
 			try {
 				ImageIO.write(gridUI.getView().getCanvas().getDrawingBuffer(), "png", pngFile);
-				controlUI.showMessage("Image saved as " + pngFile);
+				controlUI.showMessage("Image saved as '%s'", pngFile);
 			} catch (IOException x) {
-				controlUI.showMessage("Image could not be saved: " + x.getMessage());
+				controlUI.showMessage("Image could not be saved: '%s'", x.getMessage());
 			}
 		}
 	}

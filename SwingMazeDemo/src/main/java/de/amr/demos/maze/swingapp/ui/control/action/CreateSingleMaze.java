@@ -42,7 +42,7 @@ public class CreateSingleMaze extends CreateMazeAction {
 					},
 
 					failure -> {
-						controlUI.showMessage("Maze generation failed: " + failure.getClass().getSimpleName());
+						controlUI.showMessage("Maze generation failed: %s", failure.getClass().getSimpleName());
 						controlUI.reset();
 					});
 		});

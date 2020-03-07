@@ -5,7 +5,6 @@ import static de.amr.swing.Swing.icon;
 import static de.amr.swing.Swing.setEnabled;
 import static de.amr.swing.Swing.setNormalCursor;
 import static de.amr.swing.Swing.setWaitCursor;
-import static java.lang.String.format;
 
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
@@ -314,9 +313,11 @@ public class ControlUI implements PropertyChangeListener {
 			/*@formatter:on*/
 			watch.measure(() -> anim.run(solverInstance, source, target));
 		}
-		showMessage(solver.isTagged(SolverTag.INFORMED)
-				? format("%s (%s): %.2f seconds.", solver.getDescription(), model.getMetric(), watch.getSeconds())
-				: format("%s: %.2f seconds.", solver.getDescription(), watch.getSeconds()));
+		if (solver.isTagged(SolverTag.INFORMED)) {
+			showMessage("%s (%s): %.2f seconds.", solver.getDescription(), model.getMetric(), watch.getSeconds());
+		} else {
+			showMessage("%s: %.2f seconds.", solver.getDescription(), watch.getSeconds());
+		}
 	}
 
 	public void setBusy(boolean busy) {
@@ -354,8 +355,12 @@ public class ControlUI implements PropertyChangeListener {
 		return gridUI.getView().getCanvas().getWidth();
 	}
 
-	public void showMessage(String msg) {
-		view.getTextArea().append(msg + "\n");
+	public void showMessage(String msg, Object... args) {
+		String text = msg;
+		if (args.length > 0) {
+			text = String.format(msg, args);
+		}
+		view.getTextArea().append(text + "\n");
 		view.getTextArea().setCaretPosition(view.getTextArea().getDocument().getLength());
 	}
 
