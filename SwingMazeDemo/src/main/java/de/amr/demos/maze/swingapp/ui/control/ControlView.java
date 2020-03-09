@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -129,7 +128,6 @@ public class ControlView extends JPanel {
 
 		comboRenderingStyle = new JComboBox<>();
 		lblRenderingStyle.setLabelFor(comboRenderingStyle);
-		comboRenderingStyle.setModel(new DefaultComboBoxModel<>(new String[] { "Walls-Passages", "Pearls" }));
 		collapsibleArea.add(comboRenderingStyle, "cell 2 4,growx");
 
 		lblPassageWidth = new JLabel("Passage Width (%)");

@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.Action;
+import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -48,6 +49,9 @@ import de.amr.util.StopWatch;
  */
 public class ControlUI implements PropertyChangeListener {
 
+	public static final String WALLS_PASSAGES = "Walls-Passages";
+	public static final String PEARLS = "Pearls";
+
 	private final MazeDemoModel model;
 
 	private final GridUI gridUI;
@@ -75,9 +79,15 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionFloodFill;
 	final Action actionSaveImage;
 
+	final ComboBoxModel<String> renderingStyles_4neighbors = new DefaultComboBoxModel<String>(
+			new String[] { WALLS_PASSAGES, PEARLS });
+
+	final ComboBoxModel<String> renderingStyles_8neighbors = new DefaultComboBoxModel<String>(new String[] { PEARLS });
+
 	public ControlUI(GridUI gridUI, MazeDemoModel model) {
 		this.gridUI = gridUI;
 		this.model = gridUI.getModel();
+		view = new ControlView();
 
 		afterGenerationAction = AfterGenerationAction.IDLE;
 
@@ -95,17 +105,20 @@ public class ControlUI implements PropertyChangeListener {
 			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
 			model.setGridTopology(combo.getItemAt(combo.getSelectedIndex()));
 			model.emptyGrid();
+			view.getComboRenderingStyle().setModel(
+					model.getGridTopology() == Grid4Topology.get() ? renderingStyles_4neighbors : renderingStyles_8neighbors);
+			view.getComboRenderingStyle().setSelectedIndex(0);
 		});
 		actionChangeRenderingStyle = action("Change Style", e -> {
 			@SuppressWarnings("unchecked")
 			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
-			if ("Walls-Passages".equals(combo.getSelectedItem())) {
+			if (WALLS_PASSAGES.equals(combo.getSelectedItem())) {
 				if (model.getGridTopology() == Grid4Topology.get()) {
 					model.setRenderingStyle(Style.WALL_PASSAGES);
 				} else {
 					combo.setSelectedIndex(1);
 				}
-			} else if ("Pearls".equals(combo.getSelectedItem())) {
+			} else if (PEARLS.equals(combo.getSelectedItem())) {
 				model.setRenderingStyle(Style.PEARLS);
 			}
 		});
@@ -123,7 +136,6 @@ public class ControlUI implements PropertyChangeListener {
 		actionSaveImage = new SaveImage("Save Image...", this, gridUI);
 
 		// create and initialize UI
-		view = new ControlView();
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
 			int numCols = getCanvasWidth() / cellSize;
@@ -139,6 +151,8 @@ public class ControlUI implements PropertyChangeListener {
 		view.getComboGridTopology().setSelectedItem(model.getGridTopology());
 		view.getComboGridTopology().setAction(actionChangeGridTopology);
 
+		view.getComboRenderingStyle().setModel(
+				model.getGridTopology() == Grid4Topology.get() ? renderingStyles_4neighbors : renderingStyles_8neighbors);
 		view.getComboRenderingStyle().setSelectedIndex(0);
 		view.getComboRenderingStyle().setAction(actionChangeRenderingStyle);
 
@@ -187,7 +201,7 @@ public class ControlUI implements PropertyChangeListener {
 			break;
 		case "grid":
 			if (model.getGridTopology() == Grid8Topology.get()) {
-				view.getComboRenderingStyle().setSelectedIndex(1); // Pearls
+				view.getComboRenderingStyle().setSelectedItem(PEARLS);
 			}
 			break;
 		case "gridCellSizeIndex":
