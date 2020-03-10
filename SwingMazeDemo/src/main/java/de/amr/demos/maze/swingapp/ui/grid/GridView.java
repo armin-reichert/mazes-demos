@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.util.function.BiFunction;
 import java.util.function.IntSupplier;
 
-import de.amr.demos.maze.swingapp.model.Style;
+import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.GridGraph;
@@ -26,7 +26,7 @@ public class GridView {
 	private Color unvisitedCellColor;
 	private Color visitedCellColor;
 	private Color completedCellColor;
-	private Style style;
+	private GridRenderingStyle style;
 	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
 	private IntSupplier fnSourceCell;
 	private IntSupplier fnTargetCell;
@@ -50,7 +50,7 @@ public class GridView {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setStyle(Style style) {
+	public void setStyle(GridRenderingStyle style) {
 		this.style = style;
 		GridGraph<TraversalState, Integer> grid = (GridGraph<TraversalState, Integer>) canvas.getGrid();
 		reset(grid, canvas.getCellSize());
@@ -66,13 +66,13 @@ public class GridView {
 		unvisitedCellColor = Color.LIGHT_GRAY;
 		visitedCellColor = Color.BLUE;
 		completedCellColor = Color.WHITE;
-		style = Style.WALL_PASSAGES;
+		style = GridRenderingStyle.WALL_PASSAGES;
 		fnPassageWidth = (u, v) -> 1;
 	}
 
 	private ConfigurableGridRenderer createRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
 		ConfigurableGridRenderer r;
-		if (style == Style.PEARLS) {
+		if (style == GridRenderingStyle.PEARLS) {
 			r = createPearlsRenderer(grid, cellSize);
 		} else {
 			r = createWallPassageRenderer(grid, cellSize);

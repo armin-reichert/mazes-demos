@@ -23,7 +23,7 @@ import javax.swing.JMenuBar;
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.model.Style;
+import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
@@ -114,12 +114,12 @@ public class ControlUI implements PropertyChangeListener {
 			JComboBox<GridTopology> combo = (JComboBox<GridTopology>) e.getSource();
 			if (WALLS_PASSAGES.equals(combo.getSelectedItem())) {
 				if (model.getGridTopology() == Grid4Topology.get()) {
-					model.setRenderingStyle(Style.WALL_PASSAGES);
+					model.setRenderingStyle(GridRenderingStyle.WALL_PASSAGES);
 				} else {
 					combo.setSelectedIndex(1);
 				}
 			} else if (PEARLS.equals(combo.getSelectedItem())) {
-				model.setRenderingStyle(Style.PEARLS);
+				model.setRenderingStyle(GridRenderingStyle.PEARLS);
 			}
 		});
 		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
@@ -212,8 +212,8 @@ public class ControlUI implements PropertyChangeListener {
 		case "passageWidthPercentage":
 			break;
 		case "renderingStyle": {
-			Style style = (Style) change.getNewValue();
-			int selection = style == Style.WALL_PASSAGES ? 0 : 1;
+			GridRenderingStyle style = (GridRenderingStyle) change.getNewValue();
+			int selection = style == GridRenderingStyle.WALL_PASSAGES ? 0 : 1;
 			view.getComboRenderingStyle().setSelectedIndex(selection);
 			break;
 		}

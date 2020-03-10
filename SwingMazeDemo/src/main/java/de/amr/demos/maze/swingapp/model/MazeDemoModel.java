@@ -153,7 +153,7 @@ public class MazeDemoModel {
 
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private GridTopology gridTopology;
-	private Style renderingStyle;
+	private GridRenderingStyle renderingStyle;
 	private int[] gridCellSizes;
 	private int gridCellSizeIndex;
 	private int passageWidthPercentage;
@@ -168,7 +168,7 @@ public class MazeDemoModel {
 
 	public MazeDemoModel() {
 		setGridTopology(Grid4Topology.get());
-		setRenderingStyle(Style.WALL_PASSAGES);
+		setRenderingStyle(GridRenderingStyle.WALL_PASSAGES);
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
 		setGridCellSizeIndex(4);
 		setPassageWidthPercentage(100);
@@ -205,12 +205,12 @@ public class MazeDemoModel {
 		this.gridTopology = top;
 	}
 
-	public Style getRenderingStyle() {
+	public GridRenderingStyle getRenderingStyle() {
 		return renderingStyle;
 	}
 
-	public void setRenderingStyle(Style newValue) {
-		Style oldValue = this.renderingStyle;
+	public void setRenderingStyle(GridRenderingStyle newValue) {
+		GridRenderingStyle oldValue = this.renderingStyle;
 		this.renderingStyle = newValue;
 		changePublisher.firePropertyChange("renderingStyle", oldValue, newValue);
 	}

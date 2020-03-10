@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.model.Style;
+import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.Grid8Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;
@@ -70,7 +70,7 @@ public class GridUI implements PropertyChangeListener {
 			addCanvasAnimation();
 			clear();
 			if (model.getGridTopology() == Grid8Topology.get()) {
-				view.setStyle(Style.PEARLS);
+				view.setStyle(GridRenderingStyle.PEARLS);
 			}
 			drawGrid();
 			window.validate();
