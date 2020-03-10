@@ -124,7 +124,11 @@ class ControlUIMenus {
 		controlUI.getModel().generators().filter(selection).forEach(generator -> {
 			JRadioButtonMenuItem radioButton = new JRadioButtonMenuItem();
 			radioButton.addActionListener(e -> controlUI.selectGenerator(generator));
-			radioButton.setText(generator.getDescription());
+			String text = generator.getDescription();
+			if (generator.getComment() != null && generator.getComment().trim().length() > 0) {
+				text += " (" + generator.getComment() + ")";
+			}
+			radioButton.setText(text);
 			radioButton.putClientProperty("algorithm", generator);
 			radio.add(radioButton);
 			menu.add(radioButton);
@@ -248,8 +252,7 @@ class ControlUIMenus {
 		//@formatter:on
 	}
 
-	private JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelect,
-			Supplier<GridPosition> selection) {
+	private JMenu buildPositionMenu(String title, Consumer<GridPosition> onSelect, Supplier<GridPosition> selection) {
 		Function<GridPosition, String> translation = position -> ResourceBundle.getBundle("texts")
 				.getString(position.name());
 		//@formatter:off
