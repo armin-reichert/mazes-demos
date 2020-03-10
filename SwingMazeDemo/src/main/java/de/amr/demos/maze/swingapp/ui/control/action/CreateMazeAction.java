@@ -17,7 +17,6 @@ import de.amr.graph.grid.ui.rendering.PearlsGridRenderer;
 import de.amr.graph.pathfinder.util.GraphSearchUtils;
 import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
-import de.amr.maze.alg.others.BinaryTree;
 import de.amr.util.StopWatch;
 
 public abstract class CreateMazeAction extends AbstractAction {
@@ -45,11 +44,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 		}
 		int startCell = grid.cell(startPosition);
 		int x = grid.col(startCell), y = grid.row(startCell);
-		if (gen instanceof BinaryTree) {
-			BinaryTree binaryTreeGenerator = (BinaryTree) gen;
-			binaryTreeGenerator.rootPosition = startPosition;
-		}
-		controlUI.showMessage("Generated maze (%d cells) using algorithm '%s'", grid.numVertices(),
+		controlUI.showMessage("Generating maze (%d cells) using '%s' algorithm...", grid.numVertices(),
 				genInfo.getDescription());
 		if (model.isGenerationAnimated()) {
 			gen.createMaze(x, y);
