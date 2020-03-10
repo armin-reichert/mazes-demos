@@ -71,6 +71,10 @@ public abstract class CreateMazeAction extends AbstractAction {
 			controlUI.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
 			gridUI.enableAnimation(true);
 		}
+		verifyMaze(grid);
+	}
+
+	private void verifyMaze(ObservableGridGraph<TraversalState, Integer> grid) {
 		boolean maze = true;
 		if (grid.numEdges() != grid.numVertices() - 1) {
 			maze = false;
