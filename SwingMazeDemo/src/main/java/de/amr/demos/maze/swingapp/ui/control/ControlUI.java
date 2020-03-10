@@ -298,11 +298,11 @@ public class ControlUI implements PropertyChangeListener {
 		window.pack();
 	}
 
-	public void solve() {
-		getSelectedSolver().ifPresent(this::solve);
+	public void runSelectedSolver() {
+		getSelectedSolver().ifPresent(this::runSolver);
 	}
 
-	private void solve(Algorithm solver) {
+	private void runSolver(Algorithm solver) {
 		ObservableGraphSearch solverInstance = model.createSolverInstance(solver);
 		int source = model.getGrid().cell(model.getSolverSource());
 		int target = model.getGrid().cell(model.getSolverTarget());

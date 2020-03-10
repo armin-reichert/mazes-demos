@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
+import de.amr.util.StopWatch;
 
 /**
  * Action for creating a maze using the currently selected generation algorithm.
@@ -29,10 +30,12 @@ public class CreateSingleMaze extends CreateMazeAction {
 						AfterGenerationAction andNow = controlUI.getAfterGenerationAction();
 						if (andNow == AfterGenerationAction.FLOOD_FILL) {
 							GridCanvasAnimation.pause(1);
-							gridUI.floodFill();
+							StopWatch watch = new StopWatch();
+							watch.measure(gridUI::floodFill);
+							controlUI.showMessage("Flood-fill: %.3f seconds.", watch.getSeconds());
 						} else if (andNow == AfterGenerationAction.SOLVE) {
 							GridCanvasAnimation.pause(1);
-							controlUI.solve();
+							controlUI.runSelectedSolver();
 						}
 					},
 

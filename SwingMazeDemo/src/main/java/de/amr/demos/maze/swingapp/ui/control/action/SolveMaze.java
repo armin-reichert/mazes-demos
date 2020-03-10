@@ -30,7 +30,7 @@ public class SolveMaze extends AbstractAction {
 
 				() -> {
 					gridUI.drawGrid();
-					controlUI.solve();
+					controlUI.runSelectedSolver();
 				},
 
 				interruption -> {

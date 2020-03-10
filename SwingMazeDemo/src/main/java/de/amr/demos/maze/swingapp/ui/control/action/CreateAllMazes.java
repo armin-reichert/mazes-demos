@@ -50,7 +50,7 @@ public class CreateAllMazes extends CreateMazeAction {
 					gridUI.floodFill();
 				} else if (andNow == AfterGenerationAction.SOLVE) {
 					GridCanvasAnimation.pause(1);
-					controlUI.solve();
+					controlUI.runSelectedSolver();
 				}
 			} catch (AnimationInterruptedException x) {
 				throw x;
