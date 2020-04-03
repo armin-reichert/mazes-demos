@@ -237,11 +237,17 @@ public class ControlUI implements PropertyChangeListener {
 				onFailure.accept(e);
 			}
 			setBusy(false);
+			getModel().setDelay(0);
 		});
 		bgThread.start();
 	}
 
 	public void stopBackgroundThread() {
+		//TODO this is a hack to be able to interrupt thread in case no delay is set
+		int delay = getModel().getDelay();
+		if (delay == 0) {
+			getModel().setDelay(10);
+		}
 		bgThread.interrupt();
 	}
 
