@@ -233,17 +233,17 @@ public class ControlUI implements PropertyChangeListener {
 		bgThread.setUncaughtExceptionHandler((thread, e) -> {
 			if (e.getClass() == AnimationInterruptedException.class) {
 				onInterruption.accept((AnimationInterruptedException) e);
+				getModel().setDelay(0); // HACK: reset delay that has been set to allow stopping animation
 			} else {
 				onFailure.accept(e);
 			}
 			setBusy(false);
-			getModel().setDelay(0);
 		});
 		bgThread.start();
 	}
 
 	public void stopBackgroundThread() {
-		//TODO this is a hack to be able to interrupt thread in case no delay is set
+		// TODO this is a hack to be able to interrupt thread in case no delay is set
 		int delay = getModel().getDelay();
 		if (delay == 0) {
 			getModel().setDelay(10);
