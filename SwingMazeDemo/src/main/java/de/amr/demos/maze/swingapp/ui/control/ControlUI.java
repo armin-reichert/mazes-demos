@@ -21,9 +21,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
+import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
@@ -198,6 +198,7 @@ public class ControlUI implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent change) {
 		switch (change.getPropertyName()) {
 		case "delay":
+			view.getSliderDelay().setValue((Integer) change.getNewValue());
 			break;
 		case "grid":
 			if (model.getGridTopology() == Grid8Topology.get()) {
@@ -244,8 +245,7 @@ public class ControlUI implements PropertyChangeListener {
 
 	public void stopBackgroundThread() {
 		// TODO this is a hack to be able to interrupt thread in case no delay is set
-		int delay = getModel().getDelay();
-		if (delay == 0) {
+		if (getModel().getDelay() == 0) {
 			getModel().setDelay(10);
 		}
 		bgThread.interrupt();
