@@ -12,6 +12,14 @@
 	<build>
 		<plugins>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<archive>
@@ -23,6 +31,15 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 				</configuration>
+				<executions>
+					<execution>
+						<id>assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -33,9 +50,9 @@
 			<version>5.0</version>
 		</dependency>
 		<dependency>
-			<groupId>de.amr.maze</groupId>
-			<artifactId>mazes-algorithms</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
@@ -43,15 +60,25 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-			<version>1.72</version>
+			<groupId>de.amr.graph</groupId>
+			<artifactId>graph-search</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.amr.graph</groupId>
+			<artifactId>graph-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.amr.graph</groupId>
+			<artifactId>graph-grid</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.amr.maze</groupId>
+			<artifactId>mazes-algorithms</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<parent>
-		<groupId>de.amr.demos.graph</groupId>
-		<artifactId>graph-demos-all</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../../graph-demos</relativePath>
-	</parent>
+	<version>0.0.1-SNAPSHOT</version>
 </project>
