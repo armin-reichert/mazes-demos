@@ -346,13 +346,17 @@ public class ControlUI implements PropertyChangeListener {
 				window.setVisible(false);
 			}
 			setEnabled(false, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(), menus.getOptionMenu());
-			setEnabled(false, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
+			setEnabled(false, actionChangeGridResolution, actionChangeGridTopology, actionChangeRenderingStyle,
+					actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
+			view.getSliderPassageWidth().setEnabled(false);
 			setWaitCursor(view);
 			setNormalCursor(view.getBtnStop(), view.getBtnShowHideDetails(), view.getSliderDelay());
 		} else {
 			window.setVisible(true);
 			setEnabled(true, menus.getGeneratorMenu(), menus.getSolverMenu(), menus.getCanvasMenu(), menus.getOptionMenu());
-			setEnabled(true, actionChangeGridResolution, actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
+			setEnabled(true, actionChangeGridResolution, actionChangeGridTopology, actionChangeRenderingStyle,
+					actionCreateSingleMaze, actionCreateAllMazes, actionSolveMaze);
+			view.getSliderPassageWidth().setEnabled(true);
 			setNormalCursor(view);
 		}
 	}
