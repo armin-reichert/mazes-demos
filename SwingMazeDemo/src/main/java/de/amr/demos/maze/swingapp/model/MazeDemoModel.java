@@ -1,5 +1,6 @@
 package de.amr.demos.maze.swingapp.model;
 
+import static de.amr.datastruct.StreamUtils.randomElement;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.EdgeDeleting;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
@@ -18,6 +19,7 @@ import static de.amr.graph.grid.impl.GridFactory.fullObservableGrid;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
@@ -293,6 +295,22 @@ public class MazeDemoModel {
 
 	public void fullGrid() {
 		createGrid(grid.numCols(), grid.numRows(), true, TraversalState.UNVISITED);
+	}
+
+	public void randomGrid() {
+		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
+		grid = emptyObservableGrid(oldGrid.numCols(), oldGrid.numRows(), gridTopology, TraversalState.UNVISITED, 0);
+		new WilsonUSTRandomCell(grid).createMaze(0, 0);
+		int edgesToAdd = (int) (grid.numEdges() * .33f);
+		while (edgesToAdd > 0) {
+			int v = new Random().nextInt(grid.numVertices());
+			Optional<Integer> unconnectedNeighbor = randomElement(grid.neighbors(v).filter(w -> !grid.adjacent(v, w)));
+			if (unconnectedNeighbor.isPresent()) {
+				grid.addEdge(v, unconnectedNeighbor.get());
+				edgesToAdd--;
+			}
+		}
+		changePublisher.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public int getDelay() {

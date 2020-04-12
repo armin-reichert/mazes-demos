@@ -193,6 +193,7 @@ class ControlUIMenus {
 			.separator()
 			.action(controlUI.actionCreateEmptyGrid)
 			.action(controlUI.actionCreateFullGrid)
+			.action(controlUI.actionCreateRandomGrid)
 			.separator()
 			.action(controlUI.actionSaveImage)
 		.build();		
