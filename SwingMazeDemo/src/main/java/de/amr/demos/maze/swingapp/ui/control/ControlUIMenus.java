@@ -3,6 +3,7 @@ package de.amr.demos.maze.swingapp.ui.control;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
 import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
+import static de.amr.swing.MenuBuilder.beginMenu;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -105,7 +106,7 @@ class ControlUIMenus {
 	private JMenu buildGeneratorMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 			.title("Generators")
 			.property("radio", radio)
 			.items(
@@ -141,7 +142,7 @@ class ControlUIMenus {
 	private JMenu buildSolverMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 				.title("Solvers")
 				.property("radio", radio)
 				.caption("Uninformed Solvers")
@@ -169,14 +170,14 @@ class ControlUIMenus {
 		Function<Metric, String> displayName = metric -> metric.name().substring(0, 1)
 				+ metric.name().substring(1).toLowerCase();
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 				.title("Metric")
 				.radioButtonGroup(Metric.class)
 					.onSelect(controlUI.getModel()::setMetric)
 					.selection(controlUI.getModel()::getMetric)
-					.button().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).endButton()
-					.button().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).endButton()
-					.button().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).endButton()
+					.radioButton().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).endRadioButton()
+					.radioButton().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).endRadioButton()
+					.radioButton().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).endRadioButton()
 				.endRadioButtonGroup()
 		.endMenu();
 		//@formatter:on
@@ -186,7 +187,7 @@ class ControlUIMenus {
 
 	private JMenu buildCanvasMenu() {
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 			.title("Canvas")
 			.action(controlUI.actionClearCanvas)
 			.action(controlUI.actionFloodFill)
@@ -206,7 +207,7 @@ class ControlUIMenus {
 	private JMenu buildOptionMenu() {
 		final MazeDemoModel model = controlUI.getModel();
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 			.title("Options")
 			.menu(buildPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart))
 			.menu(buildPositionMenu("Solution Start", model::setSolverSource, model::getSolverSource))
@@ -215,18 +216,18 @@ class ControlUIMenus {
 			.radioButtonGroup(AfterGenerationAction.class)
 				.onSelect(controlUI::setAfterGenerationAction)
 				.selection(controlUI::getAfterGenerationAction)
-				.button()
+				.radioButton()
 					.text("No action after generation")
 					.selectionValue(AfterGenerationAction.IDLE)
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.text("Solve after generation")
 					.selectionValue(AfterGenerationAction.SOLVE)
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.text("Flood-fill after generation")
 					.selectionValue(AfterGenerationAction.FLOOD_FILL)
-					.endButton()
+					.endRadioButton()
 			.endRadioButtonGroup()
 			.separator()
 			.checkBox()
@@ -258,31 +259,31 @@ class ControlUIMenus {
 		Function<GridPosition, String> translation = position -> ResourceBundle.getBundle("texts")
 				.getString(position.name());
 		//@formatter:off
-		return MenuBuilder.beginMenu()
+		return beginMenu()
 			.title(title)
 			.radioButtonGroup(GridPosition.class)
 				.selection(selection)
 				.onSelect(onSelect)
-				.button()
+				.radioButton()
 					.selectionValue(GridPosition.CENTER)
 					.text(translation.apply(GridPosition.CENTER))
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.selectionValue(GridPosition.TOP_LEFT)
 					.text(translation.apply(GridPosition.TOP_LEFT))
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.selectionValue(GridPosition.TOP_RIGHT)
 					.text(translation.apply(GridPosition.TOP_RIGHT))
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.selectionValue(GridPosition.BOTTOM_LEFT)
 					.text(translation.apply(GridPosition.BOTTOM_LEFT))
-					.endButton()
-				.button()
+					.endRadioButton()
+				.radioButton()
 					.selectionValue(GridPosition.BOTTOM_RIGHT)
 					.text(translation.apply(GridPosition.BOTTOM_RIGHT))
-					.endButton()
+					.endRadioButton()
 			.endRadioButtonGroup()
 		.endMenu();
 		//@formatter:on
