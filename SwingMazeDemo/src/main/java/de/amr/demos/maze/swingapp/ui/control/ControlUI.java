@@ -126,8 +126,8 @@ public class ControlUI implements PropertyChangeListener {
 		});
 		actionCreateEmptyGrid = action("Empty Grid", e -> model.emptyGrid());
 		actionCreateFullGrid = action("Full Grid", e -> model.fullGrid());
-		actionCreateSparseRandomGrid = action("Sparse Random Connected Grid", e -> model.randomGrid(10));
-		actionCreateDenseRandomGrid = action("Dense Random Connected Grid", e -> model.randomGrid(60));
+		actionCreateSparseRandomGrid = action("Sparse Grid", e -> model.randomGrid(true));
+		actionCreateDenseRandomGrid = action("Dense Grid", e -> model.randomGrid(false));
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridUI.clear();
 			gridUI.drawGrid();

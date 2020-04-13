@@ -297,13 +297,14 @@ public class MazeDemoModel {
 		createGrid(grid.numCols(), grid.numRows(), true, TraversalState.UNVISITED);
 	}
 
-	public void randomGrid(int density) {
+	public void randomGrid(boolean sparse) {
 		int c = grid.numCols(), r = grid.numRows();
-		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
+		ObservableGridGraph<TraversalState, Integer> oldGrid = grid;
 		grid = emptyObservableGrid(c, r, gridTopology, TraversalState.UNVISITED, 0);
-		int fullGridEdgeCount = gridTopology == Grid4Topology.get() ? 2 * c * r - c - r : 4 * c * r - 3 * c - 3 * r + 2;
 		new WilsonUSTRandomCell(grid).createMaze(0, 0);
-		int numEdgesToAdd = (fullGridEdgeCount - grid.numEdges()) * density / 100;
+		int numFullGridEdges = gridTopology == Grid4Topology.get() ? 2 * c * r - c - r : 4 * c * r - 3 * c - 3 * r + 2;
+		int maxEdgesToAdd = numFullGridEdges - grid.numEdges();
+		int numEdgesToAdd = sparse ? maxEdgesToAdd * 10 / 100 : maxEdgesToAdd * 50 / 100;
 		while (numEdgesToAdd > 0) {
 			int v = new Random().nextInt(grid.numVertices());
 			Optional<Integer> unconnectedNeighbor = randomElement(grid.neighbors(v).filter(w -> !grid.adjacent(v, w)));
