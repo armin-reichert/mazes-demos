@@ -105,7 +105,7 @@ class ControlUIMenus {
 	private JMenu buildGeneratorMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 			.title("Generators")
 			.property("radio", radio)
 			.items(
@@ -115,7 +115,7 @@ class ControlUIMenus {
 				generatorMenu("Others", radio,
 					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST)))
 			)
-		.build();
+		.endMenu();
 		//@formatter:on
 	}
 
@@ -141,7 +141,7 @@ class ControlUIMenus {
 	private JMenu buildSolverMenu() {
 		ButtonGroup radio = new ButtonGroup();
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 				.title("Solvers")
 				.property("radio", radio)
 				.caption("Uninformed Solvers")
@@ -150,7 +150,7 @@ class ControlUIMenus {
 				.caption("Informed Solvers")
 				.menu(buildMetricsMenu())
 				.items(solverItems(radio, solver -> solver.isTagged(SolverTag.INFORMED)))
-		.build();
+		.endMenu();
 		//@formatter:on
 	}
 
@@ -169,16 +169,16 @@ class ControlUIMenus {
 		Function<Metric, String> displayName = metric -> metric.name().substring(0, 1)
 				+ metric.name().substring(1).toLowerCase();
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 				.title("Metric")
 				.radioButtonGroup(Metric.class)
 					.onSelect(controlUI.getModel()::setMetric)
 					.selection(controlUI.getModel()::getMetric)
-					.button().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).build()
-					.button().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).build()
-					.button().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).build()
-				.build()
-		.build();
+					.button().selectionValue(Metric.EUCLIDEAN).text(displayName.apply(Metric.EUCLIDEAN)).endButton()
+					.button().selectionValue(Metric.MANHATTAN).text(displayName.apply(Metric.MANHATTAN)).endButton()
+					.button().selectionValue(Metric.CHEBYSHEV).text(displayName.apply(Metric.CHEBYSHEV)).endButton()
+				.endRadioButtonGroup()
+		.endMenu();
 		//@formatter:on
 	}
 
@@ -186,7 +186,7 @@ class ControlUIMenus {
 
 	private JMenu buildCanvasMenu() {
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 			.title("Canvas")
 			.action(controlUI.actionClearCanvas)
 			.action(controlUI.actionFloodFill)
@@ -197,7 +197,7 @@ class ControlUIMenus {
 			.action(controlUI.actionCreateFullGrid)
 			.separator()
 			.action(controlUI.actionSaveImage)
-		.build();		
+		.endMenu();		
 		//@formatter:on
 	}
 
@@ -206,7 +206,7 @@ class ControlUIMenus {
 	private JMenu buildOptionMenu() {
 		final MazeDemoModel model = controlUI.getModel();
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 			.title("Options")
 			.menu(buildPositionMenu("Generation Start", model::setGenerationStart, model::getGenerationStart))
 			.menu(buildPositionMenu("Solution Start", model::setSolverSource, model::getSolverSource))
@@ -218,39 +218,39 @@ class ControlUIMenus {
 				.button()
 					.text("No action after generation")
 					.selectionValue(AfterGenerationAction.IDLE)
-					.build()
+					.endButton()
 				.button()
 					.text("Solve after generation")
 					.selectionValue(AfterGenerationAction.SOLVE)
-					.build()
+					.endButton()
 				.button()
 					.text("Flood-fill after generation")
 					.selectionValue(AfterGenerationAction.FLOOD_FILL)
-					.build()
-			.build()
+					.endButton()
+			.endRadioButtonGroup()
 			.separator()
 			.checkBox()
 				.text("Animate Generation")
 				.onToggle(model::setGenerationAnimated)
 				.selection(model::isGenerationAnimated)
-				.build()
+				.endCheckBox()
 			.checkBox()
 				.text("Show distances")
 				.onToggle(model::setDistancesVisible)
 				.selection(model::isDistancesVisible)
-				.build()
+				.endCheckBox()
 			.checkBox()
 				.text("Fluent Passage Width")
 				.onToggle(model::setPassageWidthFluent)
 				.selection(model::isPassageWidthFluent)
-				.build()
+				.endCheckBox()
 			.separator()	
 			.checkBox()
 				.text("Hide this dialog when running")
 				.onToggle(controlUI::setHiddenWhenBusy)
 				.selection(controlUI::isHiddenWhenBusy)
-				.build()
-		.build();
+				.endCheckBox()
+		.endMenu();
 		//@formatter:on
 	}
 
@@ -258,7 +258,7 @@ class ControlUIMenus {
 		Function<GridPosition, String> translation = position -> ResourceBundle.getBundle("texts")
 				.getString(position.name());
 		//@formatter:off
-		return MenuBuilder.newBuilder()
+		return MenuBuilder.beginMenu()
 			.title(title)
 			.radioButtonGroup(GridPosition.class)
 				.selection(selection)
@@ -266,25 +266,25 @@ class ControlUIMenus {
 				.button()
 					.selectionValue(GridPosition.CENTER)
 					.text(translation.apply(GridPosition.CENTER))
-					.build()
+					.endButton()
 				.button()
 					.selectionValue(GridPosition.TOP_LEFT)
 					.text(translation.apply(GridPosition.TOP_LEFT))
-					.build()
+					.endButton()
 				.button()
 					.selectionValue(GridPosition.TOP_RIGHT)
 					.text(translation.apply(GridPosition.TOP_RIGHT))
-					.build()
+					.endButton()
 				.button()
 					.selectionValue(GridPosition.BOTTOM_LEFT)
 					.text(translation.apply(GridPosition.BOTTOM_LEFT))
-					.build()
+					.endButton()
 				.button()
 					.selectionValue(GridPosition.BOTTOM_RIGHT)
 					.text(translation.apply(GridPosition.BOTTOM_RIGHT))
-					.build()
-			.build()
-		.build();
+					.endButton()
+			.endRadioButtonGroup()
+		.endMenu();
 		//@formatter:on
 	}
 }
