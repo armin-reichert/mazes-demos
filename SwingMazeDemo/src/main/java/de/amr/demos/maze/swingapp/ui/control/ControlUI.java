@@ -71,7 +71,8 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionChangeRenderingStyle;
 	final Action actionCreateEmptyGrid;
 	final Action actionCreateFullGrid;
-	final Action actionCreateRandomGrid;
+	final Action actionCreateSparseRandomGrid;
+	final Action actionCreateDenseRandomGrid;
 	final Action actionStopBackgroundThread;
 	final Action actionClearCanvas;
 	final Action actionCreateSingleMaze;
@@ -123,9 +124,10 @@ public class ControlUI implements PropertyChangeListener {
 				model.setRenderingStyle(GridRenderingStyle.PEARLS);
 			}
 		});
-		actionCreateEmptyGrid = action("Create Empty Grid", e -> model.emptyGrid());
-		actionCreateFullGrid = action("Create Full Grid", e -> model.fullGrid());
-		actionCreateRandomGrid = action("Create Random Grid", e -> model.randomGrid());
+		actionCreateEmptyGrid = action("Empty Grid", e -> model.emptyGrid());
+		actionCreateFullGrid = action("Full Grid", e -> model.fullGrid());
+		actionCreateSparseRandomGrid = action("Sparse Random Connected Grid", e -> model.randomGrid(10));
+		actionCreateDenseRandomGrid = action("Dense Random Connected Grid", e -> model.randomGrid(60));
 		actionClearCanvas = action("Clear Canvas", e -> {
 			gridUI.clear();
 			gridUI.drawGrid();

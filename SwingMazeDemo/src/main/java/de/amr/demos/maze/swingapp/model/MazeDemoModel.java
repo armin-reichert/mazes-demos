@@ -297,17 +297,19 @@ public class MazeDemoModel {
 		createGrid(grid.numCols(), grid.numRows(), true, TraversalState.UNVISITED);
 	}
 
-	public void randomGrid() {
+	public void randomGrid(int density) {
+		int c = grid.numCols(), r = grid.numRows();
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
-		grid = emptyObservableGrid(oldGrid.numCols(), oldGrid.numRows(), gridTopology, TraversalState.UNVISITED, 0);
+		grid = emptyObservableGrid(c, r, gridTopology, TraversalState.UNVISITED, 0);
+		int fullGridEdgeCount = gridTopology == Grid4Topology.get() ? 2 * c * r - c - r : 4 * c * r - 3 * c - 3 * r + 2;
 		new WilsonUSTRandomCell(grid).createMaze(0, 0);
-		int edgesToAdd = (int) (grid.numEdges() * .33f);
-		while (edgesToAdd > 0) {
+		int numEdgesToAdd = (fullGridEdgeCount - grid.numEdges()) * density / 100;
+		while (numEdgesToAdd > 0) {
 			int v = new Random().nextInt(grid.numVertices());
 			Optional<Integer> unconnectedNeighbor = randomElement(grid.neighbors(v).filter(w -> !grid.adjacent(v, w)));
 			if (unconnectedNeighbor.isPresent()) {
 				grid.addEdge(v, unconnectedNeighbor.get());
-				edgesToAdd--;
+				numEdgesToAdd--;
 			}
 		}
 		changePublisher.firePropertyChange("grid", oldGrid, grid);
