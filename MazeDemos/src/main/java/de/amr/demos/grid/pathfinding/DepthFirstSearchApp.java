@@ -21,8 +21,8 @@ import javax.swing.KeyStroke;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
-import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.Grid4Topology;
+import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.ui.rendering.ConfigurableGridRenderer;
 import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;

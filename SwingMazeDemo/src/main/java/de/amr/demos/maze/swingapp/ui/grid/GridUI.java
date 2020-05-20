@@ -14,8 +14,8 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
+import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.Grid8Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;

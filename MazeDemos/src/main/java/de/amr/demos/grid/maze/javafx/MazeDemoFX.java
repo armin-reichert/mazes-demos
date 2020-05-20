@@ -10,8 +10,8 @@ import java.util.TimerTask;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
-import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.Grid4Topology;
+import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.BreadthFirstSearch;
 import de.amr.maze.alg.core.MazeGenerator;
@@ -37,8 +37,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
- * Generates mazes using different generation algorithms, draws them and shows the path from top
- * left to bottom right cell.
+ * Generates mazes using different generation algorithms, draws them and shows
+ * the path from top left to bottom right cell.
  * <p>
  * By pressing the PLUS-/MINUS-key the user can change the grid resolution.
  * 
@@ -116,8 +116,7 @@ public class MazeDemoFX extends Application {
 					cellSize *= 2;
 					computeGridSize();
 				}
-			}
-			else if (event.getCode() == KeyCode.PLUS) {
+			} else if (event.getCode() == KeyCode.PLUS) {
 				if (cellSize > 4) {
 					cellSize /= 2;
 					computeGridSize();
@@ -148,8 +147,7 @@ public class MazeDemoFX extends Application {
 
 	private void drawPassage(Integer u, Integer v) {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.strokeLine(grid.col(u) * cellSize, grid.row(u) * cellSize, grid.col(v) * cellSize,
-				grid.row(v) * cellSize);
+		gc.strokeLine(grid.col(u) * cellSize, grid.row(u) * cellSize, grid.col(v) * cellSize, grid.row(v) * cellSize);
 	}
 
 	private void drawGrid() {
