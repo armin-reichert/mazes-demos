@@ -7,9 +7,9 @@ import java.util.stream.IntStream;
 
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
+import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.ObservableGridGraph;
-import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.maze.alg.core.MazeGenerator;
 
@@ -37,17 +37,32 @@ public class MazeDemoApp extends SwingGridSampleApp {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			System.out.println("Usage: java de.amr.demos.grid.maze.swing.MazeDemoApp <maze generator class>");
 		}
 	}
 
 	public static void launch(Class<? extends MazeGenerator> generatorClass) {
-		launch(new MazeDemoApp(generatorClass.getSimpleName(), generatorClass));
+		launch(generatorClass, false);
+	}
+
+	public static void launch(Class<? extends MazeGenerator> generatorClass, boolean fullscreen) {
+		if (fullscreen) {
+			MazeDemoApp app = new MazeDemoApp(generatorClass.getSimpleName(), generatorClass);
+			launch(app);
+		} else {
+			MazeDemoApp app = new MazeDemoApp(generatorClass.getSimpleName(), generatorClass, 800, 600);
+			launch(app);
+		}
 	}
 
 	private final Class<? extends MazeGenerator> generatorClass;
+
+	public MazeDemoApp(String appName, Class<? extends MazeGenerator> generatorClass, int w, int h) {
+		super(w, h, 128);
+		this.generatorClass = generatorClass;
+		setAppName(appName);
+	}
 
 	public MazeDemoApp(String appName, Class<? extends MazeGenerator> generatorClass) {
 		super(128);
@@ -58,8 +73,8 @@ public class MazeDemoApp extends SwingGridSampleApp {
 	private MazeGenerator createGenerator(GridGraph2D<TraversalState, Integer> grid) {
 		try {
 			return generatorClass.getConstructor(GridGraph2D.class).newInstance(grid);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
