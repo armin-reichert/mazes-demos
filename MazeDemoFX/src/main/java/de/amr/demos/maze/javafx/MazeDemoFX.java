@@ -1,4 +1,4 @@
-package de.amr.demos.grid.maze.javafx;
+package de.amr.demos.maze.javafx;
 
 import static de.amr.graph.core.api.TraversalState.UNVISITED;
 import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
