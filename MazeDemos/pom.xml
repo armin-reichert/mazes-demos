@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.amr.demos.maze</groupId>
 	<artifactId>MazeDemos</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>de.amr.maze</groupId>
 			<artifactId>mazes-algorithms</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>de.amr.graph</groupId>
 			<artifactId>graph-viz</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>

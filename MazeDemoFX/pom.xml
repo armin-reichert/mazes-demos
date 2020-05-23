@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.amr.demos.maze.javafx</groupId>
 	<artifactId>MazeDemoFX</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,12 +26,12 @@
 		<dependency>
 			<groupId>de.amr.maze</groupId>
 			<artifactId>mazes-algorithms</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
 			<artifactId>graph-viz</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openjfx</groupId>
