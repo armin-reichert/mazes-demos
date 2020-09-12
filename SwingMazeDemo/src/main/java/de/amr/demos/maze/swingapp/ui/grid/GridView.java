@@ -63,7 +63,7 @@ public class GridView {
 
 	private void initProperties() {
 		gridBackgroundColor = Color.BLACK;
-		unvisitedCellColor = Color.LIGHT_GRAY;
+		unvisitedCellColor = new Color(245, 245, 240);
 		visitedCellColor = Color.BLUE;
 		completedCellColor = Color.WHITE;
 		style = GridRenderingStyle.WALL_PASSAGES;
