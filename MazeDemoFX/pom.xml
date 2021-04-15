@@ -27,4 +27,24 @@
 			<version>11</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
+				<configuration>
+					<release>15</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.openjfx</groupId>
+				<artifactId>javafx-maven-plugin</artifactId>
+				<version>0.0.5</version>
+				<configuration>
+					<mainClass>de.amr.demos.maze.javafx.MazeDemoFX</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
