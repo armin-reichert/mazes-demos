@@ -1,2 +1,3 @@
-# mazes-demos
-Demo apps for maze algorithms
+# Demo apps for maze algorithms
+
+![Swing Maze Demo Application](mazedemoapp.png)
