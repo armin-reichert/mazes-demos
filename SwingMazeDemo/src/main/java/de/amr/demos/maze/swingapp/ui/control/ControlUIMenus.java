@@ -53,6 +53,7 @@ class ControlUIMenus {
 	private final JMenu canvasMenu;
 	private final JMenu solverMenu;
 	private final JMenu optionMenu;
+	private final JMenu aboutMenu;
 
 	public ControlUIMenus(ControlUI controlUI) {
 		this.controlUI = controlUI;
@@ -60,6 +61,7 @@ class ControlUIMenus {
 		solverMenu = buildSolverMenu();
 		canvasMenu = buildCanvasMenu();
 		optionMenu = buildOptionMenu();
+		aboutMenu = buildAboutMenu();
 	}
 
 	public JMenu getGeneratorMenu() {
@@ -76,6 +78,10 @@ class ControlUIMenus {
 
 	public JMenu getOptionMenu() {
 		return optionMenu;
+	}
+
+	public JMenu getAboutMenu() {
+		return aboutMenu;
 	}
 
 	public void updateSelection() {
@@ -288,4 +294,14 @@ class ControlUIMenus {
 		.endMenu();
 		//@formatter:on
 	}
+
+	private JMenu buildAboutMenu() {
+		//@formatter:off
+		return beginMenu()
+			.title("?")
+			.action(controlUI.actionVisitOnGitHub)
+		.endMenu();		
+		//@formatter:on
+	}
+
 }

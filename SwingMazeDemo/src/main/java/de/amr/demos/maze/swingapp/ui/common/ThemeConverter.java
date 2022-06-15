@@ -15,7 +15,7 @@ public class ThemeConverter extends StringConverter {
 
 	@Override
 	public String convert(String value) {
-		switch (value) {
+		switch (value.toLowerCase()) {
 		case "system":
 			return UIManager.getSystemLookAndFeelClassName();
 		case "cross":

@@ -6,9 +6,11 @@ import static de.amr.swing.Swing.setEnabled;
 import static de.amr.swing.Swing.setNormalCursor;
 import static de.amr.swing.Swing.setWaitCursor;
 
+import java.awt.Desktop;
 import java.awt.Window;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -80,6 +82,7 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionSolveMaze;
 	final Action actionFloodFill;
 	final Action actionSaveImage;
+	final Action actionVisitOnGitHub;
 
 	final ComboBoxModel<String> renderingStyles_4neighbors = new DefaultComboBoxModel<String>(
 			new String[] { WALLS_PASSAGES, PEARLS });
@@ -139,6 +142,17 @@ public class ControlUI implements PropertyChangeListener {
 		actionFloodFill = new FloodFill("Flood-fill", this, gridUI);
 		actionSaveImage = new SaveImage("Save Image...", this, gridUI);
 
+		actionVisitOnGitHub = action("Visit me on GitHub", icon("/GitHub-Mark-32px.png"), e -> {
+			if (Desktop.isDesktopSupported()) {
+				var url = "https://github.com/armin-reichert/mazes";
+				try {
+					Desktop.getDesktop().browse(new URI(url));
+				} catch (Exception x) {
+					System.err.println("Could not browse URL " + url);
+				}
+			}
+		});
+
 		// create and initialize UI
 
 		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
@@ -196,6 +210,7 @@ public class ControlUI implements PropertyChangeListener {
 		window.getJMenuBar().add(menus.getSolverMenu());
 		window.getJMenuBar().add(menus.getCanvasMenu());
 		window.getJMenuBar().add(menus.getOptionMenu());
+		window.getJMenuBar().add(menus.getAboutMenu());
 	}
 
 	@Override
