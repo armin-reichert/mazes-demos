@@ -5,16 +5,12 @@
 	<groupId>de.amr.demos.maze.javafx</groupId>
 	<artifactId>MazeDemoFX</artifactId>
 	<version>1.0</version>
-	
 	<properties>
 		<javafx.version>17.0.2</javafx.version>
-		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mainClass>de.amr.demos.maze.javafx.MazeDemoFX</mainClass>
 	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>de.amr.maze</groupId>
@@ -37,14 +33,17 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.plugin.version}</version>
+				<version>3.8.1</version>
+				<configuration>
+					<release>17</release>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.openjfx</groupId>
 				<artifactId>javafx-maven-plugin</artifactId>
 				<version>0.0.8</version>
 				<configuration>
-					<mainClass>${mainClass}</mainClass>
+					<mainClass>de.amr.demos.maze.javafx.MazeDemoFX</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
