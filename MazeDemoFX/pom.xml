@@ -6,10 +6,10 @@
 	<artifactId>MazeDemoFX</artifactId>
 	<version>1.0</version>
 	<properties>
-		<javafx.version>17.0.2</javafx.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<javafx.version>18.0.1</javafx.version>
+		<maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
+		<maven.compiler.source>18</maven.compiler.source>
+		<maven.compiler.target>18</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -33,10 +33,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-				<configuration>
-					<release>17</release>
-				</configuration>
+				<version>${maven.compiler.plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.openjfx</groupId>

@@ -24,6 +24,7 @@ import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridMetrics;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.graph.grid.api.GridTopology;
 import de.amr.graph.grid.impl.Grid4Topology;
@@ -153,6 +154,7 @@ public class MazeDemoModel {
 
 	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
 
+	private Random rnd = new Random();
 	private ObservableGridGraph<TraversalState, Integer> grid;
 	private GridTopology gridTopology;
 	private GridRenderingStyle renderingStyle;
@@ -298,7 +300,8 @@ public class MazeDemoModel {
 	}
 
 	public void randomGrid(boolean sparse) {
-		int c = grid.numCols(), r = grid.numRows();
+		int c = grid.numCols();
+		int r = grid.numRows();
 		ObservableGridGraph<TraversalState, Integer> oldGrid = grid;
 		grid = emptyObservableGrid(c, r, gridTopology, TraversalState.UNVISITED, 0);
 		new WilsonUSTRandomCell(grid).createMaze(0, 0);
@@ -306,7 +309,7 @@ public class MazeDemoModel {
 		int maxEdgesToAdd = numFullGridEdges - grid.numEdges();
 		int numEdgesToAdd = sparse ? maxEdgesToAdd * 10 / 100 : maxEdgesToAdd * 50 / 100;
 		while (numEdgesToAdd > 0) {
-			int v = new Random().nextInt(grid.numVertices());
+			int v = rnd.nextInt(grid.numVertices());
 			Optional<Integer> unconnectedNeighbor = randomElement(grid.neighbors(v).filter(w -> !grid.adjacent(v, w)));
 			if (unconnectedNeighbor.isPresent()) {
 				grid.addEdge(v, unconnectedNeighbor.get());
@@ -379,11 +382,11 @@ public class MazeDemoModel {
 	private ToDoubleBiFunction<Integer, Integer> metric() {
 		switch (metric) {
 		case CHEBYSHEV:
-			return grid::chebyshev;
+			return (u, v) -> GridMetrics.chebyshev(grid, u, v);
 		case EUCLIDEAN:
-			return grid::euclidean;
+			return (u, v) -> GridMetrics.euclidean(grid, u, v);
 		case MANHATTAN:
-			return grid::manhattan;
+			return (u, v) -> GridMetrics.manhattan(grid, u, v);
 		default:
 			throw new IllegalStateException();
 		}
