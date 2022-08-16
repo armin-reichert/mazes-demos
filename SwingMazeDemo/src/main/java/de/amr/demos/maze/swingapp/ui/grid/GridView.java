@@ -2,7 +2,7 @@ package de.amr.demos.maze.swingapp.ui.grid;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.IntSupplier;
 
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
@@ -27,7 +27,7 @@ public class GridView {
 	private Color visitedCellColor;
 	private Color completedCellColor;
 	private GridRenderingStyle style;
-	private BiFunction<Integer, Integer, Integer> fnPassageWidth;
+	private BinaryOperator<Integer> fnPassageWidth;
 	private IntSupplier fnSourceCell;
 	private IntSupplier fnTargetCell;
 
@@ -38,7 +38,7 @@ public class GridView {
 	}
 
 	public GridView(GridGraph<TraversalState, Integer> grid, int cellSize, IntSupplier fnSourceCell,
-			IntSupplier fnTargetCell, BiFunction<Integer, Integer, Integer> fnPassageWidth) {
+			IntSupplier fnTargetCell, BinaryOperator<Integer> fnPassageWidth) {
 		initProperties();
 		this.fnPassageWidth = fnPassageWidth;
 		this.fnSourceCell = fnSourceCell;
