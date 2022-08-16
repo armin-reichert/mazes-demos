@@ -17,8 +17,8 @@ import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
-import de.amr.graph.pathfinder.impl.AStarSearch;
-import de.amr.maze.alg.traversal.RandomBFS;
+import de.amr.graph.pathfinder.impl.BestFirstSearch;
+import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.swing.Swing;
 
 class Settings {
@@ -42,13 +42,11 @@ class Settings {
 }
 
 /**
- * This application visualizes different maze generation algorithms and path
- * finders.
+ * This application visualizes different maze generation algorithms and path finders.
  * <p>
  * The application provides
  * <ul>
- * <li>a preview window (full-screen by default) where the maze generation and
- * path finding animations are shown.
+ * <li>a preview window (full-screen by default) where the maze generation and path finding animations are shown.
  * <li>a control window where the following settings can be made
  * <ul>
  * <li>the maze generation algorithm
@@ -84,20 +82,21 @@ public class MazeDemoApp {
 		GridUI gridUI = new GridUI(model, settings.width, settings.height);
 		ControlUI controlUI = new ControlUI(gridUI, model);
 
-		// configure control UI
+		// Configure control UI
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
-		controlUI.setAfterGenerationAction(AfterGenerationAction.IDLE);
+		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
 		controlUI.expandWindow();
-		model.findGenerator(RandomBFS.class).ifPresent(controlUI::selectGenerator);
-		model.findSolver(AStarSearch.class).ifPresent(controlUI::selectSolver);
+		controlUI.collapseWindow();
+		model.findGenerator(IterativeDFS.class).ifPresent(controlUI::selectGenerator);
+		model.findSolver(BestFirstSearch.class).ifPresent(controlUI::selectSolver);
 		model.changes.addPropertyChangeListener(controlUI);
 
-		// configure preview UI
+		// Configure preview UI
 		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
 		gridUI.startModelChangeListening();
 
-		// show both windows
+		// Show both windows
 		gridUI.show();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();

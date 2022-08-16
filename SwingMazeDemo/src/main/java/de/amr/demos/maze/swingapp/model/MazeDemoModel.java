@@ -173,7 +173,7 @@ public class MazeDemoModel {
 		setGridTopology(Grid4Topology.get());
 		setRenderingStyle(GridRenderingStyle.WALL_PASSAGES);
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
-		setGridCellSizeIndex(4);
+		setGridCellSizeIndex(5);
 		setPassageWidthPercentage(90);
 		setDelay(0);
 		setGenerationStart(CENTER);
