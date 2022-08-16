@@ -204,7 +204,7 @@ public class GridUI implements PropertyChangeListener {
 
 	public void floodFill() {
 		int startCell = model.getGrid().cell(model.getSolverSource());
-		BFSAnimation.builder().canvas(view.getCanvas()).delay(() -> model.getDelay())
-				.distanceVisible(model.isDistancesVisible()).build().floodFill(startCell);
+		BFSAnimation.builder().canvas(view.getCanvas()).delay(model::getDelay).distanceVisible(model.isDistancesVisible())
+				.build().floodFill(startCell);
 	}
 }

@@ -85,10 +85,10 @@ public class ControlUI implements PropertyChangeListener {
 	final Action actionSaveImage;
 	final Action actionVisitOnGitHub;
 
-	final ComboBoxModel<String> renderingStyles_4neighbors = new DefaultComboBoxModel<String>(
+	final ComboBoxModel<String> renderingStyles4neighbors = new DefaultComboBoxModel<String>(
 			new String[] { WALLS_PASSAGES, PEARLS });
 
-	final ComboBoxModel<String> renderingStyles_8neighbors = new DefaultComboBoxModel<String>(new String[] { PEARLS });
+	final ComboBoxModel<String> renderingStyles8neighbors = new DefaultComboBoxModel<String>(new String[] { PEARLS });
 
 	public ControlUI(GridUI gridUI, MazeDemoModel model) {
 		this.gridUI = gridUI;
@@ -112,7 +112,7 @@ public class ControlUI implements PropertyChangeListener {
 			model.setGridTopology(combo.getItemAt(combo.getSelectedIndex()));
 			model.emptyGrid();
 			view.getComboRenderingStyle().setModel(
-					model.getGridTopology() == Grid4Topology.get() ? renderingStyles_4neighbors : renderingStyles_8neighbors);
+					model.getGridTopology() == Grid4Topology.get() ? renderingStyles4neighbors : renderingStyles8neighbors);
 			view.getComboRenderingStyle().setSelectedIndex(0);
 		});
 		actionChangeRenderingStyle = action("Change Style", e -> {
@@ -171,7 +171,7 @@ public class ControlUI implements PropertyChangeListener {
 		view.getComboGridTopology().setAction(actionChangeGridTopology);
 
 		view.getComboRenderingStyle().setModel(
-				model.getGridTopology() == Grid4Topology.get() ? renderingStyles_4neighbors : renderingStyles_8neighbors);
+				model.getGridTopology() == Grid4Topology.get() ? renderingStyles4neighbors : renderingStyles8neighbors);
 		view.getComboRenderingStyle().setSelectedIndex(0);
 		view.getComboRenderingStyle().setAction(actionChangeRenderingStyle);
 
@@ -338,7 +338,7 @@ public class ControlUI implements PropertyChangeListener {
 			/*@formatter:off*/
 			BFSAnimation anim = BFSAnimation.builder()
 					.canvas(gridView.getCanvas())
-					.delay(() -> model.getDelay())
+					.delay(model::getDelay)
 					.distanceVisible(model.isDistancesVisible())
 					.build();
 			/*@formatter:on*/
@@ -348,7 +348,7 @@ public class ControlUI implements PropertyChangeListener {
 			/*@formatter:off*/
 			DFSAnimation anim = DFSAnimation.builder()
 					.canvas(gridView.getCanvas())
-					.delay(() -> model.getDelay())
+					.delay(model::getDelay)
 					.build();
 			/*@formatter:on*/
 			watch.measure(() -> anim.run(solverInstance, source, target));

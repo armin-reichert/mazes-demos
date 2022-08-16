@@ -116,9 +116,7 @@ public class GridView {
 		PearlsGridRenderer r = new PearlsGridRenderer();
 		r.fnRelativePearlSize = () -> 0.5;
 		r.fnPassageWidth = (u, v) -> 1;
-		r.fnPassageColor = (u, v) -> {
-			return completedCellColor;
-		};
+		r.fnPassageColor = (u, v) -> completedCellColor;
 		return r;
 	}
 

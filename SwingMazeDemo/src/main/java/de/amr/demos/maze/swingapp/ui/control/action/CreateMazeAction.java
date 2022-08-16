@@ -43,7 +43,8 @@ public abstract class CreateMazeAction extends AbstractAction {
 			throw new RuntimeException(e);
 		}
 		int startCell = grid.cell(startPosition);
-		int x = grid.col(startCell), y = grid.row(startCell);
+		int x = grid.col(startCell);
+		int y = grid.row(startCell);
 		controlUI.showMessage("Generating maze (%d cells) using '%s' algorithm...", grid.numVertices(),
 				genInfo.getDescription());
 		if (model.isGenerationAnimated()) {
@@ -62,7 +63,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			gen.createMaze(x, y);
 			watch.stop();
 			controlUI.showMessage(format("Maze generation: %.0f ms.", watch.getMillis()));
-			watch.measure(() -> gridUI.drawGrid());
+			watch.measure(gridUI::drawGrid);
 			controlUI.showMessage(format("Grid rendering:  %.0f ms.", watch.getMillis()));
 			gridUI.enableAnimation(true);
 		}
