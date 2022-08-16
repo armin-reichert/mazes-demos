@@ -25,7 +25,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 	protected final GridUI gridUI;
 	protected MazeDemoModel model;
 
-	public CreateMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
+	protected CreateMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name);
 		this.gridUI = gridUI;
 		this.controlUI = controlUI;

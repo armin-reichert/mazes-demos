@@ -21,6 +21,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.WindowConstants;
 
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
@@ -199,7 +200,7 @@ public class ControlUI implements PropertyChangeListener {
 
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Control View");
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		window.setAlwaysOnTop(true);
 		window.setContentPane(view);
 

@@ -73,9 +73,9 @@ public class GridView {
 	private ConfigurableGridRenderer createRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
 		ConfigurableGridRenderer r;
 		if (style == GridRenderingStyle.PEARLS) {
-			r = createPearlsRenderer(grid, cellSize);
+			r = createPearlsRenderer(cellSize);
 		} else {
-			r = createWallPassageRenderer(grid, cellSize);
+			r = createWallPassageRenderer(cellSize);
 		}
 		r.fnGridBgColor = () -> gridBackgroundColor;
 		r.fnCellSize = () -> cellSize;
@@ -105,14 +105,14 @@ public class GridView {
 		return r;
 	}
 
-	private WallPassageGridRenderer createWallPassageRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
+	private WallPassageGridRenderer createWallPassageRenderer(int cellSize) {
 		WallPassageGridRenderer r = new WallPassageGridRenderer();
 		r.fnPassageWidth = fnPassageWidth;
 		r.fnPassageColor = (cell, dir) -> r.getCellBgColor(cell);
 		return r;
 	}
 
-	private PearlsGridRenderer createPearlsRenderer(GridGraph2D<TraversalState, ?> grid, int cellSize) {
+	private PearlsGridRenderer createPearlsRenderer(int cellSize) {
 		PearlsGridRenderer r = new PearlsGridRenderer();
 		r.fnRelativePearlSize = () -> 0.5;
 		r.fnPassageWidth = (u, v) -> 1;
