@@ -171,11 +171,11 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void stopModelChangeListening() {
-		model.changePublisher.removePropertyChangeListener(this);
+		model.changes.removePropertyChangeListener(this);
 	}
 
 	public void startModelChangeListening() {
-		model.changePublisher.addPropertyChangeListener(this);
+		model.changes.addPropertyChangeListener(this);
 	}
 
 	public void setEscapeAction(Action action) {

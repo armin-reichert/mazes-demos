@@ -91,7 +91,7 @@ public class MazeDemoApp {
 		controlUI.expandWindow();
 		model.findGenerator(RandomBFS.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(AStarSearch.class).ifPresent(controlUI::selectSolver);
-		model.changePublisher.addPropertyChangeListener(controlUI);
+		model.changes.addPropertyChangeListener(controlUI);
 
 		// configure preview UI
 		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));

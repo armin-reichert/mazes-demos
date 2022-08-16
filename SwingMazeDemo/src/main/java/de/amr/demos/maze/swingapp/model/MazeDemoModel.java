@@ -1,12 +1,12 @@
 package de.amr.demos.maze.swingapp.model;
 
 import static de.amr.datastruct.StreamUtils.randomElement;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.EdgeDeleting;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.Slow;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.SmallGrid;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.EDGE_DELETING;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.GRAPH_TRAVERSAL;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.MIN_SPANNING_TREE;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.SLOW;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.SMALL_GRID_ONLY;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.UNIFORM_SPANNING_TREE;
 import static de.amr.demos.maze.swingapp.model.SolverTag.BFS;
 import static de.amr.demos.maze.swingapp.model.SolverTag.DFS;
 import static de.amr.demos.maze.swingapp.model.SolverTag.INFORMED;
@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.ToDoubleBiFunction;
+import java.util.function.ToDoubleFunction;
 import java.util.stream.Stream;
 
 import de.amr.graph.core.api.TraversalState;
@@ -47,8 +48,6 @@ import de.amr.maze.alg.mst.PrimMST;
 import de.amr.maze.alg.mst.ReverseDeleteMST_BFS;
 import de.amr.maze.alg.mst.ReverseDeleteMST_BestFS;
 import de.amr.maze.alg.mst.ReverseDeleteMST_BidiAStar;
-import de.amr.maze.alg.mst.ReverseDeleteMST_DFS;
-import de.amr.maze.alg.mst.ReverseDeleteMST_HillClimbing;
 import de.amr.maze.alg.others.Armin;
 import de.amr.maze.alg.others.BinaryTree;
 import de.amr.maze.alg.others.BinaryTreeRandom;
@@ -90,49 +89,49 @@ import de.amr.maze.alg.ust.WilsonUSTRowsTopDown;
  */
 public class MazeDemoModel {
 
+	private static final String VERY_SLOW = "Very slow!";
+
 	private static final Algorithm[] GENERATORS = {
 		/*@formatter:off*/
-		new Algorithm(RecursiveDFS.class, "Random recursive DFS", "small grids only!", Traversal, SmallGrid),
-		new Algorithm(IterativeDFS.class, "Random non-recursive DFS", "", Traversal),
-		new Algorithm(RandomBFS.class, "Random BFS", "", Traversal),
-		new Algorithm(GrowingTreeAlwaysFirst.class, "Growing Tree (always select first)", "", Traversal),
-		new Algorithm(GrowingTreeAlwaysLast.class, "Growing Tree (always select last)", "", Traversal),
-		new Algorithm(GrowingTreeAlwaysRandom.class, "Growing Tree (always select random)", "", Traversal),
-		new Algorithm(GrowingTreeLastOrRandom.class, "Growing Tree (last or random)", "", Traversal),
-		new Algorithm(KruskalMST.class, "Kruskal MST", "", MST),
-		new Algorithm(PrimMST.class, "Prim MST", "", MST),
-		new Algorithm(BoruvkaMST.class, "Boruvka MST", "", MST),
-		new Algorithm(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS)", "very slow!", MST, Slow, EdgeDeleting),
-		new Algorithm(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search)", "very slow!", MST, Slow, EdgeDeleting),
-		new Algorithm(ReverseDeleteMST_DFS.class, "Reverse-Delete MST (DFS)", "very slow!", MST, Slow, EdgeDeleting),
-		new Algorithm(ReverseDeleteMST_HillClimbing.class, "Reverse-Delete MST (Hill-Climbing)", "very slow!", MST, Slow, EdgeDeleting),
-		new Algorithm(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*)", "very slow!", MST, Slow, EdgeDeleting),
-		new Algorithm(AldousBroderUST.class, "Aldous-Broder UST", "rather slow", UST, Slow),
-		new Algorithm(AldousBroderWilsonUST.class, "Houston UST", "rather slow", UST, Slow),
-		new Algorithm(WilsonUSTRandomCell.class, "Wilson UST (random)", "", UST, Slow),
-		new Algorithm(WilsonUSTRowsTopDown.class, "Wilson UST (row-wise, top-to-bottom)", "", UST),
-		new Algorithm(WilsonUSTLeftToRightSweep.class, "Wilson UST (column-wise, left to right)", "", UST),
-		new Algorithm(WilsonUSTRightToLeftSweep.class, "Wilson UST (column-wise, right to left)", "", UST),
-		new Algorithm(WilsonUSTCollapsingWalls.class, "Wilson UST (column-wise, collapsing)", "", UST),
-		new Algorithm(WilsonUSTCollapsingRectangle.class, "Wilson UST (collapsing rectangle)", "", UST),
-		new Algorithm(WilsonUSTExpandingCircle.class, "Wilson UST (expanding circle)", "", UST),
-		new Algorithm(WilsonUSTCollapsingCircle.class, "Wilson UST (collapsing circle)", "", UST),
-		new Algorithm(WilsonUSTExpandingCircles.class, "Wilson UST (expanding circles)", "", UST),
-		new Algorithm(WilsonUSTExpandingSpiral.class, "Wilson UST (expanding spiral)", "", UST),
-		new Algorithm(WilsonUSTExpandingRectangle.class, "Wilson UST (expanding rectangle)", "", UST),
-		new Algorithm(WilsonUSTNestedRectangles.class, "Wilson UST (nested rectangles)", "", UST),
-		new Algorithm(WilsonUSTRecursiveCrosses.class, "Wilson UST (recursive crosses)", "", UST),
-		new Algorithm(WilsonUSTHilbertCurve.class, "Wilson UST (Hilbert curve)", "", UST),
-		new Algorithm(WilsonUSTMooreCurve.class, "Wilson UST (Moore curve)", "", UST),
-		new Algorithm(WilsonUSTPeanoCurve.class, "Wilson UST (Peano curve)", "", UST),
+		new Algorithm(RecursiveDFS.class, "Random recursive DFS", "small grids only!", GRAPH_TRAVERSAL, SMALL_GRID_ONLY),
+		new Algorithm(IterativeDFS.class, "Random non-recursive DFS", "", GRAPH_TRAVERSAL),
+		new Algorithm(RandomBFS.class, "Random BFS", "", GRAPH_TRAVERSAL),
+		new Algorithm(GrowingTreeAlwaysFirst.class, "Growing Tree (always select first)", "", GRAPH_TRAVERSAL),
+		new Algorithm(GrowingTreeAlwaysLast.class, "Growing Tree (always select last)", "", GRAPH_TRAVERSAL),
+		new Algorithm(GrowingTreeAlwaysRandom.class, "Growing Tree (always select random)", "", GRAPH_TRAVERSAL),
+		new Algorithm(GrowingTreeLastOrRandom.class, "Growing Tree (last or random)", "", GRAPH_TRAVERSAL),
+		new Algorithm(KruskalMST.class, "Kruskal MST", "", MIN_SPANNING_TREE),
+		new Algorithm(PrimMST.class, "Prim MST", "", MIN_SPANNING_TREE),
+		new Algorithm(BoruvkaMST.class, "Boruvka MST", "", MIN_SPANNING_TREE),
+		new Algorithm(ReverseDeleteMST_BFS.class, "Reverse-Delete MST (BFS)", VERY_SLOW, MIN_SPANNING_TREE, SLOW, EDGE_DELETING),
+		new Algorithm(ReverseDeleteMST_BestFS.class, "Reverse-Delete MST (Best-First Search)", VERY_SLOW, MIN_SPANNING_TREE, SLOW, EDGE_DELETING),
+		new Algorithm(ReverseDeleteMST_BidiAStar.class, "Reverse-Delete MST (Bidi A*)", VERY_SLOW, MIN_SPANNING_TREE, SLOW, EDGE_DELETING),
+		new Algorithm(AldousBroderUST.class, "Aldous-Broder UST", "rather slow", UNIFORM_SPANNING_TREE, SLOW),
+		new Algorithm(AldousBroderWilsonUST.class, "Houston UST", "rather slow", UNIFORM_SPANNING_TREE, SLOW),
+		new Algorithm(WilsonUSTRandomCell.class, "Wilson UST (random)", "", UNIFORM_SPANNING_TREE, SLOW),
+		new Algorithm(WilsonUSTRowsTopDown.class, "Wilson UST (row-wise, top-to-bottom)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTLeftToRightSweep.class, "Wilson UST (column-wise, left to right)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTRightToLeftSweep.class, "Wilson UST (column-wise, right to left)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTCollapsingWalls.class, "Wilson UST (column-wise, collapsing)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTCollapsingRectangle.class, "Wilson UST (collapsing rectangle)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTExpandingCircle.class, "Wilson UST (expanding circle)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTCollapsingCircle.class, "Wilson UST (collapsing circle)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTExpandingCircles.class, "Wilson UST (expanding circles)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTExpandingSpiral.class, "Wilson UST (expanding spiral)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTExpandingRectangle.class, "Wilson UST (expanding rectangle)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTNestedRectangles.class, "Wilson UST (nested rectangles)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTRecursiveCrosses.class, "Wilson UST (recursive crosses)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTHilbertCurve.class, "Wilson UST (Hilbert curve)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTMooreCurve.class, "Wilson UST (Moore curve)", "", UNIFORM_SPANNING_TREE),
+		new Algorithm(WilsonUSTPeanoCurve.class, "Wilson UST (Peano curve)", "", UNIFORM_SPANNING_TREE),
 		new Algorithm(BinaryTree.class, "Binary Tree (row-wise, top-to-bottom)", ""),
 		new Algorithm(BinaryTreeRandom.class, "Binary Tree (random)", ""), 
 		new Algorithm(Sidewinder.class, "Sidewinder", ""),
 		new Algorithm(Eller.class, "Eller's Algorithm", ""), 
-		new Algorithm(Armin.class, "Armin's Algorithm", "Not yet working for 8-neighbors"), 
+		new Algorithm(Armin.class, "Armin's Algorithm", "4-neighbor topology only"), 
 		new Algorithm(HuntAndKill.class, "Hunt-And-Kill", ""),
 		new Algorithm(HuntAndKillRandom.class, "Hunt-And-Kill (random)", ""),
-		new Algorithm(RecursiveDivision.class, "Recursive Division", "", EdgeDeleting),
+		new Algorithm(RecursiveDivision.class, "Recursive Division", "", EDGE_DELETING),
 		/*@formatter:on*/
 	};
 
@@ -142,7 +141,7 @@ public class MazeDemoModel {
 		new Algorithm(BidiBreadthFirstSearch.class, "Bidirectional Breadth-First Search", "", BFS),
 		new Algorithm(DepthFirstSearch.class, "Depth-First Search", "", DFS),
 		new Algorithm(DepthFirstSearch2.class, "Depth-First Search (variation)", "", DFS), 
-		new Algorithm(IDDFS.class, "Iterative-Deepening DFS", "very slow!", DFS),
+		new Algorithm(IDDFS.class, "Iterative-Deepening DFS", VERY_SLOW, DFS),
 		new Algorithm(DijkstraSearch.class, "Uniform-Cost (Dijkstra) Search", "", BFS),
 		new Algorithm(BidiDijkstraSearch.class, "Bidirectional Dijkstra Search", "", BFS),
 		new Algorithm(HillClimbingSearch.class, "Hill-Climbing Search", "", DFS, INFORMED),
@@ -152,7 +151,7 @@ public class MazeDemoModel {
 		/*@formatter:on*/
 	};
 
-	public final PropertyChangeSupport changePublisher = new PropertyChangeSupport(this);
+	public final PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
 	private Random rnd = new Random();
 	private ObservableGridGraph<TraversalState, Integer> grid;
@@ -175,7 +174,7 @@ public class MazeDemoModel {
 		setRenderingStyle(GridRenderingStyle.WALL_PASSAGES);
 		setGridCellSizes(256, 128, 64, 32, 16, 8, 4, 2);
 		setGridCellSizeIndex(4);
-		setPassageWidthPercentage(100);
+		setPassageWidthPercentage(90);
 		setDelay(0);
 		setGenerationStart(CENTER);
 		setSolverSource(TOP_LEFT);
@@ -216,7 +215,7 @@ public class MazeDemoModel {
 	public void setRenderingStyle(GridRenderingStyle newValue) {
 		GridRenderingStyle oldValue = this.renderingStyle;
 		this.renderingStyle = newValue;
-		changePublisher.firePropertyChange("renderingStyle", oldValue, newValue);
+		changes.firePropertyChange("renderingStyle", oldValue, newValue);
 	}
 
 	public int[] getGridCellSizes() {
@@ -239,7 +238,7 @@ public class MazeDemoModel {
 		if (0 <= newValue && newValue < gridCellSizes.length) {
 			int oldValue = gridCellSizeIndex;
 			gridCellSizeIndex = newValue;
-			changePublisher.firePropertyChange("gridCellSizeIndex", oldValue, newValue);
+			changes.firePropertyChange("gridCellSizeIndex", oldValue, newValue);
 		} else {
 			throw new IndexOutOfBoundsException();
 		}
@@ -252,7 +251,7 @@ public class MazeDemoModel {
 	public void setPassageWidthPercentage(int newValue) {
 		int oldValue = passageWidthPercentage;
 		passageWidthPercentage = newValue;
-		changePublisher.firePropertyChange("passageWidthPercentage", oldValue, newValue);
+		changes.firePropertyChange("passageWidthPercentage", oldValue, newValue);
 	}
 
 	public boolean isPassageWidthFluent() {
@@ -262,7 +261,7 @@ public class MazeDemoModel {
 	public void setPassageWidthFluent(boolean newValue) {
 		boolean oldValue = passageWidthFluent;
 		passageWidthFluent = newValue;
-		changePublisher.firePropertyChange("passageWidthFluent", oldValue, newValue);
+		changes.firePropertyChange("passageWidthFluent", oldValue, newValue);
 	}
 
 	public boolean isGenerationAnimated() {
@@ -272,7 +271,7 @@ public class MazeDemoModel {
 	public void setGenerationAnimated(boolean newValue) {
 		boolean oldValue = generationAnimated;
 		generationAnimated = newValue;
-		changePublisher.firePropertyChange("generationAnimated", oldValue, newValue);
+		changes.firePropertyChange("generationAnimated", oldValue, newValue);
 	}
 
 	public ObservableGridGraph<TraversalState, Integer> getGrid() {
@@ -283,7 +282,7 @@ public class MazeDemoModel {
 		ObservableGridGraph<TraversalState, Integer> oldGrid = this.grid;
 		grid = full ? fullObservableGrid(numCols, numRows, gridTopology, defaultState, 0)
 				: emptyObservableGrid(numCols, numRows, gridTopology, defaultState, 0);
-		changePublisher.firePropertyChange("grid", oldGrid, grid);
+		changes.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public void createGridSilently(int numCols, int numRows, boolean full, TraversalState defaultState) {
@@ -316,7 +315,7 @@ public class MazeDemoModel {
 				numEdgesToAdd--;
 			}
 		}
-		changePublisher.firePropertyChange("grid", oldGrid, grid);
+		changes.firePropertyChange("grid", oldGrid, grid);
 	}
 
 	public int getDelay() {
@@ -326,7 +325,7 @@ public class MazeDemoModel {
 	public void setDelay(int newValue) {
 		int oldValue = delay;
 		delay = newValue;
-		changePublisher.firePropertyChange("delay", oldValue, newValue);
+		changes.firePropertyChange("delay", oldValue, newValue);
 	}
 
 	public GridPosition getGenerationStart() {
@@ -336,7 +335,7 @@ public class MazeDemoModel {
 	public void setGenerationStart(GridPosition newValue) {
 		GridPosition oldValue = generationStart;
 		generationStart = newValue;
-		changePublisher.firePropertyChange("generationStart", oldValue, newValue);
+		changes.firePropertyChange("generationStart", oldValue, newValue);
 	}
 
 	public Metric getMetric() {
@@ -346,7 +345,7 @@ public class MazeDemoModel {
 	public void setMetric(Metric newValue) {
 		Metric oldValue = metric;
 		metric = newValue;
-		changePublisher.firePropertyChange("metric", oldValue, newValue);
+		changes.firePropertyChange("metric", oldValue, newValue);
 	}
 
 	public boolean isDistancesVisible() {
@@ -356,7 +355,7 @@ public class MazeDemoModel {
 	public void setDistancesVisible(boolean newValue) {
 		boolean oldValue = distancesVisible;
 		distancesVisible = newValue;
-		changePublisher.firePropertyChange("distancesVisible", oldValue, newValue);
+		changes.firePropertyChange("distancesVisible", oldValue, newValue);
 	}
 
 	public GridPosition getSolverSource() {
@@ -366,7 +365,7 @@ public class MazeDemoModel {
 	public void setSolverSource(GridPosition newValue) {
 		GridPosition oldValue = solverSource;
 		solverSource = newValue;
-		changePublisher.firePropertyChange("solverSource", oldValue, newValue);
+		changes.firePropertyChange("solverSource", oldValue, newValue);
 	}
 
 	public GridPosition getSolverTarget() {
@@ -376,7 +375,7 @@ public class MazeDemoModel {
 	public void setSolverTarget(GridPosition newValue) {
 		GridPosition oldValue = solverTarget;
 		solverTarget = newValue;
-		changePublisher.firePropertyChange("solverTarget", oldValue, newValue);
+		changes.firePropertyChange("solverTarget", oldValue, newValue);
 	}
 
 	private ToDoubleBiFunction<Integer, Integer> metric() {
@@ -393,41 +392,43 @@ public class MazeDemoModel {
 	}
 
 	public ObservableGraphSearch createSolverInstance(Algorithm solver) {
-		int targetCell = grid.cell(solverTarget);
+		var solverType = solver.getAlgorithmClass();
+		ToDoubleBiFunction<Integer, Integer> unitCost = (u, v) -> 1.0;
+		ToDoubleFunction<Integer> estimatedTargetCost = u -> metric().applyAsDouble(u, grid.cell(solverTarget));
 
-		if (solver.getAlgorithmClass() == BreadthFirstSearch.class) {
+		if (solverType == BreadthFirstSearch.class) {
 			return new BreadthFirstSearch(grid);
 		}
-		if (solver.getAlgorithmClass() == BidiBreadthFirstSearch.class) {
-			return new BidiBreadthFirstSearch(grid, (u, v) -> 1);
+		if (solverType == BidiBreadthFirstSearch.class) {
+			return new BidiBreadthFirstSearch(grid, unitCost);
 		}
-		if (solver.getAlgorithmClass() == DijkstraSearch.class) {
-			return new DijkstraSearch(grid, (u, v) -> 1);
+		if (solverType == DijkstraSearch.class) {
+			return new DijkstraSearch(grid, unitCost);
 		}
-		if (solver.getAlgorithmClass() == BidiDijkstraSearch.class) {
-			return new BidiDijkstraSearch(grid, (u, v) -> 1);
+		if (solverType == BidiDijkstraSearch.class) {
+			return new BidiDijkstraSearch(grid, unitCost);
 		}
-		if (solver.getAlgorithmClass() == BestFirstSearch.class) {
-			return new BestFirstSearch(grid, v -> metric().applyAsDouble(v, targetCell));
+		if (solverType == BestFirstSearch.class) {
+			return new BestFirstSearch(grid, estimatedTargetCost);
 		}
-		if (solver.getAlgorithmClass() == AStarSearch.class) {
-			return new AStarSearch(grid, (u, v) -> 1, metric());
+		if (solverType == AStarSearch.class) {
+			return new AStarSearch(grid, unitCost, metric());
 		}
-		if (solver.getAlgorithmClass() == BidiAStarSearch.class) {
-			return new BidiAStarSearch(grid, (u, v) -> 1, metric(), metric());
+		if (solverType == BidiAStarSearch.class) {
+			return new BidiAStarSearch(grid, unitCost, metric(), metric());
 		}
-		if (solver.getAlgorithmClass() == DepthFirstSearch.class) {
+		if (solverType == DepthFirstSearch.class) {
 			return new DepthFirstSearch(grid);
 		}
-		if (solver.getAlgorithmClass() == DepthFirstSearch2.class) {
+		if (solverType == DepthFirstSearch2.class) {
 			return new DepthFirstSearch2(grid);
 		}
-		if (solver.getAlgorithmClass() == IDDFS.class) {
+		if (solverType == IDDFS.class) {
 			return new IDDFS(grid);
 		}
-		if (solver.getAlgorithmClass() == HillClimbingSearch.class) {
-			return new HillClimbingSearch(grid, v -> metric().applyAsDouble(v, targetCell));
+		if (solverType == HillClimbingSearch.class) {
+			return new HillClimbingSearch(grid, estimatedTargetCost);
 		}
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Unknown solver algorithm class: " + solverType);
 	}
 }

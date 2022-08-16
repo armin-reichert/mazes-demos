@@ -50,7 +50,7 @@ public abstract class CreateMazeAction extends AbstractAction {
 			gen.createMaze(x, y);
 			// TODO: make Pearls renderer work correctly for algorithms that remove edges,
 			// render resulting grid correctly for now
-			if (genInfo.isTagged(GeneratorTag.EdgeDeleting) && gridUI.getRenderer() instanceof PearlsGridRenderer) {
+			if (genInfo.isTagged(GeneratorTag.EDGE_DELETING) && gridUI.getRenderer() instanceof PearlsGridRenderer) {
 				gridUI.clear();
 				gridUI.drawGrid();
 			}

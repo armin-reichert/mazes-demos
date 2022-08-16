@@ -39,7 +39,7 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.Slow)).toArray(Algorithm[]::new);
+		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.SLOW)).toArray(Algorithm[]::new);
 		for (Algorithm generator : fastOnes) {
 			controlUI.selectGenerator(generator);
 			try {

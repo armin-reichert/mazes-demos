@@ -1,8 +1,8 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.MST;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.Traversal;
-import static de.amr.demos.maze.swingapp.model.GeneratorTag.UST;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.MIN_SPANNING_TREE;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.GRAPH_TRAVERSAL;
+import static de.amr.demos.maze.swingapp.model.GeneratorTag.UNIFORM_SPANNING_TREE;
 import static de.amr.swing.MenuBuilder.beginMenu;
 
 import java.util.Collections;
@@ -116,11 +116,11 @@ class ControlUIMenus {
 			.title("Generators")
 			.property("radio", radio)
 			.items(
-				generatorMenu("Graph Traversal", radio, algorithm -> algorithm.isTagged(Traversal)),
-				generatorMenu("Minimum Spanning Tree", radio, algorithm -> algorithm.isTagged(MST)),
-				generatorMenu("Uniform Spanning Tree", radio, algorithm -> algorithm.isTagged(UST)),
+				generatorMenu("Graph Traversal", radio, algorithm -> algorithm.isTagged(GRAPH_TRAVERSAL)),
+				generatorMenu("Minimum Spanning Tree", radio, algorithm -> algorithm.isTagged(MIN_SPANNING_TREE)),
+				generatorMenu("Uniform Spanning Tree", radio, algorithm -> algorithm.isTagged(UNIFORM_SPANNING_TREE)),
 				generatorMenu("Others", radio,
-					algorithm -> !(algorithm.isTagged(Traversal) || algorithm.isTagged(MST) || algorithm.isTagged(UST)))
+					algorithm -> !(algorithm.isTagged(GRAPH_TRAVERSAL) || algorithm.isTagged(MIN_SPANNING_TREE) || algorithm.isTagged(UNIFORM_SPANNING_TREE)))
 			)
 		.endMenu();
 		//@formatter:on
