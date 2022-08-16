@@ -2,49 +2,22 @@ package de.amr.demos.maze.swingapp;
 
 import static de.amr.swing.Swing.action;
 
-import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.UIManager;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
-import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
-import de.amr.swing.Swing;
-
-class Settings {
-
-	@Parameter(description = "Preview window content width", names = { "-width" })
-	int width;
-
-	@Parameter(description = "Preview window content height", names = { "-height" })
-	int height;
-
-	@Parameter(description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
-			"-theme" }, converter = ThemeConverter.class)
-	String theme;
-
-	public Settings() {
-		Dimension displaySize = Swing.getDisplaySize();
-		width = displaySize.width;
-		height = displaySize.height;
-		theme = NimbusLookAndFeel.class.getName();
-	}
-}
 
 /**
- * This application visualizes different maze generation algorithms and path finders.
- * <p>
- * The application provides
+ * This application visualizes different maze generation algorithms and path finders. It provides
  * <ul>
  * <li>a preview window (full-screen by default) where the maze generation and path finding animations are shown.
  * <li>a control window where the following settings can be made
@@ -61,11 +34,11 @@ class Settings {
  */
 public class MazeDemoApp {
 
-	public static void main(String[] commandLineArgs) {
+	public static void main(String[] cmdLineArgs) {
 		Settings settings = new Settings();
-		JCommander commandLineProcessor = JCommander.newBuilder().addObject(settings).build();
-		commandLineProcessor.usage();
-		commandLineProcessor.parse(commandLineArgs);
+		JCommander cmdLineProcessor = JCommander.newBuilder().addObject(settings).build();
+		cmdLineProcessor.usage();
+		cmdLineProcessor.parse(cmdLineArgs);
 		try {
 			UIManager.setLookAndFeel(settings.theme);
 		} catch (Exception e) {
@@ -76,27 +49,26 @@ public class MazeDemoApp {
 
 	private void start(Settings settings) {
 		MazeDemoModel model = new MazeDemoModel();
-		model.createGrid(settings.width / model.getGridCellSize(), settings.height / model.getGridCellSize(), false,
-				TraversalState.UNVISITED);
+		var gridWidth = settings.width / model.getGridCellSize();
+		var gridHeight = settings.height / model.getGridCellSize();
+		model.createGrid(gridWidth, gridHeight, false, TraversalState.UNVISITED);
 
-		GridUI gridUI = new GridUI(model, settings.width, settings.height);
-		ControlUI controlUI = new ControlUI(gridUI, model);
+		var gridUI = new GridUI(model, settings.width, settings.height);
 
-		// Configure control UI
+		var controlUI = new ControlUI(gridUI, model);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
 		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
 		controlUI.expandWindow();
 		controlUI.collapseWindow();
+
 		model.findGenerator(IterativeDFS.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(BestFirstSearch.class).ifPresent(controlUI::selectSolver);
 		model.changes.addPropertyChangeListener(controlUI);
 
-		// Configure preview UI
 		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
 		gridUI.startModelChangeListening();
 
-		// Show both windows
 		gridUI.show();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();
