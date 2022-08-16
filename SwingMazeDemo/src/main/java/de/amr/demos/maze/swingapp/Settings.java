@@ -31,7 +31,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
-import de.amr.swing.Swing;
+import de.amr.swing.MySwingUtils;
 
 class Settings {
 
@@ -46,7 +46,7 @@ class Settings {
 	String theme;
 
 	public Settings() {
-		Dimension displaySize = Swing.getDisplaySize();
+		Dimension displaySize = MySwingUtils.getDisplaySize();
 		width = displaySize.width;
 		height = displaySize.height;
 		theme = NimbusLookAndFeel.class.getName();

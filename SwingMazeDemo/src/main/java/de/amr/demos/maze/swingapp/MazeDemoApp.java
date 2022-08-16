@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.swing.Swing.action;
+import static de.amr.swing.MySwingUtils.action;
 
 import java.awt.EventQueue;
 
