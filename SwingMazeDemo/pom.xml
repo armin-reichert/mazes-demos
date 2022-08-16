@@ -10,6 +10,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>18</maven.compiler.source>
 		<maven.compiler.target>18</maven.compiler.target>
+		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
 	</properties>
 	<build>
 		<plugins>
@@ -18,7 +19,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>de.amr.demos.maze.swingapp.MazeDemoApp</mainClass>
+							<mainClass>${main.class}</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
