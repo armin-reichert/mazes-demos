@@ -56,17 +56,17 @@ public class MazeToImage {
 
 	public static void main(String[] args) {
 		try {
-			Params p = new Params();
-			JCommander.newBuilder().addObject(p).build().parse(args);
-			ObservableGridGraph2D<TraversalState, Integer> maze = maze(p);
-			GridCanvas canvas = new GridCanvas(maze, p.cellSize);
-			WallPassageGridRenderer gr = new WallPassageGridRenderer();
-			gr.fnCellSize = () -> p.cellSize;
-			canvas.pushRenderer(gr);
-			if (p.floodfill) {
+			var params = new Params();
+			JCommander.newBuilder().addObject(params).build().parse(args);
+			var maze = maze(params);
+			var canvas = new GridCanvas(maze, params.cellSize);
+			var renderer = new WallPassageGridRenderer();
+			renderer.fnCellSize = () -> params.cellSize;
+			canvas.pushRenderer(renderer);
+			renderer.drawGrid(canvas.getDrawGraphics(), maze);
+			if (params.floodfill) {
 				BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 			}
-			gr.drawGrid(canvas.getDrawGraphics(), maze);
 			ImageIO.write(canvas.getDrawingBuffer(), "png", new File("maze.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
