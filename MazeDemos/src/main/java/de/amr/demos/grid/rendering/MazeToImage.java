@@ -62,37 +62,46 @@ public class MazeToImage {
 	public static void main(String[] args) {
 		var params = new Params();
 		JCommander.newBuilder().addObject(params).build().parse(args);
-		LOGGER.info(() -> "Creating maze of size %dx%d (cellsize %d) using %s".formatted(params.width, params.height,
-				params.cellSize, params.algorithm));
-		var maze = maze(params);
-		var canvas = new GridCanvas(maze, params.cellSize);
-		var renderer = new WallPassageGridRenderer();
+		new MazeToImage(params).writeImageFile("maze.png", "png");
+	}
+
+	private final GridCanvas canvas;
+	private final WallPassageGridRenderer renderer;
+	private GridGraph2D<TraversalState, Integer> grid;
+
+	public MazeToImage(Params params) {
+		buildMaze(params.width, params.height, params.algorithm);
+		canvas = new GridCanvas(grid, params.cellSize);
+		renderer = new WallPassageGridRenderer();
 		renderer.fnCellSize = () -> params.cellSize;
 		canvas.pushRenderer(renderer);
-		renderer.drawGrid(canvas.getDrawGraphics(), maze);
+		renderer.drawGrid(canvas.getDrawGraphics(), grid);
 		if (params.floodfill) {
 			LOGGER.info("Flood-filling maze");
 			BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 		}
-		try {
-			var file = new File("maze.png");
-			ImageIO.write(canvas.getDrawingBuffer(), "png", file);
-			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
-		} catch (IOException e) {
-			LOGGER.catching(e);
-		}
 	}
 
-	private static GridGraph2D<TraversalState, Integer> maze(Params params) {
-		var grid = GridFactory.emptyObservableGrid(params.width, params.height, Grid4Topology.get(), UNVISITED, 0);
-		switch (params.algorithm) {
+	private void buildMaze(int width, int height, String algorithm) {
+		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(width, height, algorithm));
+		grid = GridFactory.emptyObservableGrid(width, height, Grid4Topology.get(), UNVISITED, 0);
+		switch (algorithm) {
 		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);
 		case "bfs" -> new RandomBFS(grid).createMaze(0, 0);
 		case "kruskal" -> new KruskalMST(grid).createMaze(0, 0);
 		case "wilson" -> new WilsonUSTRandomCell(grid).createMaze(0, 0);
 		case "division" -> new RecursiveDivision(grid).createMaze(0, 0);
-		default -> throw new IllegalArgumentException("Unknown algorithm: " + params.algorithm);
+		default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
 		}
-		return grid;
+	}
+
+	private void writeImageFile(String path, String type) {
+		try {
+			var file = new File(path);
+			ImageIO.write(canvas.getDrawingBuffer(), type, file);
+			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
+		} catch (IOException e) {
+			LOGGER.catching(e);
+		}
 	}
 }
