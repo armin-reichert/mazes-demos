@@ -66,6 +66,7 @@ public class MazeToImage {
 			if (p.floodfill) {
 				BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 			}
+			gr.drawGrid(canvas.getDrawGraphics(), maze);
 			ImageIO.write(canvas.getDrawingBuffer(), "png", new File("maze.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -73,26 +74,14 @@ public class MazeToImage {
 	}
 
 	private static ObservableGridGraph2D<TraversalState, Integer> maze(Params p) {
-		ObservableGridGraph2D<TraversalState, Integer> grid = GridFactory.emptyObservableGrid(p.width, p.height,
-				Grid4Topology.get(), UNVISITED, 0);
+		var grid = GridFactory.emptyObservableGrid(p.width, p.height, Grid4Topology.get(), UNVISITED, 0);
 		switch (p.alg) {
-		case "dfs":
-			new IterativeDFS(grid).createMaze(0, 0);
-			break;
-		case "bfs":
-			new RandomBFS(grid).createMaze(0, 0);
-			break;
-		case "kruskal":
-			new KruskalMST(grid).createMaze(0, 0);
-			break;
-		case "wilson":
-			new WilsonUSTRandomCell(grid).createMaze(0, 0);
-			break;
-		case "division":
-			new RecursiveDivision(grid).createMaze(0, 0);
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown algorithm: " + p.alg);
+		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);
+		case "bfs" -> new RandomBFS(grid).createMaze(0, 0);
+		case "kruskal" -> new KruskalMST(grid).createMaze(0, 0);
+		case "wilson" -> new WilsonUSTRandomCell(grid).createMaze(0, 0);
+		case "division" -> new RecursiveDivision(grid).createMaze(0, 0);
+		default -> throw new IllegalArgumentException("Unknown algorithm: " + p.alg);
 		}
 		return grid;
 	}
