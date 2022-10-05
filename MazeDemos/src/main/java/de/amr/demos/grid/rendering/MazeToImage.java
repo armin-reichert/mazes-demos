@@ -62,7 +62,8 @@ public class MazeToImage {
 	public static void main(String[] args) {
 		var params = new Params();
 		JCommander.newBuilder().addObject(params).build().parse(args);
-		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(params.width, params.height, params.algorithm));
+		LOGGER.info(() -> "Creating maze of size %dx%d (cellsize %d) using %s".formatted(params.width, params.height,
+				params.cellSize, params.algorithm));
 		var maze = maze(params);
 		var canvas = new GridCanvas(maze, params.cellSize);
 		var renderer = new WallPassageGridRenderer();
