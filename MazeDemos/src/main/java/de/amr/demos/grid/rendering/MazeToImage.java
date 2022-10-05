@@ -7,6 +7,9 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -36,10 +39,12 @@ import de.amr.maze.alg.ust.WilsonUSTRandomCell;
  */
 public class MazeToImage {
 
+	private static final Logger LOGGER = LogManager.getFormatterLogger();
+
 	static class Params {
 
-		@Parameter(names = { "-alg" }, description = "maze algorithm (dfs, bfs, kruskal, wilson, division)")
-		public String alg = "dfs";
+		@Parameter(names = { "-algorithm", "-alg" }, description = "maze algorithm (dfs, bfs, kruskal, wilson, division)")
+		public String algorithm = "dfs";
 
 		@Parameter(names = { "-width", "-w" }, description = "maze width (num columns")
 		public int width = 40;
@@ -55,33 +60,37 @@ public class MazeToImage {
 	}
 
 	public static void main(String[] args) {
+		var params = new Params();
+		JCommander.newBuilder().addObject(params).build().parse(args);
+		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(params.width, params.height, params.algorithm));
+		var maze = maze(params);
+		var canvas = new GridCanvas(maze, params.cellSize);
+		var renderer = new WallPassageGridRenderer();
+		renderer.fnCellSize = () -> params.cellSize;
+		canvas.pushRenderer(renderer);
+		renderer.drawGrid(canvas.getDrawGraphics(), maze);
+		if (params.floodfill) {
+			LOGGER.info("Flood-filling maze");
+			BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
+		}
 		try {
-			var params = new Params();
-			JCommander.newBuilder().addObject(params).build().parse(args);
-			var maze = maze(params);
-			var canvas = new GridCanvas(maze, params.cellSize);
-			var renderer = new WallPassageGridRenderer();
-			renderer.fnCellSize = () -> params.cellSize;
-			canvas.pushRenderer(renderer);
-			renderer.drawGrid(canvas.getDrawGraphics(), maze);
-			if (params.floodfill) {
-				BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
-			}
-			ImageIO.write(canvas.getDrawingBuffer(), "png", new File("maze.png"));
+			var file = new File("maze.png");
+			ImageIO.write(canvas.getDrawingBuffer(), "png", file);
+			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.catching(e);
 		}
 	}
 
 	private static GridGraph2D<TraversalState, Integer> maze(Params params) {
 		var grid = GridFactory.emptyObservableGrid(params.width, params.height, Grid4Topology.get(), UNVISITED, 0);
-		switch (params.alg) {
+		switch (params.algorithm) {
 		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);
 		case "bfs" -> new RandomBFS(grid).createMaze(0, 0);
 		case "kruskal" -> new KruskalMST(grid).createMaze(0, 0);
 		case "wilson" -> new WilsonUSTRandomCell(grid).createMaze(0, 0);
 		case "division" -> new RecursiveDivision(grid).createMaze(0, 0);
-		default -> throw new IllegalArgumentException("Unknown algorithm: " + params.alg);
+		default -> throw new IllegalArgumentException("Unknown algorithm: " + params.algorithm);
 		}
 		return grid;
 	}
