@@ -11,8 +11,8 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
 import de.amr.graph.core.api.TraversalState;
+import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
-import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.Grid4Topology;
 import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
@@ -73,15 +73,15 @@ public class MazeToImage {
 		}
 	}
 
-	private static ObservableGridGraph2D<TraversalState, Integer> maze(Params p) {
-		var grid = GridFactory.emptyObservableGrid(p.width, p.height, Grid4Topology.get(), UNVISITED, 0);
-		switch (p.alg) {
+	private static GridGraph2D<TraversalState, Integer> maze(Params params) {
+		var grid = GridFactory.emptyObservableGrid(params.width, params.height, Grid4Topology.get(), UNVISITED, 0);
+		switch (params.alg) {
 		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);
 		case "bfs" -> new RandomBFS(grid).createMaze(0, 0);
 		case "kruskal" -> new KruskalMST(grid).createMaze(0, 0);
 		case "wilson" -> new WilsonUSTRandomCell(grid).createMaze(0, 0);
 		case "division" -> new RecursiveDivision(grid).createMaze(0, 0);
-		default -> throw new IllegalArgumentException("Unknown algorithm: " + p.alg);
+		default -> throw new IllegalArgumentException("Unknown algorithm: " + params.alg);
 		}
 		return grid;
 	}
