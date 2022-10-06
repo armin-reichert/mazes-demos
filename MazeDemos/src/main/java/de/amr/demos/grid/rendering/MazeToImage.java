@@ -62,10 +62,10 @@ public class MazeToImage {
 	public static void main(String[] args) {
 		var params = new Params();
 		JCommander.newBuilder().addObject(params).build().parse(args);
-		new MazeToImage(params);
+		createMazeImage(params, "maze.png", "png");
 	}
 
-	public MazeToImage(Params params) {
+	public static void createMazeImage(Params params, String filename, String imageFormat) {
 		var maze = buildMaze(params.width, params.height, params.algorithm);
 		var canvas = new GridCanvas(maze, params.cellSize, false);
 		var renderer = new WallPassageGridRenderer();
@@ -78,15 +78,15 @@ public class MazeToImage {
 			BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 		}
 		try {
-			var file = new File("maze.png");
-			ImageIO.write(canvas.getDrawingBuffer(), "png", file);
+			var file = new File(filename);
+			ImageIO.write(canvas.getDrawingBuffer(), imageFormat, file);
 			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
 		} catch (IOException e) {
 			LOGGER.catching(e);
 		}
 	}
 
-	private GridGraph2D<TraversalState, Integer> buildMaze(int width, int height, String algorithm) {
+	private static GridGraph2D<TraversalState, Integer> buildMaze(int width, int height, String algorithm) {
 		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(width, height, algorithm));
 		var grid = GridFactory.emptyObservableGrid(width, height, Grid4Topology.get(), UNVISITED, 0);
 		switch (algorithm) {
