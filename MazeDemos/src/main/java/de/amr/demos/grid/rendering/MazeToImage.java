@@ -67,9 +67,10 @@ public class MazeToImage {
 
 	public MazeToImage(Params params) {
 		var maze = buildMaze(params.width, params.height, params.algorithm);
-		var canvas = new GridCanvas(maze, params.cellSize);
+		var canvas = new GridCanvas(maze, params.cellSize, false);
 		var renderer = new WallPassageGridRenderer();
 		renderer.fnCellSize = () -> params.cellSize;
+		renderer.fnText = v -> null;
 		canvas.pushRenderer(renderer);
 		renderer.drawGrid(canvas.getDrawGraphics(), maze);
 		if (params.floodfill) {
