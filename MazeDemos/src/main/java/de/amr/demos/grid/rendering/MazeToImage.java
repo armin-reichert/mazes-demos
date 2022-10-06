@@ -62,29 +62,32 @@ public class MazeToImage {
 	public static void main(String[] args) {
 		var params = new Params();
 		JCommander.newBuilder().addObject(params).build().parse(args);
-		new MazeToImage(params).writeImageFile("maze.png", "png");
+		new MazeToImage(params);
 	}
 
-	private final GridCanvas canvas;
-	private final WallPassageGridRenderer renderer;
-	private GridGraph2D<TraversalState, Integer> grid;
-
 	public MazeToImage(Params params) {
-		buildMaze(params.width, params.height, params.algorithm);
-		canvas = new GridCanvas(grid, params.cellSize);
-		renderer = new WallPassageGridRenderer();
+		var maze = buildMaze(params.width, params.height, params.algorithm);
+		var canvas = new GridCanvas(maze, params.cellSize);
+		var renderer = new WallPassageGridRenderer();
 		renderer.fnCellSize = () -> params.cellSize;
 		canvas.pushRenderer(renderer);
-		renderer.drawGrid(canvas.getDrawGraphics(), grid);
+		renderer.drawGrid(canvas.getDrawGraphics(), maze);
 		if (params.floodfill) {
 			LOGGER.info("Flood-filling maze");
 			BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 		}
+		try {
+			var file = new File("maze.png");
+			ImageIO.write(canvas.getDrawingBuffer(), "png", file);
+			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
+		} catch (IOException e) {
+			LOGGER.catching(e);
+		}
 	}
 
-	private void buildMaze(int width, int height, String algorithm) {
+	private GridGraph2D<TraversalState, Integer> buildMaze(int width, int height, String algorithm) {
 		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(width, height, algorithm));
-		grid = GridFactory.emptyObservableGrid(width, height, Grid4Topology.get(), UNVISITED, 0);
+		var grid = GridFactory.emptyObservableGrid(width, height, Grid4Topology.get(), UNVISITED, 0);
 		switch (algorithm) {
 		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);
 		case "bfs" -> new RandomBFS(grid).createMaze(0, 0);
@@ -93,15 +96,6 @@ public class MazeToImage {
 		case "division" -> new RecursiveDivision(grid).createMaze(0, 0);
 		default -> throw new IllegalArgumentException("Unknown algorithm: " + algorithm);
 		}
-	}
-
-	private void writeImageFile(String path, String type) {
-		try {
-			var file = new File(path);
-			ImageIO.write(canvas.getDrawingBuffer(), type, file);
-			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
-		} catch (IOException e) {
-			LOGGER.catching(e);
-		}
+		return grid;
 	}
 }
