@@ -8,6 +8,9 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
@@ -45,6 +48,8 @@ class GeneratorInfo {
 }
 
 public class EightNeighborsMazeApp {
+
+	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
 	static final int GRID_SIZE = 40;
 	static final int CANVAS_SIZE = 640;
@@ -86,7 +91,7 @@ public class EightNeighborsMazeApp {
 
 	void mazes() {
 		for (int i = 0; i < ITERATIONS; ++i) {
-			System.out.println("--- Round #" + i);
+			LOGGER.info("--- Round #" + i);
 			for (GeneratorInfo genInfo : GENERATORS) {
 				maze(genInfo);
 				render();
@@ -104,10 +109,10 @@ public class EightNeighborsMazeApp {
 		int center = grid.cell(GridPosition.CENTER);
 		try {
 			gen = (MazeGenerator) genInfo.impl.getConstructor(GridGraph2D.class).newInstance(grid);
-			System.out.println("Generator: " + genInfo.name);
+			LOGGER.info("Generator: " + genInfo.name);
 			gen.createMaze(grid.col(center), grid.row(center));
 			if (!isMaze()) {
-				System.out.println("No maze!");
+				LOGGER.info("No maze!");
 			}
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException x) {
@@ -118,15 +123,15 @@ public class EightNeighborsMazeApp {
 	boolean isMaze() {
 		boolean edgeCountOk = grid.numEdges() == grid.numVertices() - 1;
 		if (!edgeCountOk) {
-			System.out.println("Edge count failed " + grid.numEdges() + ", should be " + (grid.numVertices() - 1));
+			LOGGER.info(() -> "Edge count failed: %d edges, should be %d".formatted(grid.numEdges(), grid.numVertices() - 1));
 		}
 		boolean cycleFree = !GraphUtils.containsCycle(grid);
 		if (!cycleFree) {
-			System.out.println("Cycle detected");
+			LOGGER.info("Cycle detected");
 		}
 		boolean connected = GraphSearchUtils.isConnectedGraph(grid);
 		if (!connected) {
-			System.out.println("Generated graph is disconnected");
+			LOGGER.info("Generated graph is disconnected");
 		}
 		return edgeCountOk && connected && cycleFree;
 	}
