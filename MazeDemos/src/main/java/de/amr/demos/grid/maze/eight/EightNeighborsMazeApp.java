@@ -1,13 +1,12 @@
 package de.amr.demos.grid.maze.eight;
 
 import java.awt.Color;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,11 +50,10 @@ public class EightNeighborsMazeApp {
 
 	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-	static final int GRID_SIZE = 40;
-	static final int CANVAS_SIZE = 640;
-	static final int ITERATIONS = 1;
+	private static final int GRID_SIZE = 40;
+	private static final int CANVAS_SIZE = 640;
 
-	static final GeneratorInfo[] GENERATORS = {
+	private static final GeneratorInfo[] GENERATORS = {
 		//@formatter:off
 		GeneratorInfo.of("DFS", IterativeDFS.class), 
 		GeneratorInfo.of("BFS", RandomBFS.class),
@@ -76,51 +74,46 @@ public class EightNeighborsMazeApp {
 		new EightNeighborsMazeApp();
 	}
 
-	GridGraph<TraversalState, Integer> grid;
-	MazeGenerator gen;
-	GridCanvas canvas;
-	volatile boolean nextMaze = true;
+	private GridGraph<TraversalState, Integer> grid;
+	private GridCanvas canvas;
 
 	public EightNeighborsMazeApp() {
 		SwingUtilities.invokeLater(this::showUI);
 	}
 
-	void grid() {
+	private void create8NeighborGrid() {
 		grid = GridFactory.emptyGrid(GRID_SIZE, GRID_SIZE, Grid8Topology.get(), TraversalState.UNVISITED, 0);
 	}
 
-	void mazes() {
-		for (int i = 0; i < ITERATIONS; ++i) {
-			LOGGER.info("--- Round #" + i);
-			for (GeneratorInfo genInfo : GENERATORS) {
-				maze(genInfo);
-				render();
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException x) {
-					x.printStackTrace();
-				}
+	private void createMazes() {
+		for (GeneratorInfo genInfo : GENERATORS) {
+			createMaze(genInfo);
+			render();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException x) {
+				LOGGER.log(Level.WARN, "Interrupted!", x);
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
 
-	void maze(GeneratorInfo genInfo) {
-		grid();
+	private void createMaze(GeneratorInfo genInfo) {
+		create8NeighborGrid();
 		int center = grid.cell(GridPosition.CENTER);
 		try {
-			gen = (MazeGenerator) genInfo.impl.getConstructor(GridGraph2D.class).newInstance(grid);
-			LOGGER.info("Generator: " + genInfo.name);
+			var gen = (MazeGenerator) genInfo.impl.getConstructor(GridGraph2D.class).newInstance(grid);
+			LOGGER.info("Generator: %s", genInfo.name);
 			gen.createMaze(grid.col(center), grid.row(center));
 			if (!isMaze()) {
 				LOGGER.info("No maze!");
 			}
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException x) {
-			x.printStackTrace();
+		} catch (Exception x) {
+			LOGGER.throwing(x);
 		}
 	}
 
-	boolean isMaze() {
+	private boolean isMaze() {
 		boolean edgeCountOk = grid.numEdges() == grid.numVertices() - 1;
 		if (!edgeCountOk) {
 			LOGGER.info(() -> "Edge count failed: %d edges, should be %d".formatted(grid.numEdges(), grid.numVertices() - 1));
@@ -136,24 +129,16 @@ public class EightNeighborsMazeApp {
 		return edgeCountOk && connected && cycleFree;
 	}
 
-	void render() {
+	private void render() {
 		canvas.setGrid(grid);
 		canvas.drawGrid();
 	}
 
-	void showUI() {
+	private void showUI() {
 		JFrame f = new JFrame();
 		f.setTitle("Maze from grid with 8-neighbor topology");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		f.setResizable(false);
-		f.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-					nextMaze = true;
-				}
-			}
-		});
 		canvas = new GridCanvas();
 		canvas.setCellSize(CANVAS_SIZE / GRID_SIZE);
 		f.getContentPane().add(canvas);
@@ -163,10 +148,10 @@ public class EightNeighborsMazeApp {
 		gr.fnCellSize = () -> canvas.getCellSize();
 		gr.fnPassageWidth = (u, v) -> 2;
 		canvas.pushRenderer(gr);
-		grid();
+		create8NeighborGrid();
 		render();
 		f.pack();
 		f.setVisible(true);
-		new Thread(this::mazes).start();
+		new Thread(this::createMazes).start();
 	}
 }
