@@ -14,6 +14,9 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.graph.core.api.TraversalState;
@@ -31,23 +34,28 @@ import de.amr.swing.MySwingUtils;
  */
 public class GridUI implements PropertyChangeListener {
 
+	private static final Logger LOGGER = LogManager.getFormatterLogger();
+	private static final String ACTION_TOGGLE_FULLSCREEN = "ToggleFullscreen";
+
 	private final MazeDemoModel model;
 
 	private JFrame window;
-	private final GridView view;
+	private GridView gridView;
+	private Dimension gridViewSize;
 	private GridCanvasAnimation<TraversalState, Integer> animation;
-	private final Dimension gridViewSize;
 
 	public GridUI(MazeDemoModel model, int width, int height) {
 		this.model = model;
 		this.gridViewSize = new Dimension(width, height);
 
-		view = new GridView(model.getGrid(), model.getGridCellSize(), () -> model.getGrid().cell(model.getSolverSource()),
-				() -> model.getGrid().cell(model.getSolverTarget()), this::passageWidth);
+		gridView = new GridView(model.getGrid(), model.getGridCellSize(),
+				() -> model.getGrid().cell(model.getSolverSource()), () -> model.getGrid().cell(model.getSolverTarget()),
+				this::passageWidth);
 		addCanvasAnimation();
 
-		view.getCanvas().getActionMap().put("toggleFullscreen", MySwingUtils.action("toggleFullscreen", e -> toggleFullscreen()));
-		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "toggleFullscreen");
+		gridView.getCanvas().getActionMap().put(ACTION_TOGGLE_FULLSCREEN,
+				MySwingUtils.action(ACTION_TOGGLE_FULLSCREEN, e -> toggleFullscreen()));
+		gridView.getCanvas().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), ACTION_TOGGLE_FULLSCREEN);
 
 		if (gridViewSize.equals(getDisplaySize())) {
 			showFullscreenWindow();
@@ -60,9 +68,9 @@ public class GridUI implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent change) {
 		switch (change.getPropertyName()) {
-		case "delay":
-			break;
-		case "grid":
+		case "delay" -> {
+		}
+		case "grid" -> {
 			getView().changeGridSize(model.getGrid(), model.getGridCellSize());
 			if (change.getOldValue() != null) {
 				removeCanvasAnimation((ObservableGridGraph<TraversalState, Integer>) change.getOldValue());
@@ -70,27 +78,26 @@ public class GridUI implements PropertyChangeListener {
 			addCanvasAnimation();
 			clear();
 			if (model.getGridTopology() == Grid8Topology.get()) {
-				view.setStyle(GridRenderingStyle.PEARLS);
+				gridView.setStyle(GridRenderingStyle.PEARLS);
 			}
 			drawGrid();
 			window.validate();
-			break;
-		case "gridCellSizeIndex":
-			break;
-		case "passageWidthPercentage":
+		}
+		case "gridCellSizeIndex" -> {
+		}
+		case "passageWidthPercentage" -> {
 			clear();
 			drawGrid();
-			break;
-		case "renderingStyle":
-			view.setStyle(model.getRenderingStyle());
-			break;
-		case "solverSource":
-		case "solverTarget":
+		}
+		case "renderingStyle" -> {
+			gridView.setStyle(model.getRenderingStyle());
+		}
+		case "solverSource", "solverTarget" -> {
 			drawGrid();
-			break;
-		default:
-			System.out.println(String.format("%10s: unhandled event %s", getClass().getSimpleName(), change));
-			break;
+		}
+		default -> {
+			LOGGER.info(() -> "Unhandled property change '%s'".formatted(change));
+		}
 		}
 	}
 
@@ -100,13 +107,13 @@ public class GridUI implements PropertyChangeListener {
 		}
 		window = new JFrame();
 		window.setTitle("Maze Demo App - Display View");
-		window.setContentPane(view.getCanvas());
+		window.setContentPane(gridView.getCanvas());
 		window.setResizable(false);
 	}
 
 	private void showNormalWindow() {
 		createWindow();
-		view.getCanvas().setSize(gridViewSize);
+		gridView.getCanvas().setSize(gridViewSize);
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
@@ -138,15 +145,15 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public GridView getView() {
-		return view;
+		return gridView;
 	}
 
 	public GridRenderer getRenderer() {
-		return view.getCanvas().getRenderer();
+		return gridView.getCanvas().getRenderer();
 	}
 
 	private void addCanvasAnimation() {
-		animation = new GridCanvasAnimation<>(view.getCanvas());
+		animation = new GridCanvasAnimation<>(gridView.getCanvas());
 		animation.fnDelay = model::getDelay;
 		model.getGrid().addGraphObserver(animation);
 	}
@@ -179,13 +186,13 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void setEscapeAction(Action action) {
-		view.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapeAction");
-		view.getCanvas().getActionMap().put("escapeAction", action);
+		gridView.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapeAction");
+		gridView.getCanvas().getActionMap().put("escapeAction", action);
 	}
 
 	public void reset() {
 		stopModelChangeListening();
-		view.reset(model.getGrid(), model.getGridCellSize());
+		gridView.reset(model.getGrid(), model.getGridCellSize());
 		startModelChangeListening();
 		window.validate();
 	}
@@ -195,16 +202,16 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void clear() {
-		view.getCanvas().clear();
+		gridView.getCanvas().clear();
 	}
 
 	public void drawGrid() {
-		view.getCanvas().drawGrid();
+		gridView.getCanvas().drawGrid();
 	}
 
 	public void floodFill() {
 		int startCell = model.getGrid().cell(model.getSolverSource());
-		BFSAnimation.builder().canvas(view.getCanvas()).delay(model::getDelay).distanceVisible(model.isDistancesVisible())
-				.build().floodFill(startCell);
+		BFSAnimation.builder().canvas(gridView.getCanvas()).delay(model::getDelay)
+				.distanceVisible(model.isDistancesVisible()).build().floodFill(startCell);
 	}
 }
