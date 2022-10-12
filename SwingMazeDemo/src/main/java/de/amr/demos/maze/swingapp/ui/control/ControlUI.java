@@ -23,6 +23,9 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.WindowConstants;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
@@ -52,6 +55,8 @@ import de.amr.util.StopWatch;
  */
 public class ControlUI implements PropertyChangeListener {
 
+	private static final Logger LOGGER = LogManager.getFormatterLogger();
+
 	public static final String WALLS_PASSAGES = "Walls-Passages";
 	public static final String PEARLS = "Pearls";
 
@@ -67,37 +72,99 @@ public class ControlUI implements PropertyChangeListener {
 	private final ControlUIMenus menus;
 	private final ControlView view;
 
-	final Action actionCollapseWindow;
-	final Action actionExpandWindow;
-	final Action actionChangeGridResolution;
-	final Action actionChangeGridTopology;
-	final Action actionChangeRenderingStyle;
-	final Action actionCreateEmptyGrid;
-	final Action actionCreateFullGrid;
-	final Action actionCreateSparseRandomGrid;
-	final Action actionCreateDenseRandomGrid;
-	final Action actionStopBackgroundThread;
-	final Action actionClearCanvas;
-	final Action actionCreateSingleMaze;
-	final Action actionCreateAllMazes;
-	final Action actionSolveMaze;
-	final Action actionFloodFill;
-	final Action actionSaveImage;
-	final Action actionVisitOnGitHub;
+	// package visible to be accessible by menus
+	Action actionCollapseWindow;
+	Action actionExpandWindow;
+	Action actionChangeGridResolution;
+	Action actionChangeGridTopology;
+	Action actionChangeRenderingStyle;
+	Action actionCreateEmptyGrid;
+	Action actionCreateFullGrid;
+	Action actionCreateSparseRandomGrid;
+	Action actionCreateDenseRandomGrid;
+	Action actionStopBackgroundThread;
+	Action actionClearCanvas;
+	Action actionCreateSingleMaze;
+	Action actionCreateAllMazes;
+	Action actionSolveMaze;
+	Action actionFloodFill;
+	Action actionSaveImage;
+	Action actionVisitOnGitHub;
 
-	final ComboBoxModel<String> renderingStyles4neighbors = new DefaultComboBoxModel<String>(
+	private ComboBoxModel<String> renderingStyles4neighbors = new DefaultComboBoxModel<>(
 			new String[] { WALLS_PASSAGES, PEARLS });
 
-	final ComboBoxModel<String> renderingStyles8neighbors = new DefaultComboBoxModel<String>(new String[] { PEARLS });
+	private ComboBoxModel<String> renderingStyles8neighbors = new DefaultComboBoxModel<>(new String[] { PEARLS });
 
 	public ControlUI(GridUI gridUI, MazeDemoModel model) {
 		this.gridUI = gridUI;
-		this.model = gridUI.getModel();
+		this.model = model;
 		view = new ControlView();
 
-		afterGenerationAction = AfterGenerationAction.IDLE;
+		createActions(gridUI, model);
 
-		// create actions
+		// create and initialize UI
+
+		var entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
+			int numCols = getCanvasWidth() / cellSize;
+			int numRows = getCanvasHeight() / cellSize;
+			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows, cellSize);
+		}).toArray(String[]::new);
+		view.getComboGridResolution().setModel(new DefaultComboBoxModel<>(entries));
+		view.getComboGridResolution().setSelectedIndex(model.getGridCellSizeIndex());
+		view.getComboGridResolution().setAction(actionChangeGridResolution);
+
+		var topologies = new GridTopology[] { Grid4Topology.get(), Grid8Topology.get() };
+		view.getComboGridTopology().setModel(new DefaultComboBoxModel<>(topologies));
+		view.getComboGridTopology().setSelectedItem(model.getGridTopology());
+		view.getComboGridTopology().setAction(actionChangeGridTopology);
+
+		view.getComboRenderingStyle().setModel(
+				model.getGridTopology() == Grid4Topology.get() ? renderingStyles4neighbors : renderingStyles8neighbors);
+		view.getComboRenderingStyle().setSelectedIndex(0);
+		view.getComboRenderingStyle().setAction(actionChangeRenderingStyle);
+
+		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
+		view.getSliderPassageWidth().addChangeListener(e -> {
+			if (!view.getSliderPassageWidth().getValueIsAdjusting()) {
+				model.setPassageWidthPercentage(view.getSliderPassageWidth().getValue());
+			}
+		});
+
+		view.getSliderDelay().setMinimum(0);
+		view.getSliderDelay().setMaximum(100);
+		view.getSliderDelay().setValue(model.getDelay());
+		view.getSliderDelay().setMinorTickSpacing(10);
+		view.getSliderDelay().setMajorTickSpacing(50);
+		view.getSliderDelay().addChangeListener(e -> {
+			if (!view.getSliderDelay().getValueIsAdjusting()) {
+				model.setDelay(view.getSliderDelay().getValue());
+			}
+		});
+
+		view.getBtnCreateMaze().setAction(actionCreateSingleMaze);
+		view.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
+		view.getBtnSolve().setAction(actionSolveMaze);
+		view.getBtnStop().setAction(actionStopBackgroundThread);
+
+		window = new JFrame();
+		window.setTitle("Maze Demo App - Control View");
+		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		window.setAlwaysOnTop(true);
+		window.setContentPane(view);
+
+		menus = new ControlUIMenus(this);
+		menus.updateSelection();
+		window.setJMenuBar(new JMenuBar());
+		window.getJMenuBar().add(menus.getGeneratorMenu());
+		window.getJMenuBar().add(menus.getSolverMenu());
+		window.getJMenuBar().add(menus.getCanvasMenu());
+		window.getJMenuBar().add(menus.getOptionMenu());
+		window.getJMenuBar().add(menus.getAboutMenu());
+	}
+
+	private void createActions(GridUI gridUI, MazeDemoModel model) {
+		afterGenerationAction = AfterGenerationAction.IDLE;
 		actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
 		actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
 		actionChangeGridResolution = action("Change Resolution", e -> {
@@ -149,69 +216,10 @@ public class ControlUI implements PropertyChangeListener {
 				try {
 					Desktop.getDesktop().browse(new URI(url));
 				} catch (Exception x) {
-					System.err.println("Could not browse URL " + url);
+					LOGGER.error("Could not browse URL '%s'".formatted(url));
 				}
 			}
 		});
-
-		// create and initialize UI
-
-		String[] entries = Arrays.stream(model.getGridCellSizes()).mapToObj(cellSize -> {
-			int numCols = getCanvasWidth() / cellSize;
-			int numRows = getCanvasHeight() / cellSize;
-			return String.format("%d cells (%d cols x %d rows, cell size %d)", numCols * numRows, numCols, numRows, cellSize);
-		}).toArray(String[]::new);
-		view.getComboGridResolution().setModel(new DefaultComboBoxModel<>(entries));
-		view.getComboGridResolution().setSelectedIndex(model.getGridCellSizeIndex());
-		view.getComboGridResolution().setAction(actionChangeGridResolution);
-
-		GridTopology topologies[] = { Grid4Topology.get(), Grid8Topology.get() };
-		view.getComboGridTopology().setModel(new DefaultComboBoxModel<>(topologies));
-		view.getComboGridTopology().setSelectedItem(model.getGridTopology());
-		view.getComboGridTopology().setAction(actionChangeGridTopology);
-
-		view.getComboRenderingStyle().setModel(
-				model.getGridTopology() == Grid4Topology.get() ? renderingStyles4neighbors : renderingStyles8neighbors);
-		view.getComboRenderingStyle().setSelectedIndex(0);
-		view.getComboRenderingStyle().setAction(actionChangeRenderingStyle);
-
-		view.getSliderPassageWidth().setValue(model.getPassageWidthPercentage());
-		view.getSliderPassageWidth().addChangeListener(e -> {
-			if (!view.getSliderPassageWidth().getValueIsAdjusting()) {
-				model.setPassageWidthPercentage(view.getSliderPassageWidth().getValue());
-			}
-		});
-
-		view.getSliderDelay().setMinimum(0);
-		view.getSliderDelay().setMaximum(100);
-		view.getSliderDelay().setValue(model.getDelay());
-		view.getSliderDelay().setMinorTickSpacing(10);
-		view.getSliderDelay().setMajorTickSpacing(50);
-		view.getSliderDelay().addChangeListener(e -> {
-			if (!view.getSliderDelay().getValueIsAdjusting()) {
-				model.setDelay(view.getSliderDelay().getValue());
-			}
-		});
-
-		view.getBtnCreateMaze().setAction(actionCreateSingleMaze);
-		view.getBtnCreateAllMazes().setAction(actionCreateAllMazes);
-		view.getBtnSolve().setAction(actionSolveMaze);
-		view.getBtnStop().setAction(actionStopBackgroundThread);
-
-		window = new JFrame();
-		window.setTitle("Maze Demo App - Control View");
-		window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		window.setAlwaysOnTop(true);
-		window.setContentPane(view);
-
-		menus = new ControlUIMenus(this);
-		menus.updateSelection();
-		window.setJMenuBar(new JMenuBar());
-		window.getJMenuBar().add(menus.getGeneratorMenu());
-		window.getJMenuBar().add(menus.getSolverMenu());
-		window.getJMenuBar().add(menus.getCanvasMenu());
-		window.getJMenuBar().add(menus.getOptionMenu());
-		window.getJMenuBar().add(menus.getAboutMenu());
 	}
 
 	@Override
@@ -239,7 +247,7 @@ public class ControlUI implements PropertyChangeListener {
 			break;
 		}
 		default:
-			System.out.println(String.format("%10s: unhandled event %s", getClass().getSimpleName(), change));
+			LOGGER.info(() -> "Unhandled property change %s".formatted(change));
 			break;
 		}
 	}

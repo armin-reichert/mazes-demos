@@ -35,6 +35,8 @@ import de.amr.swing.MySwingUtils;
 public class GridUI implements PropertyChangeListener {
 
 	private static final Logger LOGGER = LogManager.getFormatterLogger();
+
+	private static final String ACTION_ESCAPE = "Escape";
 	private static final String ACTION_TOGGLE_FULLSCREEN = "ToggleFullscreen";
 
 	private final MazeDemoModel model;
@@ -186,8 +188,8 @@ public class GridUI implements PropertyChangeListener {
 	}
 
 	public void setEscapeAction(Action action) {
-		gridView.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), "escapeAction");
-		gridView.getCanvas().getActionMap().put("escapeAction", action);
+		gridView.getCanvas().getInputMap().put(KeyStroke.getKeyStroke("ESCAPE"), ACTION_ESCAPE);
+		gridView.getCanvas().getActionMap().put(ACTION_ESCAPE, action);
 	}
 
 	public void reset() {
