@@ -12,7 +12,7 @@ import de.amr.util.StopWatch;
  * 
  * @author Armin Reichert
  */
-public class CreateSingleMaze extends CreateMazeAction {
+public class CreateSingleMaze extends CreateSingleMazeAction {
 
 	public CreateSingleMaze(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name, controlUI, gridUI);

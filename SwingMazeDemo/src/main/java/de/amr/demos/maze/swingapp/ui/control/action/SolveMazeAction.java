@@ -2,26 +2,18 @@ package de.amr.demos.maze.swingapp.ui.control.action;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
-
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 
 /**
- * Animated execution of the selected path finding algorithm ("maze solver") on
- * the current grid.
+ * Animated execution of the selected path finding algorithm ("maze solver") on the current grid.
  * 
  * @author Armin Reichert
  */
-public class SolveMaze extends AbstractAction {
+public class SolveMazeAction extends MazeDemoAction {
 
-	private final ControlUI controlUI;
-	private final GridUI gridUI;
-
-	public SolveMaze(String name, ControlUI controlUI, GridUI gridUI) {
-		super(name);
-		this.controlUI = controlUI;
-		this.gridUI = gridUI;
+	public SolveMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
+		super(name, controlUI, gridUI);
 	}
 
 	@Override

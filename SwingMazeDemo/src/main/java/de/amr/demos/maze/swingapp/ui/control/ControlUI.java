@@ -33,9 +33,9 @@ import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
-import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
-import de.amr.demos.maze.swingapp.ui.control.action.SaveImage;
-import de.amr.demos.maze.swingapp.ui.control.action.SolveMaze;
+import de.amr.demos.maze.swingapp.ui.control.action.FloodFillAction;
+import de.amr.demos.maze.swingapp.ui.control.action.SaveImageAction;
+import de.amr.demos.maze.swingapp.ui.control.action.SolveMazeAction;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.demos.maze.swingapp.ui.grid.GridView;
 import de.amr.graph.core.api.TraversalState;
@@ -206,9 +206,9 @@ public class ControlUI implements PropertyChangeListener {
 		actionStopBackgroundThread = action("Stop", e -> stopBackgroundThread());
 		actionCreateAllMazes = new CreateAllMazes("All Mazes", this, gridUI);
 		actionCreateSingleMaze = new CreateSingleMaze("New Maze", this, gridUI);
-		actionSolveMaze = new SolveMaze("Solve", this, gridUI);
-		actionFloodFill = new FloodFill("Flood-fill", this, gridUI);
-		actionSaveImage = new SaveImage("Save Image...", this, gridUI);
+		actionSolveMaze = new SolveMazeAction("Solve", this, gridUI);
+		actionFloodFill = new FloodFillAction("Flood-fill", this, gridUI);
+		actionSaveImage = new SaveImageAction("Save Image...", this, gridUI);
 
 		actionVisitOnGitHub = action("Visit me on GitHub", icon("/GitHub-Mark-32px.png"), e -> {
 			if (Desktop.isDesktopSupported()) {

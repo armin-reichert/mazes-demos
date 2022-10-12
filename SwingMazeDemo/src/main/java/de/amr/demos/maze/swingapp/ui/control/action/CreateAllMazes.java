@@ -14,7 +14,7 @@ import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
  * 
  * @author Armin Reichert
  */
-public class CreateAllMazes extends CreateMazeAction {
+public class CreateAllMazes extends CreateSingleMazeAction {
 
 	public CreateAllMazes(String name, ControlUI controlUI, GridUI gridUI) {
 		super(name, controlUI, gridUI);

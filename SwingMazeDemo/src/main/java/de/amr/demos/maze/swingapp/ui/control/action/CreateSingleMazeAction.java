@@ -2,8 +2,6 @@ package de.amr.demos.maze.swingapp.ui.control.action;
 
 import static java.lang.String.format;
 
-import javax.swing.AbstractAction;
-
 import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GeneratorTag;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
@@ -19,16 +17,12 @@ import de.amr.graph.util.GraphUtils;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.util.StopWatch;
 
-public abstract class CreateMazeAction extends AbstractAction {
+public abstract class CreateSingleMazeAction extends MazeDemoAction {
 
-	protected final ControlUI controlUI;
-	protected final GridUI gridUI;
 	protected MazeDemoModel model;
 
-	protected CreateMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
-		super(name);
-		this.gridUI = gridUI;
-		this.controlUI = controlUI;
+	protected CreateSingleMazeAction(String name, ControlUI controlUI, GridUI gridUI) {
+		super(name, controlUI, gridUI);
 		if (gridUI != null) { // avoid exception in WindowBuilder
 			model = gridUI.getModel();
 		}
