@@ -10,7 +10,7 @@ import com.beust.jcommander.JCommander;
 
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
-import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
 import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
@@ -58,7 +58,7 @@ public class MazeDemoApp {
 		var controlUI = new ControlUI(gridUI, model);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
-		controlUI.setAfterGenerationAction(AfterGenerationAction.SOLVE);
+		controlUI.setAfterGeneration(AfterGeneration.SOLVE);
 		controlUI.expandWindow();
 		controlUI.collapseWindow();
 

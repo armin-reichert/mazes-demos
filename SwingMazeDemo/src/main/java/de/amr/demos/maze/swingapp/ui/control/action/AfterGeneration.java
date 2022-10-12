@@ -5,6 +5,6 @@ package de.amr.demos.maze.swingapp.ui.control.action;
  * 
  * @author Armin Reichert
  */
-public enum AfterGenerationAction {
-	IDLE, SOLVE, FLOOD_FILL
+public enum AfterGeneration {
+	DO_NOTHING, SOLVE, FLOOD_FILL
 }

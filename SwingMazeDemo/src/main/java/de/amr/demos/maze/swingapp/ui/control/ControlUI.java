@@ -30,7 +30,7 @@ import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.GridRenderingStyle;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFill;
@@ -66,7 +66,7 @@ public class ControlUI implements PropertyChangeListener {
 
 	private Thread bgThread;
 	private boolean hiddenWhenBusy;
-	private AfterGenerationAction afterGenerationAction;
+	private AfterGeneration afterGeneration;
 
 	private final JFrame window;
 	private final ControlUIMenus menus;
@@ -164,7 +164,7 @@ public class ControlUI implements PropertyChangeListener {
 	}
 
 	private void createActions(GridUI gridUI, MazeDemoModel model) {
-		afterGenerationAction = AfterGenerationAction.IDLE;
+		afterGeneration = AfterGeneration.DO_NOTHING;
 		actionCollapseWindow = action("Hide Details", icon("/zoom_out.png"), e -> collapseWindow());
 		actionExpandWindow = action("Show Details", icon("/zoom_in.png"), e -> expandWindow());
 		actionChangeGridResolution = action("Change Resolution", e -> {
@@ -290,12 +290,12 @@ public class ControlUI implements PropertyChangeListener {
 		}
 	}
 
-	public AfterGenerationAction getAfterGenerationAction() {
-		return afterGenerationAction;
+	public AfterGeneration getAfterGeneration() {
+		return afterGeneration;
 	}
 
-	public void setAfterGenerationAction(AfterGenerationAction afterGenerationAction) {
-		this.afterGenerationAction = afterGenerationAction;
+	public void setAfterGeneration(AfterGeneration action) {
+		this.afterGeneration = action;
 		if (menus != null) {
 			menus.updateSelection();
 		}

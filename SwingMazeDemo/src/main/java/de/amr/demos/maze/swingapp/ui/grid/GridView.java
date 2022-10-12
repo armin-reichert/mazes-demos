@@ -31,6 +31,9 @@ public class GridView {
 	private IntSupplier fnSourceCell;
 	private IntSupplier fnTargetCell;
 
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public GridView() {
 		initProperties();
 		canvas = new GridCanvas();

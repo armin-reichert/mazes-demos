@@ -39,19 +39,14 @@ public class CreateAllMazes extends CreateMazeAction {
 	}
 
 	private void createAllMazes() {
-		Algorithm[] fastOnes = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.SLOW)).toArray(Algorithm[]::new);
-		for (Algorithm generator : fastOnes) {
+		Algorithm[] fastGenerators = model.generators().filter(alg -> !alg.isTagged(GeneratorTag.SLOW))
+				.toArray(Algorithm[]::new);
+		for (Algorithm generator : fastGenerators) {
 			controlUI.selectGenerator(generator);
 			try {
 				createMaze(generator, model.getGenerationStart());
-				AfterGenerationAction andNow = controlUI.getAfterGenerationAction();
-				if (andNow == AfterGenerationAction.FLOOD_FILL) {
-					GridCanvasAnimation.pause(1);
-					gridUI.floodFill();
-				} else if (andNow == AfterGenerationAction.SOLVE) {
-					GridCanvasAnimation.pause(1);
-					controlUI.runSelectedSolver();
-				}
+				afterGenerationAction();
+				GridCanvasAnimation.pause(2);
 			} catch (AnimationInterruptedException x) {
 				throw x;
 			} catch (StackOverflowError x) {
@@ -60,8 +55,23 @@ public class CreateAllMazes extends CreateMazeAction {
 			} catch (Exception x) {
 				throw new RuntimeException(x);
 			}
-			GridCanvasAnimation.pause(2);
 		}
 		controlUI.showMessage("Done.");
+	}
+
+	private void afterGenerationAction() {
+		switch (controlUI.getAfterGeneration()) {
+		case FLOOD_FILL -> {
+			GridCanvasAnimation.pause(1);
+			gridUI.floodFill();
+		}
+		case SOLVE -> {
+			GridCanvasAnimation.pause(1);
+			controlUI.runSelectedSolver();
+		}
+		default -> {
+			// nothing to do
+		}
+		}
 	}
 }

@@ -24,7 +24,7 @@ import de.amr.demos.maze.swingapp.model.Algorithm;
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.Metric;
 import de.amr.demos.maze.swingapp.model.SolverTag;
-import de.amr.demos.maze.swingapp.ui.control.action.AfterGenerationAction;
+import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
 import de.amr.graph.grid.api.GridPosition;
 import de.amr.swing.MenuBuilder;
 
@@ -219,20 +219,20 @@ class ControlUIMenus {
 			.menu(buildPositionMenu("Solution Start", model::setSolverSource, model::getSolverSource))
 			.menu(buildPositionMenu("Solution Target", model::setSolverTarget, model::getSolverTarget))
 			.separator()
-			.radioButtonGroup(AfterGenerationAction.class)
-				.onSelect(controlUI::setAfterGenerationAction)
-				.selection(controlUI::getAfterGenerationAction)
+			.radioButtonGroup(AfterGeneration.class)
+				.onSelect(controlUI::setAfterGeneration)
+				.selection(controlUI::getAfterGeneration)
 				.radioButton()
 					.text("No action after generation")
-					.selectionValue(AfterGenerationAction.IDLE)
+					.selectionValue(AfterGeneration.DO_NOTHING)
 					.endRadioButton()
 				.radioButton()
 					.text("Solve after generation")
-					.selectionValue(AfterGenerationAction.SOLVE)
+					.selectionValue(AfterGeneration.SOLVE)
 					.endRadioButton()
 				.radioButton()
 					.text("Flood-fill after generation")
-					.selectionValue(AfterGenerationAction.FLOOD_FILL)
+					.selectionValue(AfterGeneration.FLOOD_FILL)
 					.endRadioButton()
 			.endRadioButtonGroup()
 			.separator()

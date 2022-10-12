@@ -27,13 +27,13 @@ public class CreateSingleMaze extends CreateMazeAction {
 						model.emptyGrid();
 						gridUI.clear();
 						createMaze(generatorInfo, model.getGenerationStart());
-						AfterGenerationAction andNow = controlUI.getAfterGenerationAction();
-						if (andNow == AfterGenerationAction.FLOOD_FILL) {
+						AfterGeneration andNow = controlUI.getAfterGeneration();
+						if (andNow == AfterGeneration.FLOOD_FILL) {
 							GridCanvasAnimation.pause(1);
 							StopWatch watch = new StopWatch();
 							watch.measure(gridUI::floodFill);
 							controlUI.showMessage("Flood-fill: %.3f seconds.", watch.getSeconds());
-						} else if (andNow == AfterGenerationAction.SOLVE) {
+						} else if (andNow == AfterGeneration.SOLVE) {
 							GridCanvasAnimation.pause(1);
 							controlUI.runSelectedSolver();
 						}
