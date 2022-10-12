@@ -32,7 +32,7 @@ import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.model.SolverTag;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
 import de.amr.demos.maze.swingapp.ui.control.action.CreateAllMazes;
-import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMaze;
+import de.amr.demos.maze.swingapp.ui.control.action.CreateSingleMazeAction;
 import de.amr.demos.maze.swingapp.ui.control.action.FloodFillAction;
 import de.amr.demos.maze.swingapp.ui.control.action.SaveImageAction;
 import de.amr.demos.maze.swingapp.ui.control.action.SolveMazeAction;
@@ -205,7 +205,7 @@ public class ControlUI implements PropertyChangeListener {
 		});
 		actionStopBackgroundThread = action("Stop", e -> stopBackgroundThread());
 		actionCreateAllMazes = new CreateAllMazes("All Mazes", this, gridUI);
-		actionCreateSingleMaze = new CreateSingleMaze("New Maze", this, gridUI);
+		actionCreateSingleMaze = new CreateSingleMazeAction("New Maze", this, gridUI);
 		actionSolveMaze = new SolveMazeAction("Solve", this, gridUI);
 		actionFloodFill = new FloodFillAction("Flood-fill", this, gridUI);
 		actionSaveImage = new SaveImageAction("Save Image...", this, gridUI);
