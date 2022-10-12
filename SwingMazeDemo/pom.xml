@@ -2,16 +2,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<groupId>de.amr.demos.maze.swingapp</groupId>
 	<artifactId>SwingMazeDemo</artifactId>
+	<version>1.0</version>
 	<name>SwingMazeDemo</name>
 	<description>Maze generation demo app</description>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>18</maven.compiler.source>
 		<maven.compiler.target>18</maven.compiler.target>
 		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
 	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -38,6 +42,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.miglayout</groupId>
@@ -55,25 +60,10 @@
 			<version>1.0</version>
 		</dependency>
 		<dependency>
-			<groupId>de.amr.graph</groupId>
-			<artifactId>graph-search</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.amr.graph</groupId>
-			<artifactId>graph-core</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.amr.graph</groupId>
-			<artifactId>graph-grid</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
 			<groupId>de.amr.maze</groupId>
 			<artifactId>mazes-algorithms</artifactId>
 			<version>1.0</version>
 		</dependency>
 	</dependencies>
-	<version>1.0</version>
+	
 </project>
