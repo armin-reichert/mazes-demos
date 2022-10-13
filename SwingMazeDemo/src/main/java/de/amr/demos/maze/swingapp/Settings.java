@@ -24,6 +24,8 @@ SOFTWARE.
 
 package de.amr.demos.maze.swingapp;
 
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
 import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
@@ -35,15 +37,15 @@ import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
  */
 class Settings {
 
-	@Parameter(description = "Preview window content width", names = { "-width" })
-	int width;
+	@Parameter(description = "Preview window width", names = { "-width" })
+	public int width;
 
-	@Parameter(description = "Preview window content height", names = { "-height" })
-	int height;
+	@Parameter(description = "Preview window height", names = { "-height" })
+	public int height;
 
 	@Parameter(description = "Theme (class name or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
 			"-theme" }, converter = ThemeConverter.class)
-	String theme = "nimbus";
+	public String theme = NimbusLookAndFeel.class.getName();
 
 	public Settings(int width, int height) {
 		this.width = width;

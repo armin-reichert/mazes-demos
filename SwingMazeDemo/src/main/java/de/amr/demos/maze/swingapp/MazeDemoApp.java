@@ -66,6 +66,7 @@ public class MazeDemoApp {
 	private void createAndShowUI() {
 		try {
 			UIManager.setLookAndFeel(settings.theme);
+			LOGGER.info(() -> "Look and Feel: %s".formatted(UIManager.getLookAndFeel().getName()));
 		} catch (Exception e) {
 			LOGGER.error("Could not set '%s' Look and Feel".formatted(settings.theme));
 			LOGGER.throwing(e);
@@ -88,6 +89,7 @@ public class MazeDemoApp {
 		gridUI.show();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();
-		LOGGER.info("Maze demo app UI created");
+		LOGGER
+				.info(() -> "UI created. Size: %dx%d".formatted(gridUI.getWindow().getWidth(), gridUI.getWindow().getHeight()));
 	}
 }
