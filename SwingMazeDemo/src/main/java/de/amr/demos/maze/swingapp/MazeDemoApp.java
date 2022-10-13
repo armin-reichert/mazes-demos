@@ -2,9 +2,13 @@ package de.amr.demos.maze.swingapp;
 
 import static de.amr.swing.MySwingUtils.action;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.UIManager;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.beust.jcommander.JCommander;
 
@@ -15,6 +19,7 @@ import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
+import de.amr.swing.MySwingUtils;
 
 /**
  * This application visualizes different maze generation algorithms and path finders. It provides
@@ -34,27 +39,38 @@ import de.amr.maze.alg.traversal.IterativeDFS;
  */
 public class MazeDemoApp {
 
-	public static void main(String[] cmdLineArgs) {
-		Settings settings = new Settings();
-		JCommander cmdLineProcessor = JCommander.newBuilder().addObject(settings).build();
-		cmdLineProcessor.usage();
-		cmdLineProcessor.parse(cmdLineArgs);
-		try {
-			UIManager.setLookAndFeel(settings.theme);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		EventQueue.invokeLater(() -> new MazeDemoApp().start(settings));
+	private static final Logger LOGGER = LogManager.getFormatterLogger();
+
+	private final Settings settings;
+	private final MazeDemoModel model;
+
+	public static void main(String[] args) {
+		Dimension defaultSize = MySwingUtils.getDisplaySize();
+		Settings settings = new Settings(defaultSize.width, defaultSize.height);
+		JCommander cmdLineParser = JCommander.newBuilder().addObject(settings).build();
+		cmdLineParser.usage();
+		cmdLineParser.parse(args);
+		var app = new MazeDemoApp(settings);
+		EventQueue.invokeLater(app::createAndShowUI);
 	}
 
-	private void start(Settings settings) {
-		MazeDemoModel model = new MazeDemoModel();
+	public MazeDemoApp(Settings settings) {
+		this.settings = settings;
+		model = new MazeDemoModel();
 		var gridWidth = settings.width / model.getGridCellSize();
 		var gridHeight = settings.height / model.getGridCellSize();
 		model.createGrid(gridWidth, gridHeight, false, TraversalState.UNVISITED);
+		LOGGER.info("Maze demo app created");
+	}
 
+	private void createAndShowUI() {
+		try {
+			UIManager.setLookAndFeel(settings.theme);
+		} catch (Exception e) {
+			LOGGER.error("Could not set '%s' Look and Feel".formatted(settings.theme));
+			LOGGER.throwing(e);
+		}
 		var gridUI = new GridUI(model, settings.width, settings.height);
-
 		var controlUI = new ControlUI(gridUI, model);
 		controlUI.setBusy(false);
 		controlUI.setHiddenWhenBusy(false);
@@ -62,15 +78,16 @@ public class MazeDemoApp {
 		controlUI.expandWindow();
 		controlUI.collapseWindow();
 
+		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
+		gridUI.startModelChangeListening();
+
 		model.findGenerator(IterativeDFS.class).ifPresent(controlUI::selectGenerator);
 		model.findSolver(BestFirstSearch.class).ifPresent(controlUI::selectSolver);
 		model.changes.addPropertyChangeListener(controlUI);
 
-		gridUI.setEscapeAction(action("Escape", e -> controlUI.show()));
-		gridUI.startModelChangeListening();
-
 		gridUI.show();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();
+		LOGGER.info("Maze demo app UI created");
 	}
 }

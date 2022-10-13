@@ -24,15 +24,15 @@ SOFTWARE.
 
 package de.amr.demos.maze.swingapp;
 
-import java.awt.Dimension;
-
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-
 import com.beust.jcommander.Parameter;
 
 import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
-import de.amr.swing.MySwingUtils;
 
+/**
+ * Maze demo app command-line settings.
+ * 
+ * @author Armin Reichert
+ */
 class Settings {
 
 	@Parameter(description = "Preview window content width", names = { "-width" })
@@ -41,14 +41,12 @@ class Settings {
 	@Parameter(description = "Preview window content height", names = { "-height" })
 	int height;
 
-	@Parameter(description = "Theme class name (or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
+	@Parameter(description = "Theme (class name or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
 			"-theme" }, converter = ThemeConverter.class)
-	String theme;
+	String theme = "nimbus";
 
-	public Settings() {
-		Dimension displaySize = MySwingUtils.getDisplaySize();
-		width = displaySize.width;
-		height = displaySize.height;
-		theme = NimbusLookAndFeel.class.getName();
+	public Settings(int width, int height) {
+		this.width = width;
+		this.height = height;
 	}
 }
