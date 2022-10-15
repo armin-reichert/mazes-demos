@@ -23,7 +23,7 @@ public class PearlsRendererTestApp extends SwingGridSampleApp {
 	public PearlsRendererTestApp() {
 		super(CANVAS_SIZE, CANVAS_SIZE, GRID_CELL_SIZE);
 		setAppName("Pearls Renderer Test");
-		setStyle(Style.PEARLS);
+		setStyle(RenderingStyle.PEARLS);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.swing.MySwingUtils.action;
+import static de.amr.swing.MySwing.action;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -19,7 +19,7 @@ import de.amr.demos.maze.swingapp.ui.grid.GridUI;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
-import de.amr.swing.MySwingUtils;
+import de.amr.swing.MySwing;
 
 /**
  * This application visualizes different maze generation algorithms and path finders. It provides
@@ -45,7 +45,7 @@ public class MazeDemoApp {
 	private final MazeDemoModel model;
 
 	public static void main(String[] args) {
-		Dimension defaultSize = MySwingUtils.getDisplaySize();
+		Dimension defaultSize = MySwing.getDisplaySize();
 		Settings settings = new Settings(defaultSize.width, defaultSize.height);
 		JCommander cmdLineParser = JCommander.newBuilder().addObject(settings).build();
 		cmdLineParser.usage();

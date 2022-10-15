@@ -1,10 +1,10 @@
 package de.amr.demos.maze.swingapp.ui.control;
 
-import static de.amr.swing.MySwingUtils.action;
-import static de.amr.swing.MySwingUtils.icon;
-import static de.amr.swing.MySwingUtils.setEnabled;
-import static de.amr.swing.MySwingUtils.setNormalCursor;
-import static de.amr.swing.MySwingUtils.setWaitCursor;
+import static de.amr.swing.MySwing.action;
+import static de.amr.swing.MySwing.icon;
+import static de.amr.swing.MySwing.setEnabled;
+import static de.amr.swing.MySwing.setNormalCursor;
+import static de.amr.swing.MySwing.setWaitCursor;
 
 import java.awt.Desktop;
 import java.awt.Window;

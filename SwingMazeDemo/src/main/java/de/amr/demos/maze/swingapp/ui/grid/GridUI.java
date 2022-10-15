@@ -1,6 +1,6 @@
 package de.amr.demos.maze.swingapp.ui.grid;
 
-import static de.amr.swing.MySwingUtils.getDisplaySize;
+import static de.amr.swing.MySwing.getDisplaySize;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -25,7 +25,7 @@ import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
-import de.amr.swing.MySwingUtils;
+import de.amr.swing.MySwing;
 
 /**
  * View Controller for the grid display UI.
@@ -56,7 +56,7 @@ public class GridUI implements PropertyChangeListener {
 		addCanvasAnimation();
 
 		gridView.getCanvas().getActionMap().put(ACTION_TOGGLE_FULLSCREEN,
-				MySwingUtils.action(ACTION_TOGGLE_FULLSCREEN, e -> toggleFullscreen()));
+				MySwing.action(ACTION_TOGGLE_FULLSCREEN, e -> toggleFullscreen()));
 		gridView.getCanvas().getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), ACTION_TOGGLE_FULLSCREEN);
 
 		if (gridViewSize.equals(getDisplaySize())) {
