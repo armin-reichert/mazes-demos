@@ -9,9 +9,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>18</maven.compiler.source>
-		<maven.compiler.target>18</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
+		<vs.tinylog>2.6.2</vs.tinylog>
 	</properties>
 
 	<build>
@@ -64,6 +65,17 @@
 			<groupId>de.amr.maze</groupId>
 			<artifactId>mazes-algorithms</artifactId>
 			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.tinylog</groupId>
+			<artifactId>tinylog-api</artifactId>
+			<version>${vs.tinylog}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.tinylog</groupId>
+			<artifactId>tinylog-impl</artifactId>
+			<version>${vs.tinylog}</version>
 		</dependency>
 	</dependencies>
 
