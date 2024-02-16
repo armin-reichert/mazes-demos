@@ -71,7 +71,6 @@
 			<artifactId>tinylog-api</artifactId>
 			<version>${vs.tinylog}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.tinylog</groupId>
 			<artifactId>tinylog-impl</artifactId>
