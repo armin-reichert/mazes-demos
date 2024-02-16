@@ -12,7 +12,7 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
-		<vs.tinylog>2.6.2</vs.tinylog>
+		<vs.tinylog>2.7.0</vs.tinylog>
 	</properties>
 
 	<build>
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.72</version>
+			<version>1.82</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
