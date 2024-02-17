@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.amr.demos.maze.swingapp</groupId>
+	<groupId>de.amr.demos.maze.swing</groupId>
 	<artifactId>SwingMazeDemo</artifactId>
 	<version>1.0</version>
 	<name>SwingMazeDemo</name>
@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
+		<main.class>de.amr.maze.demo.MazeDemoAppSwing</main.class>
 		<vs.tinylog>2.7.0</vs.tinylog>
 	</properties>
 

@@ -22,33 +22,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package de.amr.demos.maze.swingapp;
+package de.amr.maze.demo.ui.control.action;
 
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.AbstractAction;
 
-import com.beust.jcommander.Parameter;
-
-import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
+import de.amr.maze.demo.ui.control.ControlUI;
+import de.amr.maze.demo.ui.grid.GridUI;
 
 /**
- * Maze demo app command-line settings.
- * 
  * @author Armin Reichert
+ *
  */
-public class Settings {
+public abstract class MazeDemoAction extends AbstractAction {
 
-	@Parameter(description = "Preview window width", names = { "-width" })
-	public int width;
+	protected final ControlUI controlUI;
+	protected final GridUI gridUI;
 
-	@Parameter(description = "Preview window height", names = { "-height" })
-	public int height;
-
-	@Parameter(description = "Theme (class name or: 'system', 'cross', 'metal', 'nimbus')", names = { "-laf",
-			"-theme" }, converter = ThemeConverter.class)
-	public String theme = NimbusLookAndFeel.class.getName();
-
-	public Settings(int width, int height) {
-		this.width = width;
-		this.height = height;
+	protected MazeDemoAction(String name, ControlUI controlUI, GridUI gridUI) {
+		super(name);
+		this.controlUI = controlUI;
+		this.gridUI = gridUI;
 	}
 }
