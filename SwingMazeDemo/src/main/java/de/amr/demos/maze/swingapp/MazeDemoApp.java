@@ -1,17 +1,6 @@
 package de.amr.demos.maze.swingapp;
 
-import static de.amr.swing.MySwing.action;
-
-import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.UIManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.beust.jcommander.JCommander;
-
 import de.amr.demos.maze.swingapp.model.MazeDemoModel;
 import de.amr.demos.maze.swingapp.ui.control.ControlUI;
 import de.amr.demos.maze.swingapp.ui.control.action.AfterGeneration;
@@ -20,6 +9,12 @@ import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.pathfinder.impl.BestFirstSearch;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.swing.MySwing;
+import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+
+import static de.amr.swing.MySwing.action;
 
 /**
  * This application visualizes different maze generation algorithms and path finders. It provides
@@ -38,8 +33,6 @@ import de.amr.swing.MySwing;
  * @author Armin Reichert
  */
 public class MazeDemoApp {
-
-	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
 	private final Settings settings;
 	private final MazeDemoModel model;
@@ -60,16 +53,16 @@ public class MazeDemoApp {
 		var gridWidth = settings.width / model.getGridCellSize();
 		var gridHeight = settings.height / model.getGridCellSize();
 		model.createGrid(gridWidth, gridHeight, false, TraversalState.UNVISITED);
-		LOGGER.info("Maze demo app created");
+		Logger.info("Maze demo app created");
 	}
 
 	private void createAndShowUI() {
 		try {
 			UIManager.setLookAndFeel(settings.theme);
-			LOGGER.info(() -> "Look and Feel: %s".formatted(UIManager.getLookAndFeel().getName()));
+			Logger.info(() -> "Look and Feel: %s".formatted(UIManager.getLookAndFeel().getName()));
 		} catch (Exception e) {
-			LOGGER.error("Could not set '%s' Look and Feel".formatted(settings.theme));
-			LOGGER.throwing(e);
+			Logger.error("Could not set '%s' Look and Feel".formatted(settings.theme));
+			Logger.trace(e);
 		}
 		var gridUI = new GridUI(model, settings.width, settings.height);
 		var controlUI = new ControlUI(gridUI, model);
@@ -89,7 +82,6 @@ public class MazeDemoApp {
 		gridUI.show();
 		controlUI.placeWindowRelativeTo(gridUI.getWindow());
 		controlUI.show();
-		LOGGER
-				.info(() -> "UI created. Size: %dx%d".formatted(gridUI.getWindow().getWidth(), gridUI.getWindow().getHeight()));
+		Logger.info(() -> "UI created. Size: %dx%d".formatted(gridUI.getWindow().getWidth(), gridUI.getWindow().getHeight()));
 	}
 }

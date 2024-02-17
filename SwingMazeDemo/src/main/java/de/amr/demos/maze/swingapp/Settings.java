@@ -35,7 +35,7 @@ import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
  * 
  * @author Armin Reichert
  */
-class Settings {
+public class Settings {
 
 	@Parameter(description = "Preview window width", names = { "-width" })
 	public int width;
