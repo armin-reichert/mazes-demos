@@ -30,5 +30,11 @@
 			<artifactId>javafx-controls</artifactId>
 			<version>${javafx.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.tinylog</groupId>
+			<artifactId>tinylog-api</artifactId>
+			<version>2.7.0</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

@@ -1,13 +1,5 @@
 package de.amr.demos.grid.maze.recording;
 
-import static de.amr.graph.core.api.TraversalState.UNVISITED;
-
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
-import javax.swing.JFrame;
-
 import de.amr.graph.core.api.ObservableGraph;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.event.EdgeEvent;
@@ -24,34 +16,16 @@ import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
-import de.amr.maze.alg.others.Armin;
-import de.amr.maze.alg.others.BinaryTree;
-import de.amr.maze.alg.others.BinaryTreeRandom;
-import de.amr.maze.alg.others.Eller;
-import de.amr.maze.alg.others.HuntAndKill;
-import de.amr.maze.alg.others.HuntAndKillRandom;
-import de.amr.maze.alg.others.Sidewinder;
-import de.amr.maze.alg.traversal.GrowingTreeAlwaysFirst;
-import de.amr.maze.alg.traversal.GrowingTreeAlwaysLast;
-import de.amr.maze.alg.traversal.GrowingTreeAlwaysRandom;
-import de.amr.maze.alg.traversal.GrowingTreeLastOrRandom;
-import de.amr.maze.alg.traversal.IterativeDFS;
-import de.amr.maze.alg.traversal.RandomBFS;
-import de.amr.maze.alg.ust.WilsonUSTCollapsingCircle;
-import de.amr.maze.alg.ust.WilsonUSTCollapsingWalls;
-import de.amr.maze.alg.ust.WilsonUSTExpandingCircle;
-import de.amr.maze.alg.ust.WilsonUSTExpandingCircles;
-import de.amr.maze.alg.ust.WilsonUSTExpandingRectangle;
-import de.amr.maze.alg.ust.WilsonUSTExpandingSpiral;
-import de.amr.maze.alg.ust.WilsonUSTHilbertCurve;
-import de.amr.maze.alg.ust.WilsonUSTLeftToRightSweep;
-import de.amr.maze.alg.ust.WilsonUSTMooreCurve;
-import de.amr.maze.alg.ust.WilsonUSTNestedRectangles;
-import de.amr.maze.alg.ust.WilsonUSTPeanoCurve;
-import de.amr.maze.alg.ust.WilsonUSTRandomCell;
-import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
-import de.amr.maze.alg.ust.WilsonUSTRightToLeftSweep;
-import de.amr.maze.alg.ust.WilsonUSTRowsTopDown;
+import de.amr.maze.alg.others.*;
+import de.amr.maze.alg.traversal.*;
+import de.amr.maze.alg.ust.*;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
 
 /**
  * Runs maze generation algorithms and saves the mazes as animated GIF images.

@@ -1,14 +1,14 @@
 package de.amr.demos.grid.rendering;
 
-import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
-import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
 import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.ust.WilsonUSTRecursiveCrosses;
+
+import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
+import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 
 public class PearlsRendererTestApp extends SwingGridSampleApp {
 
