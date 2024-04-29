@@ -1,8 +1,8 @@
 package de.amr.demos.grid.maze.swing;
 
-import static de.amr.demos.grid.maze.swing.MazeDemoApp.launch;
-
 import de.amr.maze.alg.others.HuntAndKillRandom;
+
+import static de.amr.demos.grid.maze.swing.MazeDemoApp.launch;
 
 public class HuntAndKillRandomApp {
 

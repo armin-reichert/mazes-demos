@@ -1,18 +1,7 @@
 package de.amr.demos.grid.rendering;
 
-import static de.amr.graph.core.api.TraversalState.UNVISITED;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
@@ -26,6 +15,14 @@ import de.amr.maze.alg.others.RecursiveDivision;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.maze.alg.ust.WilsonUSTRandomCell;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
 
 /**
  * Sample app demonstrating how to create a maze image.

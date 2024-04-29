@@ -1,10 +1,5 @@
 package de.amr.demos.grid.maze.swing;
 
-import static de.amr.graph.core.api.TraversalState.UNVISITED;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.stream.IntStream;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.impl.Grid4Topology;
@@ -12,6 +7,11 @@ import de.amr.graph.grid.impl.GridFactory;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.SwingGridSampleApp;
 import de.amr.maze.alg.core.MazeGenerator;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.stream.IntStream;
+
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
 
 /**
  * Helper class for visualizing maze creation and flood-fill.

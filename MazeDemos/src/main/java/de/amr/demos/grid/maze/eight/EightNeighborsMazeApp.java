@@ -1,15 +1,5 @@
 package de.amr.demos.grid.maze.eight;
 
-import java.awt.Color;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridGraph2D;
 import de.amr.graph.grid.api.GridPosition;
@@ -24,15 +14,14 @@ import de.amr.maze.alg.core.MazeGenerator;
 import de.amr.maze.alg.mst.BoruvkaMST;
 import de.amr.maze.alg.mst.KruskalMST;
 import de.amr.maze.alg.mst.PrimMST;
-import de.amr.maze.alg.others.Armin;
-import de.amr.maze.alg.others.BinaryTreeRandom;
-import de.amr.maze.alg.others.Eller;
-import de.amr.maze.alg.others.HuntAndKill;
-import de.amr.maze.alg.others.RecursiveDivision;
-import de.amr.maze.alg.others.Sidewinder;
+import de.amr.maze.alg.others.*;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.maze.alg.ust.WilsonUSTRandomCell;
+import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.awt.*;
 
 class GeneratorInfo {
 	String name;
@@ -47,8 +36,6 @@ class GeneratorInfo {
 }
 
 public class EightNeighborsMazeApp {
-
-	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
 	private static final int GRID_SIZE = 40;
 	private static final int CANVAS_SIZE = 640;
@@ -92,7 +79,7 @@ public class EightNeighborsMazeApp {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException x) {
-				LOGGER.log(Level.WARN, "Interrupted!", x);
+				Logger.info("Interrupted!", x);
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -103,28 +90,28 @@ public class EightNeighborsMazeApp {
 		int center = grid.cell(GridPosition.CENTER);
 		try {
 			var gen = (MazeGenerator) genInfo.impl.getConstructor(GridGraph2D.class).newInstance(grid);
-			LOGGER.info("Generator: %s", genInfo.name);
+			Logger.info("Generator: %s", genInfo.name);
 			gen.createMaze(grid.col(center), grid.row(center));
 			if (!isMaze()) {
-				LOGGER.info("No maze!");
+				Logger.info("No maze!");
 			}
 		} catch (Exception x) {
-			LOGGER.throwing(x);
+			Logger.trace(x);
 		}
 	}
 
 	private boolean isMaze() {
 		boolean edgeCountOk = grid.numEdges() == grid.numVertices() - 1;
 		if (!edgeCountOk) {
-			LOGGER.info(() -> "Edge count failed: %d edges, should be %d".formatted(grid.numEdges(), grid.numVertices() - 1));
+			Logger.info(() -> "Edge count failed: %d edges, should be %d".formatted(grid.numEdges(), grid.numVertices() - 1));
 		}
 		boolean cycleFree = !GraphUtils.containsCycle(grid);
 		if (!cycleFree) {
-			LOGGER.info("Cycle detected");
+			Logger.info("Cycle detected");
 		}
 		boolean connected = GraphSearchUtils.isConnectedGraph(grid);
 		if (!connected) {
-			LOGGER.info("Generated graph is disconnected");
+			Logger.info("Generated graph is disconnected");
 		}
 		return edgeCountOk && connected && cycleFree;
 	}

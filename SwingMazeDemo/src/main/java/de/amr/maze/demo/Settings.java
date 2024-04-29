@@ -22,20 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package de.amr.demos.maze.swingapp;
+package de.amr.maze.demo;
 
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.beust.jcommander.Parameter;
 
-import de.amr.demos.maze.swingapp.ui.common.ThemeConverter;
+import de.amr.maze.demo.ui.common.ThemeConverter;
 
 /**
  * Maze demo app command-line settings.
  * 
  * @author Armin Reichert
  */
-class Settings {
+public class Settings {
 
 	@Parameter(description = "Preview window width", names = { "-width" })
 	public int width;

@@ -1,24 +1,5 @@
 package de.amr.demos.grid.pathfinding;
 
-import static de.amr.graph.core.api.TraversalState.UNVISITED;
-import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
-import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.KeyStroke;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.ObservableGridGraph2D;
 import de.amr.graph.grid.impl.Grid4Topology;
@@ -28,6 +9,14 @@ import de.amr.graph.grid.ui.rendering.WallPassageGridRenderer;
 import de.amr.graph.pathfinder.api.Path;
 import de.amr.graph.pathfinder.impl.DepthFirstSearch2;
 import de.amr.maze.alg.mst.KruskalMST;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+
+import static de.amr.graph.core.api.TraversalState.UNVISITED;
+import static de.amr.graph.grid.api.GridPosition.BOTTOM_RIGHT;
+import static de.amr.graph.grid.api.GridPosition.TOP_LEFT;
 
 /**
  * A simple test application for maze generation and path finding.

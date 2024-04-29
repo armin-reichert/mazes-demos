@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package de.amr.demos.maze.swingapp.ui.control.action;
+package de.amr.maze.demo.ui.control.action;
 
 import javax.swing.AbstractAction;
 
-import de.amr.demos.maze.swingapp.ui.control.ControlUI;
-import de.amr.demos.maze.swingapp.ui.grid.GridUI;
+import de.amr.maze.demo.ui.control.ControlUI;
+import de.amr.maze.demo.ui.grid.GridUI;
 
 /**
  * @author Armin Reichert
