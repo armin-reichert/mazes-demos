@@ -12,7 +12,7 @@
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
-		<vs.tinylog>2.6.2</vs.tinylog>
+		<vs.tinylog>2.7.0</vs.tinylog>
 	</properties>
 
 	<build>
@@ -49,12 +49,12 @@
 		<dependency>
 			<groupId>com.miglayout</groupId>
 			<artifactId>miglayout-swing</artifactId>
-			<version>5.0</version>
+			<version>11.3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.72</version>
+			<version>1.78</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
@@ -71,7 +71,6 @@
 			<artifactId>tinylog-api</artifactId>
 			<version>${vs.tinylog}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.tinylog</groupId>
 			<artifactId>tinylog-impl</artifactId>
