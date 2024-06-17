@@ -1,31 +1,25 @@
 package de.amr.maze.demo.ui.grid;
 
-import static de.amr.swing.MySwing.getDisplaySize;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import javax.swing.Action;
-import javax.swing.JFrame;
-import javax.swing.KeyStroke;
-
-import de.amr.maze.demo.model.GridRenderingStyle;
-import de.amr.maze.demo.model.MazeDemoModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.impl.Grid8Topology;
 import de.amr.graph.grid.impl.ObservableGridGraph;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.GridCanvasAnimation;
 import de.amr.graph.grid.ui.rendering.GridRenderer;
+import de.amr.maze.demo.model.GridRenderingStyle;
+import de.amr.maze.demo.model.MazeDemoModel;
 import de.amr.swing.MySwing;
+import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import static de.amr.swing.MySwing.getDisplaySize;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * View Controller for the grid display UI.
@@ -33,8 +27,6 @@ import de.amr.swing.MySwing;
  * @author Armin Reichert
  */
 public class GridUI implements PropertyChangeListener {
-
-	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
 	private static final String ACTION_ESCAPE = "Escape";
 	private static final String ACTION_TOGGLE_FULLSCREEN = "ToggleFullscreen";
@@ -98,7 +90,7 @@ public class GridUI implements PropertyChangeListener {
 			drawGrid();
 		}
 		default -> {
-			LOGGER.info(() -> "Unhandled property change '%s'".formatted(change));
+			Logger.info(() -> "Unhandled property change '%s'".formatted(change));
 		}
 		}
 	}
