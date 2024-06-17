@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.amr.demos.maze.swing</groupId>
+	<groupId>de.amr.demos.maze.swingapp</groupId>
 	<artifactId>SwingMazeDemo</artifactId>
 	<version>1.0</version>
 	<name>SwingMazeDemo</name>
@@ -9,9 +9,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
-		<main.class>de.amr.maze.demo.MazeDemoAppSwing</main.class>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
+		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
 		<vs.tinylog>2.7.0</vs.tinylog>
 	</properties>
 
@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.82</version>
+			<version>1.78</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
