@@ -70,10 +70,10 @@ public class ControlUI implements PropertyChangeListener {
 	Action actionSaveImage;
 	Action actionVisitOnGitHub;
 
-	private ComboBoxModel<String> renderingStyles4neighbors = new DefaultComboBoxModel<>(
+	private final ComboBoxModel<String> renderingStyles4neighbors = new DefaultComboBoxModel<>(
 			new String[] { WALLS_PASSAGES, PEARLS });
 
-	private ComboBoxModel<String> renderingStyles8neighbors = new DefaultComboBoxModel<>(new String[] { PEARLS });
+	private final ComboBoxModel<String> renderingStyles8neighbors = new DefaultComboBoxModel<>(new String[] { PEARLS });
 
 	public ControlUI(GridUI gridUI, MazeDemoModel model) {
 		this.gridUI = gridUI;
@@ -212,11 +212,10 @@ public class ControlUI implements PropertyChangeListener {
 				view.getComboRenderingStyle().setSelectedItem(PEARLS);
 			}
 			break;
-		case "gridCellSizeIndex":
-			break;
 		case "metric":
 			getSelectedSolver().ifPresent(this::updateSolverText);
 			break;
+		case "gridCellSizeIndex":
 		case "passageWidthPercentage":
 			break;
 		case "renderingStyle": {
@@ -418,7 +417,7 @@ public class ControlUI implements PropertyChangeListener {
 		String text = solver.getDescription();
 		if (solver.isTagged(SolverTag.INFORMED)) {
 			String metric = model.getMetric().toString();
-			metric = metric.substring(0, 1) + metric.substring(1).toLowerCase();
+			metric = metric.charAt(0) + metric.substring(1).toLowerCase();
 			text += " (" + metric + ")";
 		}
 		view.getLblSolverName().setText(text);
