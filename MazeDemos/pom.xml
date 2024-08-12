@@ -5,7 +5,7 @@
 	<version>1.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javafx.version>18.0.1</javafx.version>
+		<javafx.version>21</javafx.version>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
 		<vs.tinylog>2.7.0</vs.tinylog>
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.78</version>
+			<version>1.82</version>
 		</dependency>
 		<dependency>
 			<groupId>de.amr.graph</groupId>
@@ -42,4 +42,11 @@
 			<version>${vs.tinylog}</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>maven_central</id>
+			<name>Maven Central</name>
+			<url>https://repo.maven.apache.org/maven2/</url>
+		</repository>
+	</repositories>
 </project>

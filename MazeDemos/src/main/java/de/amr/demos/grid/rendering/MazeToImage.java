@@ -15,8 +15,7 @@ import de.amr.maze.alg.others.RecursiveDivision;
 import de.amr.maze.alg.traversal.IterativeDFS;
 import de.amr.maze.alg.traversal.RandomBFS;
 import de.amr.maze.alg.ust.WilsonUSTRandomCell;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.tinylog.Logger;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -36,9 +35,7 @@ import static de.amr.graph.core.api.TraversalState.UNVISITED;
  */
 public class MazeToImage {
 
-	private static final Logger LOGGER = LogManager.getFormatterLogger();
-
-	static class Params {
+	public static class Params {
 
 		@Parameter(names = { "-algorithm", "-alg" }, description = "maze algorithm (dfs, bfs, kruskal, wilson, division)")
 		public String algorithm = "dfs";
@@ -71,20 +68,20 @@ public class MazeToImage {
 		canvas.pushRenderer(renderer);
 		renderer.drawGrid(canvas.getDrawGraphics(), maze);
 		if (params.floodfill) {
-			LOGGER.info("Flood-filling maze");
+			Logger.info("Flood-filling maze");
 			BFSAnimation.builder().canvas(canvas).distanceVisible(false).build().floodFill(GridPosition.CENTER);
 		}
 		try {
 			var file = new File(filename);
 			ImageIO.write(canvas.getDrawingBuffer(), imageFormat, file);
-			LOGGER.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
+			Logger.info(() -> "Saved maze to file '%s'".formatted(file.getAbsolutePath()));
 		} catch (IOException e) {
-			LOGGER.catching(e);
+			Logger.error(e);
 		}
 	}
 
 	private static GridGraph2D<TraversalState, Integer> buildMaze(int width, int height, String algorithm) {
-		LOGGER.info(() -> "Creating maze of size %dx%d using %s".formatted(width, height, algorithm));
+		Logger.info(() -> "Creating maze of size %dx%d using %s".formatted(width, height, algorithm));
 		var grid = GridFactory.emptyObservableGrid(width, height, Grid4Topology.get(), UNVISITED, 0);
 		switch (algorithm) {
 		case "dfs" -> new IterativeDFS(grid).createMaze(0, 0);

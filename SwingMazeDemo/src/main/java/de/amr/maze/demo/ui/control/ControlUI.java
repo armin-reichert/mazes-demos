@@ -1,43 +1,5 @@
 package de.amr.maze.demo.ui.control;
 
-import static de.amr.swing.MySwing.action;
-import static de.amr.swing.MySwing.icon;
-import static de.amr.swing.MySwing.setEnabled;
-import static de.amr.swing.MySwing.setNormalCursor;
-import static de.amr.swing.MySwing.setWaitCursor;
-
-import java.awt.Desktop;
-import java.awt.Window;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.Consumer;
-
-import javax.swing.Action;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.WindowConstants;
-
-import de.amr.maze.demo.model.Algorithm;
-import de.amr.maze.demo.model.GridRenderingStyle;
-import de.amr.maze.demo.model.MazeDemoModel;
-import de.amr.maze.demo.model.SolverTag;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import de.amr.maze.demo.ui.control.action.AfterGeneration;
-import de.amr.maze.demo.ui.control.action.CreateAllMazes;
-import de.amr.maze.demo.ui.control.action.CreateSingleMazeAction;
-import de.amr.maze.demo.ui.control.action.FloodFillAction;
-import de.amr.maze.demo.ui.control.action.SaveImageAction;
-import de.amr.maze.demo.ui.control.action.SolveMazeAction;
-import de.amr.maze.demo.ui.grid.GridUI;
-import de.amr.maze.demo.ui.grid.GridView;
 import de.amr.graph.core.api.TraversalState;
 import de.amr.graph.grid.api.GridTopology;
 import de.amr.graph.grid.impl.Grid4Topology;
@@ -46,7 +8,26 @@ import de.amr.graph.grid.ui.animation.AnimationInterruptedException;
 import de.amr.graph.grid.ui.animation.BFSAnimation;
 import de.amr.graph.grid.ui.animation.DFSAnimation;
 import de.amr.graph.pathfinder.api.ObservableGraphSearch;
+import de.amr.maze.demo.model.Algorithm;
+import de.amr.maze.demo.model.GridRenderingStyle;
+import de.amr.maze.demo.model.MazeDemoModel;
+import de.amr.maze.demo.model.SolverTag;
+import de.amr.maze.demo.ui.control.action.*;
+import de.amr.maze.demo.ui.grid.GridUI;
+import de.amr.maze.demo.ui.grid.GridView;
 import de.amr.util.StopWatch;
+import org.tinylog.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Consumer;
+
+import static de.amr.swing.MySwing.*;
 
 /**
  * Controls the UI for maze generation and solving.
@@ -54,8 +35,6 @@ import de.amr.util.StopWatch;
  * @author Armin Reichert
  */
 public class ControlUI implements PropertyChangeListener {
-
-	private static final Logger LOGGER = LogManager.getFormatterLogger();
 
 	public static final String WALLS_PASSAGES = "Walls-Passages";
 	public static final String PEARLS = "Pearls";
@@ -216,7 +195,7 @@ public class ControlUI implements PropertyChangeListener {
 				try {
 					Desktop.getDesktop().browse(new URI(url));
 				} catch (Exception x) {
-					LOGGER.error("Could not browse URL '%s'".formatted(url));
+					Logger.error("Could not browse URL '%s'".formatted(url));
 				}
 			}
 		});
@@ -247,7 +226,7 @@ public class ControlUI implements PropertyChangeListener {
 			break;
 		}
 		default:
-			LOGGER.info(() -> "Unhandled property change %s".formatted(change));
+			Logger.info(() -> "Unhandled property change %s".formatted(change));
 			break;
 		}
 	}
