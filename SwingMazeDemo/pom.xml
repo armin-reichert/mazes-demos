@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<main.class>de.amr.demos.maze.swingapp.MazeDemoApp</main.class>
+		<main.class>de.amr.maze.demo.MazeDemoAppSwing</main.class>
 		<vs.tinylog>2.7.0</vs.tinylog>
 	</properties>
 
