@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group 'de.amr.demos.maze'
+version '1.0'
+
+dependencies {
+    implementation 'de.amr.graph:graph-core:1.0'
+    implementation 'de.amr.graph:graph-grid:1.0'
+    implementation 'de.amr.graph:graph-search:1.0'
+    implementation 'de.amr.graph:graph-viz:1.0'
+    implementation 'de.amr.maze:mazes-algorithms:1.0'
+    implementation 'com.beust:jcommander:1.82'
+    implementation 'com.miglayout:miglayout-core:11.2'     // Core layout logic
+    implementation 'com.miglayout:miglayout-swing:11.2'    // For Swing UI
+//    implementation 'com.miglayout:miglayout-javafx:11.2'   // For JavaFX UI
+    implementation(libs.bundles.tinylog)
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // This is needed because the "jcommander" module is an automatic module: (WTF)
+    options.compilerArgs += ['--module-path', classpath.asPath]
+    classpath = files()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}

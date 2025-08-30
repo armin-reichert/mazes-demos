@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    alias(libs.plugins.javafx)
+}
+
+group 'de.amr.demos.maze'
+version '1.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'de.amr.graph:graph-core:1.0'
+    implementation 'de.amr.graph:graph-grid:1.0'
+    implementation 'de.amr.graph:graph-search:1.0'
+    implementation 'de.amr.graph:graph-viz:1.0'
+    implementation 'de.amr.maze:mazes-algorithms:1.0'
+    implementation("com.beust:jcommander:1.82")
+    implementation(libs.bundles.tinylog)
+}
+
+javafx {
+    modules = ["javafx.base", "javafx.graphics", "javafx.controls"]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
